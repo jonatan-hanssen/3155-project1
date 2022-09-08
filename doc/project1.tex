@@ -41,5 +41,46 @@ the expectation value $0$. Therefore, we end up with the final expression:
 We can use expectation values to calculate the variance as well:
 
 \[ var[y_i] = E\left[(y_i - E[y_i])^2\right] \]
+\[ = E\left[y_i^2 - 2E[y_i]y_i + E[y_i]^2\right] \]
+
+Distributing the outer expectation value function:
+
+\[ var[y_i] = E[y_i^2] - 2E\left[E[y_i]\right]E[y_i] + E\left[E[y]^2\right] \]
+\[ = E[y_i^2] - 2E\left[E[y_i]\right]E[y_i] + E\left[E[y]^2\right] \]
+\[ = E[y_i^2] - 2E\left[E[y_i]\right]E[y_i] + E\left[E[y]\right]E\left[E[y]\right] \]
+
+The result of calculating the expectation value is non-stochastic. This means that
+$E[E[X]] = E[X]$. From this it follows that
+
+\[ = E[y_i^2] - 2E[y_i]E[y_i] + E[y_i]E[y_i] \]
+\[ = E[y_i^2] - E[y_i]E[y_i] \]
+\[ = E[y_i^2] - E[y_i]^2 \]
+
+The expectation value in the second summand has been proven to be equal 
+to $\bm{X}_{i,*}\bm{\beta}$ above. We therefore have
+
+\[ var[y_i] = E[y_i^2] - (\bm{X}_{i,*}\bm{\beta})^2 \]
+\[ = E\left[(X_{i,*}\bm{\beta})^2 + X_{i,*}\bm{\beta}\epsilon_i + \epsilon_i^2\right] - (\bm{X}_{i,*}\bm{\beta})^2 \]
+\[ = E\left[(X_{i,*}\bm{\beta})^2\right] + E[X_{i,*}\bm{\beta}\epsilon_i] + E[\epsilon_i^2] - (\bm{X}_{i,*}\bm{\beta})^2 \]
+
+$X_{i,*}\bm{\beta}$ and $\epsilon_i$ are both scalars. Therefore the expectation value can be written as
+$E[X_{i,*}\bm{\beta}]E[\epsilon_i]$. However, $E[\epsilon_i]$ is by definition $0$, because $\epsilon_i$ is
+defined as a normal distribution of mean $0$ and variance $\sigma^2$. Furthermore, the expectation value of the
+non-stochastic $(X_{i,*}\bm{\beta})^2$ is simply the expression itself. We therefore have
+
+\[ var[y_i] = (X_{i,*}\bm{\beta})^2 + E[X_{i,*}\bm{\beta}]\cdot 0 + E[\epsilon_i^2] - (\bm{X}_{i,*}\bm{\beta})^2 \]
+\[ = E[\epsilon_i^2] \]
+
+We can prove that this is equal to the variance of $\epsilon_i$:
+
+\[ E[\epsilon_i^2] = \frac{1}{n} \sum_i \epsilon_i^2\]
+\[ var[\epsilon_i] = \frac{1}{n} \sum_i (\epsilon_i - \bar{\epsilon_i})^2\]
+\[ var[\epsilon_i] = \frac{1}{n} \sum_i (\epsilon_i - 0)^2\]
+\[ var[\epsilon_i] = \frac{1}{n} \sum_i \epsilon_i^2 = E[\epsilon_i^2] \]
+
+And of course, we know that the variance of $\epsilon_i$ by definition is $\sigma^2$.
+
+\[ var[y_i] = E[\epsilon_i^2] = var[\epsilon_i] = \sigma^2 \]
+
 
 \end{document}
