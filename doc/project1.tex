@@ -42,4 +42,15 @@ We can use expectation values to calculate the variance as well:
 
 \[ var[y_i] = E\left[(y_i - E[y_i])^2\right] \]
 
+Proof of $var(\beta) = \sigma^{2}(X^{T}X)^{-1}$
+$$var(\beta) = var((X^{T}X)^{-1}X^{T}y)$$
+Because we are assuming $(X^{T}X)^{-1}X^{T}$ to be deterministic and $y$ to be stochastic, we can rewrite the $var(\beta)$ as following:
+$$var(\beta) = (X^{T}X)^{-1}X^{T}var(y)((X^{T}X)^{-1}X^{T})^{T}$$
+$$ = (X^{T}X)^{-1}X^{T}var(y)(X^{T})^{T}((X^{T}X)^{-1})^{T}$$
+Since $(X^{T})^{T} = X$ and $(X^{T}X)^{-1})^{T}$ = $(X^{T}X)^{T})^{-1} = (X^{T}X)^{-1}$
+$$ = (X^{T}X)^{-1}X^{T}var(y)X(X^{T}X)^{-1} $$
+We know var(y) = $\sigma^{2}$, and since it is a scalar it is commutative. Thus we may move it freely
+$$ = \sigma^{2}(X^{T}X)^{-1}X^{T}X(X^{T}X)^{-1} $$
+$$ = \sigma^{2}(X^{T}X)^{-1} $$
+$\blacksquare$
 \end{document}
