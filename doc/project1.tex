@@ -82,6 +82,13 @@ And of course, we know that the variance of $\epsilon_i$ by definition is $\sigm
 
 \[ var[y_i] = E[\epsilon_i^2] = var[\epsilon_i] = \sigma^2 \]
 
+\Proof of $E[\hat{\beta}] = \beta$
+$$E[\hat{\beta}] = E[(X^{T}X)^{-1}X^{T}y]$$
+Because we are assuming $(X^{T}X)^{-1}X^{T}$ to be deterministic, $E[(X^{T}X)^{-1}X^{T}] = (X^{T}X)^{-1}X^{T}$. Moreover, we know $E[y] = y$, and we can thus rewrite the equation as follows:
+$$E[(X^{T}X)^{-1}X^{T}y] = (X^{T}X)^{-1}X^{T}y = \beta$$
+$\blacksquare$
+\\
+\\[ var[y_i] = E\left[(y_i - E[y_i])^2\right] \]
 
 Proof of $var(\beta) = \sigma^{2}(X^{T}X)^{-1}$
 $$var(\beta) = var((X^{T}X)^{-1}X^{T}y)$$
