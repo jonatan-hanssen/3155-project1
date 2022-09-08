@@ -1,0 +1,45 @@
+\documentclass{article}
+	\usepackage[utf8]{inputenc}
+	\usepackage{mathtools}
+	\usepackage{amssymb}
+	\usepackage{amsmath}
+	\usepackage{bm}
+	\usepackage{float}
+	\usepackage{listings}
+	\usepackage{nicefrac}
+	\usepackage{xcolor}
+	\usepackage[T1]{fontenc}
+	\usepackage{newtxmath,newtxtext}
+	\author{Jonatan Hoffmann Hanssen \and Eric Emanuel Reber}
+	\title{Project 1 FYS-STK3155}
+
+\begin{document}
+	\maketitle
+
+\section*{Abstract}
+
+\section*{a}
+
+We have defined $\bm{y}$ as a function of a matrix multiplication $X\bm{\beta}$
+plus an error vector $\bm{\epsilon}$. This means that each element of the vector
+$\bm{y}$ can be expressed as follows:
+
+\[ y_i = \sum_j x_{ij}\beta_j + \epsilon_i \]
+
+If we take the expectation value of this expression we get the following:
+
+\[ E[y_i] = E\left[\sum_j x_{ij}\beta_j + \epsilon_i\right] \]
+\[ E[y_i] = E\left[\sum_j x_{ij}\beta_j\right] + E[\epsilon_i] \]
+
+However, the elements of $X$ are not stochastic, and neither are the elements of $\beta$
+the first expectation value is simply the sum itself. Furthermore, $\epsilon$ is 
+explicitly defined as a normal distribution $N(0,\sigma^2)$, and will by definition have
+the expectation value $0$. Therefore, we end up with the final expression:
+
+\[ E[y_i] = \sum_j x_{ij}\beta_j = \bm{X}_{i,*}\bm{\beta}\]
+
+We can use expectation values to calculate the variance as well:
+
+\[ var[y_i] = E\left[(y_i - E[y_i])^2\right] \]
+
+\end{document}
