@@ -36,29 +36,34 @@ def MSE(y_data,y_model):
     n = np.size(y_model)
     return np.sum((y_data-y_model)**2)/n
 
-def linear_regression(x, y, z):
-    print(x.shape, y.shape, z.shape)
-    MSE_train = np.zeros((5))
-    MSE_test = np.zeros((5))
-    R2_train = np.zeros((5))
-    R2_test = np.zeros((5))
-    betas = np.zeros((5))
+def linear_regression(x, y, z, N):
+    L = int((N+1)*(N+2)/2) # Number of elements in beta
+    MSE_train = np.zeros((N+1))
+    MSE_test = np.zeros((N+1))
+    R2_train = np.zeros((N+1))
+    R2_test = np.zeros((N+1))
+    betas = np.zeros((L,N+1))
 
-    for n in range(5):
-        X = create_X(x, y, n)
+    X = create_X(x, y, N)
 
-        X_train, X_test, z_train, z_test = train_test_split(X, z, test_size=0.2)
+    zflat = np.ravel(z)
 
-        beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ z_train
+    X_train, X_test, z_train, z_test = train_test_split(X, zflat, test_size=0.2)
 
-        z_model = X_train @ beta
-        z_model_test = X_test @ beta
+    for n in range(N+1):
+        l = int((n+1)*(n+2)/2) # Number of elements in beta
+
+        beta = np.linalg.pinv(X_train[:,0:l].T @ X_train[:,0:l]) @ X_train[:,0:l].T @ z_train
+
+
+        z_model = X_train[:,0:l] @ beta
+        z_model_test = X_test[:,0:l] @ beta
 
         MSE_train[n] = MSE(z_train, z_model)
         MSE_test[n] = MSE(z_test, z_model_test)
         R2_train[n] = R2(z_train, z_model)
         R2_test[n] = R2(z_test, z_model_test)
-        betas[n] = beta
+        betas[0:len(beta),n] = beta
 
     return betas, MSE_train, MSE_test, R2_train, R2_test
 
