@@ -21,8 +21,8 @@ N = 30
 
 # Do the linear_regression
 z += 0.05*np.random.standard_normal(z.shape)
-# betas, MSE_train, MSE_test, R2_train, R2_test, z_pred = linear_regression(x,y,z, N, scaling=False)
-betas, MSE_train, MSE_test, R2_train, R2_test, z_pred = linear_regression(x,y,z, N, scaling=True)
+_, MSE_train_scal, MSE_test_scal, R2_train_scal, R2_test_scal, _ = linear_regression(x,y,z, N, scaling=True)
+betas, MSE_train, MSE_test, R2_train, R2_test, z_pred = linear_regression(x,y,z, N, scaling=False)
 
 # ------------ PLOTTING 3D -----------------------
 fig = plt.figure(figsize=plt.figaspect(0.3))
@@ -87,7 +87,9 @@ plt.title("Beta progression")
 plt.subplot(222)
 
 plt.plot(MSE_train, label="train")
+plt.plot(MSE_train_scal, label="trainscal")
 plt.plot(MSE_test, label="test")
+plt.plot(MSE_test_scal, label="testscal")
 plt.xlabel("Polynomial degree")
 plt.legend()
 plt.title("MSE scores")
