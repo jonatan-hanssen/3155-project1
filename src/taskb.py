@@ -21,11 +21,8 @@ N = 30
 
 # Do the linear_regression
 z += 0.05*np.random.standard_normal(z.shape)
-betas, MSE_train, MSE_test, R2_train, R2_test = linear_regression(x,y,z, N)
-
-# Just create the X again so we can find our prediction
-X = create_X(x,y,N)
-z_pred = X @ betas[:,N-1]
+# betas, MSE_train, MSE_test, R2_train, R2_test, z_pred = linear_regression(x,y,z, N, scaling=False)
+betas, MSE_train, MSE_test, R2_train, R2_test, z_pred = linear_regression(x,y,z, N, scaling=True)
 
 # ------------ PLOTTING 3D -----------------------
 fig = plt.figure(figsize=plt.figaspect(0.3))

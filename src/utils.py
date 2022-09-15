@@ -32,32 +32,56 @@ def create_X(x, y, n ):
 
 def R2(y_data, y_model):
     return 1 - np.sum((y_data - y_model) ** 2) / np.sum((y_data - np.mean(y_data)) ** 2)
+
 def MSE(y_data,y_model):
     n = np.size(y_model)
     return np.sum((y_data-y_model)**2)/n
 
-def linear_regression(x, y, z, N):
+def linear_regression(x, y, z, N, *, scaling=False):
     L = int((N+1)*(N+2)/2) # Number of elements in beta
+
     MSE_train = np.zeros((N+1))
     MSE_test = np.zeros((N+1))
     R2_train = np.zeros((N+1))
     R2_test = np.zeros((N+1))
     betas = np.zeros((L,N+1))
 
+
+
     X = create_X(x, y, N)
+
+    # if we scale we do not include the intercept coloumn
+    if scaling:
+        X = X[:,1:L]
+        betas = np.zeros((L-1,N+1))
 
     zflat = np.ravel(z)
 
     X_train, X_test, z_train, z_test = train_test_split(X, zflat, test_size=0.2)
 
+    np.set_printoptions(suppress=True)
+    print(f"{X=}")
+    print(X)
+
+    if scaling:
+        z_train_mean = np.mean(z_train, axis=0)
+        X_train_mean = np.mean(X_train, axis=0)
+        print(f"{X_train_mean=}")
+        print(f"{z_train_mean=}")
+
     for n in range(N+1):
         l = int((n+1)*(n+2)/2) # Number of elements in beta
 
-        beta = np.linalg.pinv(X_train[:,0:l].T @ X_train[:,0:l]) @ X_train[:,0:l].T @ z_train
-
-
-        z_model = X_train[:,0:l] @ beta
-        z_model_test = X_test[:,0:l] @ beta
+        if scaling:
+            l -= 1
+            beta = np.linalg.pinv((X_train - X_train_mean)[:,0:l].T @ (X_train - X_train_mean)[:,0:l]) @ (X_train - X_train_mean)[:,0:l].T @ (z_train - z_train_mean)
+            intercept = np.mean(z_train_mean - X_train_mean[0:l] @ beta)
+            z_model = X_train[:,0:l] @ beta + intercept
+            z_model_test = X_test[:,0:l] @ beta + intercept
+        else:
+            beta = np.linalg.pinv(X_train[:,0:l].T @ X_train[:,0:l]) @ X_train[:,0:l].T @ z_train
+            z_model = X_train[:,0:l] @ beta
+            z_model_test = X_test[:,0:l] @ beta
 
         MSE_train[n] = MSE(z_train, z_model)
         MSE_test[n] = MSE(z_test, z_model_test)
@@ -65,6 +89,8 @@ def linear_regression(x, y, z, N):
         R2_test[n] = R2(z_test, z_model_test)
         betas[0:len(beta),n] = beta
 
-    return betas, MSE_train, MSE_test, R2_train, R2_test
+    z_pred = X @ betas[:,N:] + (intercept if scaling else 0)
+
+    return betas, MSE_train, MSE_test, R2_train, R2_test, z_pred
 
 
