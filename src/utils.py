@@ -60,14 +60,10 @@ def linear_regression(x, y, z, N, *, scaling=False):
     X_train, X_test, z_train, z_test = train_test_split(X, zflat, test_size=0.2)
 
     np.set_printoptions(suppress=True)
-    print(f"{X=}")
-    print(X)
 
     if scaling:
         z_train_mean = np.mean(z_train, axis=0)
         X_train_mean = np.mean(X_train, axis=0)
-        print(f"{X_train_mean=}")
-        print(f"{z_train_mean=}")
 
     for n in range(N+1):
         l = int((n+1)*(n+2)/2) # Number of elements in beta
