@@ -21,8 +21,9 @@ N = 30
 
 # Do the linear_regression
 z += 0.05*np.random.standard_normal(z.shape)
-_, MSE_train_scal, MSE_test_scal, R2_train_scal, R2_test_scal, _ = linear_regression(x,y,z, N, scaling=True)
-betas, MSE_train, MSE_test, R2_train, R2_test, z_pred = linear_regression(x,y,z, N, scaling=False)
+X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
+_, MSE_train_scal, MSE_test_scal, R2_train_scal, R2_test_scal, _ = linear_regression(X, X_train, X_test, z_train, z_test, N)
+betas, MSE_train, MSE_test, R2_train, R2_test, z_pred = linear_regression(X, X_train, X_test, z_train, z_test, N)
 
 # ------------ PLOTTING 3D -----------------------
 fig = plt.figure(figsize=plt.figaspect(0.3))

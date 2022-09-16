@@ -6,6 +6,7 @@ import numpy as np
 from random import random, seed
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.utils import resample
 
 def FrankeFunction(x,y):
     term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
@@ -37,8 +38,19 @@ def MSE(y_data,y_model):
     n = np.size(y_model)
     return np.sum((y_data-y_model)**2)/n
 
-def linear_regression(x, y, z, N, *, scaling=False):
-    L = int((N+1)*(N+2)/2) # Number of elements in beta
+def bootstrap(x, y, z, N, bootstraps, *, scaling=False):
+    pass
+
+def preprocess(x, y, z, N, test_size):
+    X = create_X(x, y, N)
+    zflat = np.ravel(z)
+    X_train, X_test, z_train, z_test = train_test_split(X, zflat, test_size=test_size)
+
+    return X, X_train, X_test, z_train, z_test
+
+
+def linear_regression(X, X_train, X_test, z_train, z_test, N, *, scaling=False):
+    L = X_train.shape[1]
 
     MSE_train = np.zeros((N+1))
     MSE_test = np.zeros((N+1))
@@ -47,21 +59,11 @@ def linear_regression(x, y, z, N, *, scaling=False):
     betas = np.zeros((L,N+1))
 
 
-
-    X = create_X(x, y, N)
-
     # if we scale we do not include the intercept coloumn
     if scaling:
-        X = X[:,1:L]
+        X_train = X_train[:,1:L]
+        X_test = X_test[:,1:L]
         betas = np.zeros((L-1,N+1))
-
-    zflat = np.ravel(z)
-
-    X_train, X_test, z_train, z_test = train_test_split(X, zflat, test_size=0.2)
-
-    np.set_printoptions(suppress=True)
-
-    if scaling:
         z_train_mean = np.mean(z_train, axis=0)
         X_train_mean = np.mean(X_train, axis=0)
 
