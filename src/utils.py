@@ -38,19 +38,23 @@ def MSE(y_data,y_model):
     n = np.size(y_model)
     return np.sum((y_data-y_model)**2)/n
 
-def bootstrap(X, X_train, X_test, z_train, z_test, N, bootstraps *, scaling=False):
+def bootstrap(X, X_train, X_test, z_train, z_test, N, bootstraps , *, scaling=False):
     z_preds = np.empty((z_test.shape[0], bootstraps))
 
     for i in range(N):
         for i in range(bootstraps):
             X_, z_ = resample(X_train, z_train)
-            _, _, _, _, _, _, z_pred_ =  linear_regression(X, X_train, X_test, z_train, z_test, N, *, scaling=False)
+            _, _, _, _, _, _, z_pred_ =  linear_regression(X, X_train, X_test, z_train, z_test, N, scaling=scaling)
             z_preds[:,i] = z_pred_
 
     return z_preds
 
 def bias_variance(z_preds, z_test):
+    error = np.mean(np.mean((z_test - z_preds)**2, axis=1, keepdims=True))
+    bias = np.mean((z_test - np.mean(z_preds, axis=1, keepdims=True))**2)
+    variance = np.mean(np.var(z_preds, axis=1, keepdims=True))
 
+    return error, bias, variance
 
 def preprocess(x, y, z, N, test_size):
     X = create_X(x, y, N)
@@ -71,19 +75,22 @@ def linear_regression(X, X_train, X_test, z_train, z_test, *, scaling=False):
         intercept = np.mean(z_train_mean - X_train_mean @ beta)
         z_pred_train = X_train @ beta + intercept
         z_pred_test = X_test @ beta + intercept
+        z_pred = X @ beta + intercept
     else:
         beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ z_train
         z_pred_train = X_train @ beta
         z_pred_test = X_test @ beta
+        z_pred = X @ beta
 
-    return beta, z_pred_train, z_pred_test
+    return beta, z_pred_train, z_pred_test, z_pred
 
 def linreg_to_N(X, X_train, X_test, z_train, z_test, N, *, scaling=False):
     L = X_train.shape[1]
 
     betas = np.zeros((L,N+1))
-    z_preds_train = np.empty((z_train.shape[0],L))
-    z_preds_test = np.empty((z_test.shape[0],L))
+    z_preds_train = np.empty((z_train.shape[0],N+1))
+    z_preds_test = np.empty((z_test.shape[0],N+1))
+    z_preds = np.empty((X.shape[0],N+1))
 
     # if we scale we do not include the intercept coloumn
     if scaling:
@@ -98,13 +105,14 @@ def linreg_to_N(X, X_train, X_test, z_train, z_test, N, *, scaling=False):
         if scaling:
             l -= 1
 
-        beta, z_pred_train, z_pred_test = linear_regression(X[:,0:l], X_train[:,0:l], X_test[:,0:l], z_train, z_test, scaling=False)
+        beta, z_pred_train, z_pred_test, z_pred = linear_regression(X[:,0:l], X_train[:,0:l], X_test[:,0:l], z_train, z_test, scaling=False)
 
         betas[0:len(beta),n] = beta
         z_preds_test[:,n] = z_pred_test
         z_preds_train[:,n] = z_pred_train
+        z_preds[:,n] = z_pred
 
-    return betas, z_preds_test, z_preds_train
+    return betas, z_preds_test, z_preds_train, z_preds
 
 def scores(z, z_preds):
     N = z_preds.shape[1]
@@ -112,8 +120,8 @@ def scores(z, z_preds):
     R2s = np.zeros((N))
 
     for n in range(N):
-        MSEs[:,n] = MSE(z_preds[:,n], z)
-        R2s[:,n] = R2(z_preds[:,n], z)
+        MSEs[n] = MSE(z, z_preds[:,n])
+        R2s[n] = R2(z, z_preds[:,n])
 
     return MSEs, R2s
 
