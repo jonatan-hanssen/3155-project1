@@ -22,8 +22,7 @@ N = 30
 # Do the linear_regression
 z += 0.05*np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
-_, MSE_train_scal, MSE_test_scal, R2_train_scal, R2_test_scal, _ = linear_regression(X, X_train, X_test, z_train, z_test, N)
-betas, MSE_train, MSE_test, R2_train, R2_test, z_pred = linear_regression(X, X_train, X_test, z_train, z_test, N)
+betas, z_preds_test, z_preds_train = linreg_to_N(X, X_train, X_test, z_train, z_test, N)
 
 # ------------ PLOTTING 3D -----------------------
 fig = plt.figure(figsize=plt.figaspect(0.3))
@@ -88,9 +87,7 @@ plt.title("Beta progression")
 plt.subplot(222)
 
 plt.plot(MSE_train, label="train")
-plt.plot(MSE_train_scal, label="trainscal")
 plt.plot(MSE_test, label="test")
-plt.plot(MSE_test_scal, label="testscal")
 plt.xlabel("Polynomial degree")
 plt.legend()
 plt.title("MSE scores")
