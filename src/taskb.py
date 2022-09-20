@@ -22,7 +22,7 @@ N = 30
 # Do the linear_regression
 z += 0.05*np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
-betas, z_preds_test, z_preds_train, z_preds= linreg_to_N(X, X_train, X_test, z_train, z_test, N)
+betas, z_preds_train, z_preds_test, z_preds= linreg_to_N(X, X_train, X_test, z_train, z_test, N)
 
 # Calculate scores OLS without resampling
 MSE_train, R2_train = scores(z_train, z_preds_train)

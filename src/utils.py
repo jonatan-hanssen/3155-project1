@@ -40,19 +40,23 @@ def MSE(y_data,y_model):
 
 def bootstrap(X, X_train, X_test, z_train, z_test, N, bootstraps , *, scaling=False):
     z_preds = np.empty((z_test.shape[0], bootstraps))
+    l = int((N+1)*(N+2)/2) # Number of elements in beta
 
-    for i in range(N):
-        for i in range(bootstraps):
-            X_, z_ = resample(X_train, z_train)
-            _, _, _, _, _, _, z_pred_ =  linear_regression(X, X_train, X_test, z_train, z_test, N, scaling=scaling)
-            z_preds[:,i] = z_pred_
+    for i in range(bootstraps):
+        X_, z_ = resample(X_train, z_train)
+        _, _, z_pred_test, _ =  linear_regression(X[:,:l], X_[:,:l], X_test[:,:l], z_train, z_test, scaling=scaling)
+        z_preds[:,i] = z_pred_test
 
     return z_preds
 
-def bias_variance(z_preds, z_test):
-    error = np.mean(np.mean((z_test - z_preds)**2, axis=1, keepdims=True))
+def bias_variance(z_test, z_preds):
+    # error = np.mean(np.mean((z_test - z_preds)**2, axis=1, keepdims=True))
+    MSEs, _ = scores(z_test, z_preds)
+    error = np.mean(MSEs)
     bias = np.mean((z_test - np.mean(z_preds, axis=1, keepdims=True))**2)
     variance = np.mean(np.var(z_preds, axis=1, keepdims=True))
+    # zmean = np.mean(z_preds, axis=1, keepdims=True)
+    # error = MSE(z_test, zmean)
 
     return error, bias, variance
 
@@ -112,7 +116,7 @@ def linreg_to_N(X, X_train, X_test, z_train, z_test, N, *, scaling=False):
         z_preds_train[:,n] = z_pred_train
         z_preds[:,n] = z_pred
 
-    return betas, z_preds_test, z_preds_train, z_preds
+    return betas, z_preds_train, z_preds_test, z_preds
 
 def scores(z, z_preds):
     N = z_preds.shape[1]
