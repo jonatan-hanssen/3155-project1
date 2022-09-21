@@ -43,7 +43,7 @@ def bootstrap(X, X_train, X_test, z_train, z_test, N, bootstraps , *, scaling=Fa
     l = int((N+1)*(N+2)/2) # Number of elements in beta
 
     for i in range(bootstraps):
-        X_, z_ = resample(X_train, z_train)
+        X_, z_ = resample(X_train[:,:l], z_train)
         _, _, z_pred_test, _ =  linear_regression(X[:,:l], X_[:,:l], X_test[:,:l], z_train, z_test, scaling=scaling)
         z_preds[:,i] = z_pred_test
 
