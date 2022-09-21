@@ -73,9 +73,10 @@ def linear_regression(X, X_train, X_test, z_train, z_test, *, scaling=False):
     if scaling:
         X_train = X_train[:,1:L]
         X_test = X_test[:,1:L]
+        X = X[:,1:L]
         z_train_mean = np.mean(z_train, axis=0)
         X_train_mean = np.mean(X_train, axis=0)
-        beta = np.linalg.pinv(X_train - X_train_mean.T @ X_train - X_train_mean) @ X_train - X_train_mean.T @ (z_train - z_train_mean)
+        beta = np.linalg.pinv((X_train - X_train_mean).T @ (X_train - X_train_mean)) @ (X_train - X_train_mean).T @ (z_train - z_train_mean)
         intercept = np.mean(z_train_mean - X_train_mean @ beta)
         z_pred_train = X_train @ beta + intercept
         z_pred_test = X_test @ beta + intercept
@@ -96,20 +97,10 @@ def linreg_to_N(X, X_train, X_test, z_train, z_test, N, *, scaling=False):
     z_preds_test = np.empty((z_test.shape[0],N+1))
     z_preds = np.empty((X.shape[0],N+1))
 
-    # if we scale we do not include the intercept coloumn
-    if scaling:
-        X_train = X_train[:,1:L]
-        X_test = X_test[:,1:L]
-        betas = np.zeros((L-1,N+1))
-        z_train_mean = np.mean(z_train, axis=0)
-        X_train_mean = np.mean(X_train, axis=0)
-
     for n in range(N+1):
         l = int((n+1)*(n+2)/2) # Number of elements in beta
-        if scaling:
-            l -= 1
 
-        beta, z_pred_train, z_pred_test, z_pred = linear_regression(X[:,0:l], X_train[:,0:l], X_test[:,0:l], z_train, z_test, scaling=False)
+        beta, z_pred_train, z_pred_test, z_pred = linear_regression(X[:,0:l], X_train[:,0:l], X_test[:,0:l], z_train, z_test, scaling=scaling)
 
         betas[0:len(beta),n] = beta
         z_preds_test[:,n] = z_pred_test
