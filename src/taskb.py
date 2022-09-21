@@ -15,6 +15,7 @@ x = np.arange(0, 1, 0.05)
 y = np.arange(0, 1, 0.05)
 x, y = np.meshgrid(x,y)
 z = FrankeFunction(x, y)
+# z = SkrankeFunction(x, y)
 
 # Highest order polynomial we fit with
 N = 30
