@@ -12,7 +12,7 @@ from utils import *
 
 x = np.arange(0, 1, 0.05)
 y = np.arange(0, 1, 0.05)
-x, y = np.meshgrid(x,y)
+x, y = np.meshgrid(x, y)
 z = FrankeFunction(x, y)
 # z = SkrankeFunction(x, y)
 N = 15
@@ -20,7 +20,7 @@ bootstraps = 100
 
 np.random.seed(42069)
 
-z += 0.15*np.random.standard_normal(z.shape)
+z += 0.15 * np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 
 errors = np.zeros(N)
@@ -29,8 +29,16 @@ variances = np.zeros(N)
 
 for n in range(N):
     print(n)
-    l = int((n+1)*(n+2)/2) # Number of elements in beta
-    z_preds = bootstrap(X[:,:l], X_train[:,:l], X_test[:,:l], z_train, z_test, bootstraps, scaling=True)
+    l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
+    z_preds = bootstrap(
+        X[:, :l],
+        X_train[:, :l],
+        X_test[:, :l],
+        z_train,
+        z_test,
+        bootstraps,
+        scaling=True,
+    )
 
     error, bias, variance = bias_variance(z_test, z_preds)
     errors[n] = error

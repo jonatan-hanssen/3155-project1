@@ -14,7 +14,7 @@ np.random.seed(42069)
 # Make data.
 x = np.arange(0, 1, 0.05)
 y = np.arange(0, 1, 0.05)
-x, y = np.meshgrid(x,y)
+x, y = np.meshgrid(x, y)
 z = FrankeFunction(x, y)
 # z = SkrankeFunction(x, y)
 
@@ -23,9 +23,11 @@ N = 15
 scaling = False
 
 # Do the linear_regression
-z += 0.05*np.random.standard_normal(z.shape)
+z += 0.05 * np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
-betas, z_preds_train, z_preds_test, z_preds= linreg_to_N(X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS)
+betas, z_preds_train, z_preds_test, z_preds = linreg_to_N(
+    X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS
+)
 
 # Calculate scores OLS without resampling
 MSE_train, R2_train = scores(z_train, z_preds_train)
@@ -35,29 +37,36 @@ MSE_test, R2_test = scores(z_test, z_preds_test)
 fig = plt.figure(figsize=plt.figaspect(0.3))
 
 # Subplot for Franke Function
-ax = fig.add_subplot(1,2,1,projection='3d')
+ax = fig.add_subplot(1, 2, 1, projection="3d")
 # Plot the surface.
 surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 # Customize the z axis.
 ax.set_zlim(-0.10, 1.40)
 ax.zaxis.set_major_locator(LinearLocator(10))
-ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-ax.set_title('Franke Function')
+ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
+ax.set_title("Franke Function")
 # Add a color bar which maps values to colors.
 fig.colorbar(surf, shrink=0.5, aspect=5)
 
 
 # Subplot for the prediction
 # Plot the surface.
-ax = fig.add_subplot(1,2,2,projection='3d')
+ax = fig.add_subplot(1, 2, 2, projection="3d")
 # print(f"{z=} {z=}")
 # Plot the surface.
-surf = ax.plot_surface(x, y, np.reshape(z_preds[:,N], z.shape), cmap=cm.coolwarm, linewidth=0, antialiased=False)
+surf = ax.plot_surface(
+    x,
+    y,
+    np.reshape(z_preds[:, N], z.shape),
+    cmap=cm.coolwarm,
+    linewidth=0,
+    antialiased=False,
+)
 # Customize the z axis.
 ax.set_zlim(-0.10, 1.40)
 ax.zaxis.set_major_locator(LinearLocator(10))
-ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-ax.set_title('Polynomial fit of Franke Function')
+ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
+ax.set_title("Polynomial fit of Franke Function")
 fig.colorbar(surf, shrink=0.5, aspect=5)
 
 # Subplot with overlayed prediction
@@ -81,12 +90,12 @@ plt.show()
 
 # ---------------- PLOTTING GRAPHS --------------
 plt.subplot(221)
-plt.plot(betas[0,:],label="beta0")
-plt.plot(betas[1,:],label="beta1")
-plt.plot(betas[2,:],label="beta2")
-plt.plot(betas[3,:],label="beta3")
-plt.plot(betas[4,:],label="beta4")
-plt.plot(betas[5,:],label="beta5")
+plt.plot(betas[0, :], label="beta0")
+plt.plot(betas[1, :], label="beta1")
+plt.plot(betas[2, :], label="beta2")
+plt.plot(betas[3, :], label="beta3")
+plt.plot(betas[4, :], label="beta4")
+plt.plot(betas[5, :], label="beta5")
 plt.xlabel("Polynomial degree")
 plt.legend()
 plt.title("Beta progression")
@@ -110,5 +119,3 @@ plt.title("R2 scores")
 plt.show()
 
 # linear_regression(x,y,z)
-
-

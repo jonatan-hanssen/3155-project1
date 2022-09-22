@@ -26,34 +26,39 @@ lam = 0.001
 z += 0.05 * np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 
-lambdas = np.logspace(-4, 4, 6)
+lambdas = np.logspace(-6, 4, 6)
+lambdas[0] = 0
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
-    betas, z_preds_train, z_preds_test, _ = ridgereg_to_N(
-        X, X_train, X_test, z_train, z_test, N, lambdas[i], scaling=True
+    betas, z_preds_train, z_preds_test, _ = linreg_to_N(
+        X,
+        X_train,
+        X_test,
+        z_train,
+        z_test,
+        N,
+        scaling=True,
+        lam=lambdas[i],
+        model=ridge,
     )
-    plt.plot(betas[0, :], label="beta0")
-    plt.plot(betas[1, :], label="beta1")
-    plt.plot(betas[2, :], label="beta2")
-    plt.plot(betas[3, :], label="beta3")
-    plt.plot(betas[4, :], label="beta4")
-    plt.plot(betas[5, :], label="beta5")
+
+    MSE_train, R2_train = scores(z_train, z_preds_train)
+    MSE_test, R2_test = scores(z_test, z_preds_test)
+
+    plt.plot(MSE_train, label="train")
+    plt.plot(MSE_test, label="test")
+    plt.ylim(0, 0.1)
+    plt.legend()
+    plt.title("MSE scores")
+
     plt.title(f"Beta progression for lambda = {lambdas[i]:.5}")
     plt.legend()
 
 # Calculate scores OLS without resampling
-# MSE_train, R2_train = scores(z_train, z_preds_train)
-# MSE_test, R2_test = scores(z_test, z_preds_test)
 
 # ---------------- PLOTTING GRAPHS --------------
 
 # plt.subplot(222)
-#
-# plt.plot(MSE_train, label="train")
-# plt.plot(MSE_test, label="test")
-# plt.xlabel("Polynomial degree")
-# plt.legend()
-# plt.title("MSE scores")
 #
 # plt.subplot(223)
 # plt.plot(R2_train, label="train")
