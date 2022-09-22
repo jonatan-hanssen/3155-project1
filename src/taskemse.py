@@ -20,16 +20,15 @@ z = FrankeFunction(x, y)
 
 # Highest order polynomial we fit with
 N = 30
-lam = 0.001
 
 # Do the linear_regression
 z += 0.05 * np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 
-lambdas = np.logspace(-6, 4, 6)
-lambdas[0] = 0
+lambdas = np.logspace(-12, -4, 6)
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
+    plt.suptitle(f"MSE by polynomial degree for different values of lambda")
     betas, z_preds_train, z_preds_test, _ = linreg_to_N(
         X,
         X_train,
@@ -49,9 +48,9 @@ for i in range(len(lambdas)):
     plt.plot(MSE_test, label="test")
     plt.ylim(0, 0.1)
     plt.legend()
-    plt.title("MSE scores")
 
-    plt.title(f"Beta progression for lambda = {lambdas[i]:.5}")
+    plt.title(f"lambda = {lambdas[i]:.5}")
+
     plt.legend()
 
 # Calculate scores OLS without resampling
