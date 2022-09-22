@@ -10,6 +10,7 @@ from sklearn.linear_model import LinearRegression
 # Our own library of functions
 from utils import *
 
+np.random.seed(42069)
 # Make data.
 x = np.arange(0, 1, 0.05)
 y = np.arange(0, 1, 0.05)
@@ -18,7 +19,7 @@ z = FrankeFunction(x, y)
 # z = SkrankeFunction(x, y)
 
 # Highest order polynomial we fit with
-N = 30
+N = 45
 
 # Do the linear_regression
 z += 0.05*np.random.standard_normal(z.shape)

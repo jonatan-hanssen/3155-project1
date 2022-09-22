@@ -7,6 +7,7 @@ from random import random, seed
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.utils import resample
+from typing import Tuple, Callable
 
 def FrankeFunction(x,y):
     term1 = 0.75*np.exp(-(0.25*(9*x-2)**2) - 0.25*((9*y-2)**2))
@@ -50,7 +51,7 @@ def bootstrap(X, X_train, X_test, z_train, z_test, bootstraps, *, scaling=False)
         z_preds[:,i] = z_pred_test
     return z_preds
 
-def crossval(X, z, K, *, scaling=False):
+def crossval(X: np.ndarray, z: np.ndarray, K: int, *, scaling: bool = False):
     chunksize = X.shape[0]//K
 
     errors = np.zeros(K)
@@ -74,7 +75,7 @@ def crossval(X, z, K, *, scaling=False):
 
     return np.mean(errors)
 
-def bias_variance(z_test, z_preds):
+def bias_variance(z_test: np.ndarray, z_preds: np.ndarray):
     MSEs, _ = scores(z_test, z_preds)
     error = np.mean(MSEs)
     bias = np.mean((z_test - np.mean(z_preds, axis=1, keepdims=True).flatten())**2)
@@ -82,20 +83,18 @@ def bias_variance(z_test, z_preds):
 
     return error, bias, variance
 
-def preprocess(x, y, z, N, test_size):
+def preprocess(x: np.ndarray, y: np.ndarray, z: np.ndarray, N, test_size):
     X = create_X(x, y, N)
     zflat = np.ravel(z)
     X_train, X_test, z_train, z_test = train_test_split(X, zflat, test_size=test_size)
 
     return X, X_train, X_test, z_train, z_test
 
-def linear_regression(X, X_train, X_test, z_train, *, scaling=False):
-    L = X_train.shape[1]
-
+def OLS(X: np.ndarray, X_train: np.ndarray, X_test: np.ndarray, z_train: np.ndarray, *, scaling: bool = False):
     if scaling:
-        X_train = X_train[:,1:L]
-        X_test = X_test[:,1:L]
-        X = X[:,1:L]
+        X_train = X_train[:,1:]
+        X_test = X_test[:,1:]
+        X = X[:,1:]
         z_train_mean = np.mean(z_train, axis=0)
         X_train_mean = np.mean(X_train, axis=0)
         beta = np.linalg.pinv((X_train - X_train_mean).T @ (X_train - X_train_mean)) @ (X_train - X_train_mean).T @ (z_train - z_train_mean)
@@ -111,7 +110,29 @@ def linear_regression(X, X_train, X_test, z_train, *, scaling=False):
 
     return beta, z_pred_train, z_pred_test, z_pred
 
-def linreg_to_N(X, X_train, X_test, z_train, z_test, N, *, scaling=False):
+def ridge(X, X_train, X_test, z_train, lam, *, scaling=False):
+    L = X_train.shape[1]
+
+    if scaling:
+        X_train = X_train[:,1:]
+        X_test = X_test[:,1:]
+        X = X[:,1:]
+        z_train_mean = np.mean(z_train, axis=0)
+        X_train_mean = np.mean(X_train, axis=0)
+        beta = np.linalg.pinv((X_train - X_train_mean).T @ (X_train - X_train_mean) + lam*np.eye(L-1)) @ (X_train - X_train_mean).T @ (z_train - z_train_mean)
+        intercept = np.mean(z_train_mean - X_train_mean @ beta)
+        z_pred_train = X_train @ beta + intercept
+        z_pred_test = X_test @ beta + intercept
+        z_pred = X @ beta + intercept
+    else:
+        beta = np.linalg.pinv(X_train.T @ X_train + lam*np.eye(L)) @ X_train.T @ z_train
+        z_pred_train = X_train @ beta
+        z_pred_test = X_test @ beta
+        z_pred = X @ beta
+
+    return beta, z_pred_train, z_pred_test, z_pred
+
+def linreg_to_N(X: np.ndarray, X_train: np.ndarray, X_test: np.ndarray, z_train: np.ndarray, z_test: np.ndarray, N: int, *, scaling: bool = False, model: Callable = OLS, lam: float = 0):
     L = X_train.shape[1]
 
     betas = np.zeros((L,N+1))
@@ -120,9 +141,13 @@ def linreg_to_N(X, X_train, X_test, z_train, z_test, N, *, scaling=False):
     z_preds = np.empty((X.shape[0],N+1))
 
     for n in range(N+1):
+        print(n)
         l = int((n+1)*(n+2)/2) # Number of elements in beta
 
-        beta, z_pred_train, z_pred_test, z_pred = linear_regression(X[:,0:l], X_train[:,0:l], X_test[:,0:l], z_train, scaling=scaling)
+        if model.__name__ == 'OLS':
+            beta, z_pred_train, z_pred_test, z_pred = model(X[:,0:l], X_train[:,0:l], X_test[:,0:l], z_train, scaling=scaling)
+        elif model.__name__ == 'ridge':
+            beta, z_pred_train, z_pred_test, z_pred = model(X[:,0:l], X_train[:,0:l], X_test[:,0:l], z_train, lam, scaling=scaling)
 
         betas[0:len(beta),n] = beta
         z_preds_test[:,n] = z_pred_test

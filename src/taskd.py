@@ -10,6 +10,7 @@ from sklearn.linear_model import LinearRegression
 # Our own library of functions
 from utils import *
 
+np.random.seed(42070)
 x = np.arange(0, 1, 0.05)
 y = np.arange(0, 1, 0.05)
 x, y = np.meshgrid(x,y)
@@ -19,7 +20,7 @@ z += 0.15*np.random.standard_normal(z.shape)
 N = 15
 K = 100
 bootstraps = 100
-scaling=False
+scaling = False
 
 np.random.seed(42069)
 
