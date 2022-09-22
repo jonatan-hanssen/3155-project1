@@ -46,7 +46,10 @@ for i in range(len(lambdas)):
 
     plt.plot(MSE_train, label="train")
     plt.plot(MSE_test, label="test")
-    plt.ylim(0, 0.1)
+    plt.xlabel("Polynomial Degree")
+    plt.ylabel("MSE score")
+    plt.tight_layout(h_pad=0.001)
+    plt.ylim(0, 0.09)
     plt.legend()
 
     plt.title(f"lambda = {lambdas[i]:.5}")
@@ -65,7 +68,6 @@ for i in range(len(lambdas)):
 # plt.xlabel("Polynomial degree")
 # plt.legend()
 # plt.title("R2 scores")
-
 
 plt.show()
 
