@@ -47,7 +47,7 @@ def bootstrap(X, X_train, X_test, z_train, z_test, bootstraps, *, scaling=False)
 
     for i in range(bootstraps):
         X_, z_ = resample(X_train, z_train)
-        _, _, z_pred_test, _ =  linear_regression(X, X_, X_test, z_, scaling=scaling)
+        _, _, z_pred_test, _ =  OLS(X, X_, X_test, z_, scaling=scaling)
         z_preds[:,i] = z_pred_test
     return z_preds
 
@@ -70,7 +70,7 @@ def crossval(X: np.ndarray, z: np.ndarray, K: int, *, scaling: bool = False):
         X_train = np.delete(X, [i for i in range(k*chunksize,k*chunksize+X_test.shape[0])], axis=0)
         z_train = np.delete(z, [i for i in range(k*chunksize,k*chunksize+z_test.shape[0])], axis=0)
 
-        _, _, z_pred_test, _ = linear_regression(X, X_train, X_test, z_train, scaling=scaling)
+        _, _, z_pred_test, _ = OLS(X, X_train, X_test, z_train, scaling=scaling)
         errors[k] = MSE(z_test, z_pred_test)
 
     return np.mean(errors)
