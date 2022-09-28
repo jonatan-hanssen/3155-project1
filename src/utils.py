@@ -48,73 +48,13 @@ def MSE(y_data, y_model):
     return np.sum((y_data - y_model) ** 2) / n
 
 
-def bootstrap(X, X_train, X_test, z_train, z_test, bootstraps, *, scaling=False):
-    z_preds = np.zeros((z_test.shape[0], bootstraps))
-
-    for i in range(bootstraps):
-        X_, z_ = resample(X_train, z_train)
-        _, _, z_pred_test, _ = OLS(X, X_, X_test, z_, scaling=scaling)
-        z_preds[:, i] = z_pred_test
-    return z_preds
-
-
-def crossval(X: np.ndarray, z: np.ndarray, K: int, *, scaling: bool = False):
-    chunksize = X.shape[0] // K
-
-    errors = np.zeros(K)
-    X, z = resample(X, z)
-
-    for k in range(K):
-        if k == K - 1:
-            # if we are on the last, take all thats left
-            X_test = np.zeros((X.shape[0] - K * chunksize, X.shape[1]))
-            X_test = X[k * chunksize :, :]
-            z_test = z[k * chunksize :]
-        else:
-            X_test = X[k * chunksize : (k + 1) * chunksize, :]
-            z_test = z[k * chunksize : (k + 1) * chunksize :]
-
-        X_train = np.delete(
-            X,
-            [i for i in range(k * chunksize, k * chunksize + X_test.shape[0])],
-            axis=0,
-        )
-        z_train = np.delete(
-            z,
-            [i for i in range(k * chunksize, k * chunksize + z_test.shape[0])],
-            axis=0,
-        )
-
-        _, _, z_pred_test, _ = OLS(X, X_train, X_test, z_train, scaling=scaling)
-        errors[k] = MSE(z_test, z_pred_test)
-
-    return np.mean(errors)
-
-
-def bias_variance(z_test: np.ndarray, z_preds: np.ndarray):
-    MSEs, _ = scores(z_test, z_preds)
-    error = np.mean(MSEs)
-    bias = np.mean((z_test - np.mean(z_preds, axis=1, keepdims=True).flatten()) ** 2)
-    variance = np.mean(np.var(z_preds, axis=1, keepdims=True))
-
-    return error, bias, variance
-
-
-def preprocess(x: np.ndarray, y: np.ndarray, z: np.ndarray, N, test_size):
-    X = create_X(x, y, N)
-    zflat = np.ravel(z)
-    X_train, X_test, z_train, z_test = train_test_split(X, zflat, test_size=test_size)
-
-    return X, X_train, X_test, z_train, z_test
-
-
 def OLS(
     X: np.ndarray,
     X_train: np.ndarray,
     X_test: np.ndarray,
     z_train: np.ndarray,
     *,
-    scaling: bool = False
+    scaling: bool = False,
 ):
     if scaling:
         X_train = X_train[:, 1:]
@@ -172,6 +112,90 @@ def ridge(X, X_train, X_test, z_train, lam, *, scaling=False):
     return beta, z_pred_train, z_pred_test, z_pred
 
 
+def bootstrap(
+    X: np.ndarray,
+    X_train: np.ndarray,
+    X_test: np.ndarray,
+    z_train: np.ndarray,
+    z_test: np.ndarray,
+    bootstraps: int,
+    *,
+    scaling: bool = False,
+    model: Callable = OLS,
+    lam: float = 0,
+):
+    z_preds_test = np.empty((z_test.shape[0], bootstraps))
+
+    for i in range(bootstraps):
+        X_, z_ = resample(X_train, z_train)
+        if model.__name__ == "OLS":
+            beta, z_pred_train, z_pred_test, z_pred = model(
+                X, X_, X_test, z_, scaling=scaling
+            )
+        elif model.__name__ == "ridge":
+            beta, z_pred_train, z_pred_test, z_pred = model(
+                X,
+                X_,
+                X_test,
+                z_,
+                lam,
+                scaling=scaling,
+            )
+        z_preds_test[:, i] = z_pred_test
+
+    return z_preds_test
+
+
+def crossval(X: np.ndarray, z: np.ndarray, K: int, *, scaling: bool = False):
+    chunksize = X.shape[0] // K
+
+    errors = np.zeros(K)
+    X, z = resample(X, z)
+
+    for k in range(K):
+        if k == K - 1:
+            # if we are on the last, take all thats left
+            X_test = np.zeros((X.shape[0] - K * chunksize, X.shape[1]))
+            X_test = X[k * chunksize :, :]
+            z_test = z[k * chunksize :]
+        else:
+            X_test = X[k * chunksize : (k + 1) * chunksize, :]
+            z_test = z[k * chunksize : (k + 1) * chunksize :]
+
+        X_train = np.delete(
+            X,
+            [i for i in range(k * chunksize, k * chunksize + X_test.shape[0])],
+            axis=0,
+        )
+        z_train = np.delete(
+            z,
+            [i for i in range(k * chunksize, k * chunksize + z_test.shape[0])],
+            axis=0,
+        )
+
+        _, _, z_pred_test, _ = OLS(X, X_train, X_test, z_train, scaling=scaling)
+        errors[k] = MSE(z_test, z_pred_test)
+
+    return np.mean(errors)
+
+
+def bias_variance(z_test: np.ndarray, z_preds: np.ndarray):
+    MSEs, _ = scores(z_test, z_preds)
+    error = np.mean(MSEs)
+    bias = np.mean((z_test - np.mean(z_preds, axis=1, keepdims=True).flatten()) ** 2)
+    variance = np.mean(np.var(z_preds, axis=1, keepdims=True))
+
+    return error, bias, variance
+
+
+def preprocess(x: np.ndarray, y: np.ndarray, z: np.ndarray, N, test_size):
+    X = create_X(x, y, N)
+    zflat = np.ravel(z)
+    X_train, X_test, z_train, z_test = train_test_split(X, zflat, test_size=test_size)
+
+    return X, X_train, X_test, z_train, z_test
+
+
 def linreg_to_N(
     X: np.ndarray,
     X_train: np.ndarray,
@@ -182,7 +206,8 @@ def linreg_to_N(
     *,
     scaling: bool = False,
     model: Callable = OLS,
-    lam: float = 0
+    lam: float = 0,
+    bootstrap: bool = False,
 ):
     L = X_train.shape[1]
 

@@ -81,6 +81,7 @@ plt.xlabel("Model Polynomial Degree")
 plt.title(
     f"MSE by Resampling Method, with scaling={scaling}, n={N}, k={K}, bootstraps={bootstraps}"
 )
+plt.ylim(0, 0.1)
 
 plt.legend()
 plt.show()

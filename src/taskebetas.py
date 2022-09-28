@@ -29,8 +29,16 @@ X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 lambdas = np.logspace(-4, 4, 6)
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
-    betas, z_preds_train, z_preds_test, _ = ridgereg_to_N(
-        X, X_train, X_test, z_train, z_test, N, lambdas[i], scaling=True
+    betas, z_preds_train, z_preds_test, _ = linreg_to_N(
+        X,
+        X_train,
+        X_test,
+        z_train,
+        z_test,
+        N,
+        scaling=True,
+        model=ridge,
+        lam=lambdas[i],
     )
     plt.plot(betas[0, :], label="beta0")
     plt.plot(betas[1, :], label="beta1")
