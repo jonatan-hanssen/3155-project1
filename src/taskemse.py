@@ -53,31 +53,21 @@ for i in range(len(lambdas)):
         error, bias, variance = bias_variance(z_test, z_preds)
         errors[n] = error
         biases[n] = bias
-        variances[n] = bias
+        variances[n] = variance
 
+    print(f"{variances=}")
+    print(f"{biases=}")
+    print(f"{errors=}")
     plt.plot(errors, label="MSE test")
     plt.plot(biases, label="bias")
     plt.plot(variances, label="variance")
     plt.ylim(0, 0.1)
-    plt.legend()
+    plt.xlabel("Polynomial Degree")
+    plt.tight_layout(h_pad=0.001)
 
     plt.title(f"lambda = {lambdas[i]:.5}")
 
     plt.legend()
-
-# Calculate scores OLS without resampling
-
-# ---------------- PLOTTING GRAPHS --------------
-
-# plt.subplot(222)
-#
-# plt.subplot(223)
-# plt.plot(R2_train, label="train")
-# plt.plot(R2_test, label="test")
-# plt.xlabel("Polynomial degree")
-# plt.legend()
-# plt.title("R2 scores")
-
 
 plt.show()
 
