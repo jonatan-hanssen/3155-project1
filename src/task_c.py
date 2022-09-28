@@ -48,5 +48,7 @@ for n in range(N):
 plt.plot(errors, label="error")
 plt.plot(biases, label="biases")
 plt.plot(variances, label="variances")
+plt.xlabel("Polynomial degree")
+plt.title("Bias-variance tradeoff over model complexity")
 plt.legend()
 plt.show()

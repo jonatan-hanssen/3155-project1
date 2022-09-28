@@ -1,0 +1,7 @@
+FØR RAPPORT:
+- oppgave g
+- cross validation i ridge
+- scaling
+- variation i ridge beta verdier plot
+- oppgave c beviset
+- fix lasso not converging

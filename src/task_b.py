@@ -28,7 +28,6 @@ X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 betas, z_preds_train, z_preds_test, z_preds = linreg_to_N(
     X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS
 )
-print(f"{betas=}")
 # Calculate scores OLS without resampling
 MSE_train, R2_train = scores(z_train, z_preds_train)
 MSE_test, R2_test = scores(z_test, z_preds_test)
@@ -40,8 +39,6 @@ OLS_model.fit(X_train, z_train)
 _, z_preds_train_sk, z_preds_test_sk, _ = linreg_to_N(
     X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS_model
 )
-print(f"{z_preds_test_sk.shape=}")
-print(f"{z_preds_train_sk.shape=}")
 
 MSE_train_sk, R2_train_sk = scores(z_train, z_preds_train_sk)
 MSE_test_sk, R2_test_sk = scores(z_test, z_preds_test_sk)
@@ -117,8 +114,8 @@ plt.subplot(222)
 
 plt.plot(MSE_train, label="train implementation")
 plt.plot(MSE_test, label="test implementation")
-plt.plot(MSE_train_sk, label="train ScikitLearn")
-plt.plot(MSE_test_sk, label="test ScikitLearn")
+plt.plot(MSE_train_sk, "r--", label="train ScikitLearn") 
+plt.plot(MSE_test_sk, "g--", label="test ScikitLearn") 
 plt.ylabel("MSE score")
 plt.xlabel("Polynomial degree")
 plt.legend()
@@ -127,8 +124,8 @@ plt.title("MSE scores over model complexity")
 plt.subplot(223)
 plt.plot(R2_train, label="train implementation")
 plt.plot(R2_test, label="test implementation")
-plt.plot(R2_train, label="train ScikitLearn")
-plt.plot(R2_test, label="test ScikitLearn")
+plt.plot(R2_train_sk, "r--", label="train ScikitLearn")
+plt.plot(R2_test_sk, "g--", label="test ScikitLearn")
 plt.ylabel("R2 score")
 plt.xlabel("Polynomial degree")
 plt.legend()

@@ -29,7 +29,7 @@ X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 lambdas = np.logspace(-12, -4, 6)
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
-    plt.suptitle(f"MSE by polynomial degree for different values of lambda")
+    plt.suptitle("Bias-variance tradeoff for ridge regression")
 
     errors = np.zeros(N)
     biases = np.zeros(N)

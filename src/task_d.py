@@ -77,7 +77,7 @@ for n in range(N):
 plt.plot(errors_boot, label="bootstrap")
 plt.plot(errors_cv, label="cross validation implementation")
 plt.plot(errors_cv_scikit, label="cross validation skicit learn")
-plt.xlabel("Model Polynomial Degree")
+plt.xlabel("Polynomial Degree")
 plt.title(
     f"MSE by Resampling Method, with scaling={scaling}, n={N}, k={K}, bootstraps={bootstraps}"
 )
