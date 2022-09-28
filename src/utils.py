@@ -130,22 +130,23 @@ def bootstrap(
         X_, z_ = resample(X_train, z_train)
         if isinstance(model, Callable):
 
-        if type(model).__name__ == "Lasso":
+            if model.__name__ == "OLS":
+                beta, z_pred_train, z_pred_test, z_pred = model(
+                    X, X_, X_test, z_, scaling=scaling
+                )
+            elif model.__name__ == "ridge":
+                beta, z_pred_train, z_pred_test, z_pred = model(
+                    X,
+                    X_,
+                    X_test,
+                    z_,
+                    lam,
+                    scaling=scaling,
+                )
+        # if we got here then it probably was a little skleanr moddel -jona ashek
+        else:
             model.fit(X_, z_)
             z_pred_test = model.predict(X_test)
-        elif model.__name__ == "OLS":
-            beta, z_pred_train, z_pred_test, z_pred = model(
-                X, X_, X_test, z_, scaling=scaling
-            )
-        elif model.__name__ == "ridge":
-            beta, z_pred_train, z_pred_test, z_pred = model(
-                X,
-                X_,
-                X_test,
-                z_,
-                lam,
-                scaling=scaling,
-            )
         z_preds_test[:, i] = z_pred_test
 
     return z_preds_test
@@ -225,19 +226,28 @@ def linreg_to_N(
         print(n)
         l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
 
-        if model.__name__ == "OLS":
-            beta, z_pred_train, z_pred_test, z_pred = model(
-                X[:, 0:l], X_train[:, 0:l], X_test[:, 0:l], z_train, scaling=scaling
-            )
-        elif model.__name__ == "ridge":
-            beta, z_pred_train, z_pred_test, z_pred = model(
-                X[:, 0:l],
-                X_train[:, 0:l],
-                X_test[:, 0:l],
-                z_train,
-                lam,
-                scaling=scaling,
-            )
+        if isinstance(model, Callable):
+
+            if model.__name__ == "OLS":
+                beta, z_pred_train, z_pred_test, z_pred = model(
+                    X, X_train, X_test, z_train, scaling=scaling
+                )
+            elif model.__name__ == "ridge":
+                beta, z_pred_train, z_pred_test, z_pred = model(
+                    X,
+                    X_train,
+                    X_test,
+                    z_test,
+                    lam,
+                    scaling=scaling,
+                )
+        # if we got here then it probably was a little skleanr moddel -jona ashek
+        else:
+            model.fit(X_train, z_train)
+            z_pred_test = model.predict(X_test)
+            z_pred_train = model.predict(X_train)
+            z_pred = model.predict(X)
+            beta = model.coef_
 
         betas[0 : len(beta), n] = beta
         z_preds_test[:, n] = z_pred_test

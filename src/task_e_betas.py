@@ -22,7 +22,6 @@ z = FrankeFunction(x, y)
 N = 30
 lam = 0.001
 
-# Do the linear_regression
 z += 0.05 * np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 
@@ -48,28 +47,6 @@ for i in range(len(lambdas)):
     plt.plot(betas[5, :], label="beta5")
     plt.title(f"Beta progression for lambda = {lambdas[i]:.5}")
     plt.legend()
-
-# Calculate scores OLS without resampling
-# MSE_train, R2_train = scores(z_train, z_preds_train)
-# MSE_test, R2_test = scores(z_test, z_preds_test)
-
-# ---------------- PLOTTING GRAPHS --------------
-
-# plt.subplot(222)
-#
-# plt.plot(MSE_train, label="train")
-# plt.plot(MSE_test, label="test")
-# plt.xlabel("Polynomial degree")
-# plt.legend()
-# plt.title("MSE scores")
-#
-# plt.subplot(223)
-# plt.plot(R2_train, label="train")
-# plt.plot(R2_test, label="test")
-# plt.xlabel("Polynomial degree")
-# plt.legend()
-# plt.title("R2 scores")
-
 
 plt.show()
 
