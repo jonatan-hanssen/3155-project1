@@ -18,7 +18,7 @@ z = FrankeFunction(x, y)
 z += 0.15 * np.random.standard_normal(z.shape)
 # z = SkrankeFunction(x, y)
 N = 15
-K = 100
+K = 10
 bootstraps = 100
 scaling = False
 
