@@ -128,7 +128,12 @@ def bootstrap(
 
     for i in range(bootstraps):
         X_, z_ = resample(X_train, z_train)
-        if model.__name__ == "OLS":
+        if isinstance(model, Callable):
+
+        if type(model).__name__ == "Lasso":
+            model.fit(X_, z_)
+            z_pred_test = model.predict(X_test)
+        elif model.__name__ == "OLS":
             beta, z_pred_train, z_pred_test, z_pred = model(
                 X, X_, X_test, z_, scaling=scaling
             )

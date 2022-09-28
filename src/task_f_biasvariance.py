@@ -5,7 +5,8 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 from random import random, seed
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import Lasso
+
 
 # Our own library of functions
 from utils import *
@@ -30,6 +31,7 @@ lambdas = np.logspace(-12, -4, 6)
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
     plt.suptitle(f"MSE by polynomial degree for different values of lambda")
+    model_Lasso = Lasso(lambdas[i], max_iter=200)
 
     errors = np.zeros(N)
     biases = np.zeros(N)
@@ -46,7 +48,7 @@ for i in range(len(lambdas)):
             z_test,
             bootstraps,
             scaling=True,
-            model=ridge,
+            model=model_Lasso,
             lam=lambdas[i],
         )
 
