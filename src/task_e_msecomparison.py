@@ -20,7 +20,7 @@ z = FrankeFunction(x, y)
 scaling = False
 
 # Highest order polynomial we fit with
-N = 15
+N = 10
 bootstraps = 100
 K = 10
 kfolds = KFold(n_splits=K)

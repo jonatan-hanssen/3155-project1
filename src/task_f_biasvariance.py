@@ -5,7 +5,7 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 from random import random, seed
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import Lasso
+from sklearn.linear_model import Lasso, Ridge
 
 
 # Our own library of functions
@@ -21,7 +21,7 @@ z = FrankeFunction(x, y)
 
 # Highest order polynomial we fit with
 N = 15
-bootstraps = 100
+bootstraps = 20
 
 # Do the linear_regression
 z += 0.05 * np.random.standard_normal(z.shape)
@@ -31,7 +31,8 @@ lambdas = np.logspace(-12, -4, 6)
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
     plt.suptitle(f"MSE by polynomial degree for different values of lambda")
-    model_Lasso = Lasso(lambdas[i], max_iter=200)
+    # model_Lasso = Lasso(lambdas[i], tol=0.001, max_iter=30, normalize=True)
+    model_Lasso = Lasso(lambdas[i], tol=0.01, max_iter=12)
 
     errors = np.zeros(N)
     biases = np.zeros(N)
@@ -47,7 +48,7 @@ for i in range(len(lambdas)):
             z_train,
             z_test,
             bootstraps,
-            scaling=True,
+            scaling=False,
             model=model_Lasso,
             lam=lambdas[i],
         )
@@ -60,7 +61,7 @@ for i in range(len(lambdas)):
     print(f"{variances=}")
     print(f"{biases=}")
     print(f"{errors=}")
-    plt.plot(errors, label="MSE test")
+    plt.plot(errors, "b--", label="MSE test")
     plt.plot(biases, label="bias")
     plt.plot(variances, label="variance")
     plt.ylim(0, 0.1)

@@ -128,11 +128,11 @@ def bootstrap(
 
     for i in range(bootstraps):
         X_, z_ = resample(X_train, z_train)
-        _, _, z_pred_test, z_pred = evaluate_model(
+        _, _, z_pred_test, _ = evaluate_model(
             X,
-            X_train,
+            X_,
             X_test,
-            z_train,
+            z_,
             model,
             lam=lam,
             scaling=scaling,
@@ -210,7 +210,6 @@ def preprocess(x: np.ndarray, y: np.ndarray, z: np.ndarray, N, test_size):
 
 def evaluate_model(X, X_train, X_test, z_train, model, *, lam=0, scaling=False):
     if isinstance(model, Callable):
-
         if model.__name__ == "OLS":
             beta, z_pred_train, z_pred_test, z_pred = model(
                 X, X_train, X_test, z_train, scaling=scaling

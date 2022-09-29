@@ -19,7 +19,7 @@ z = FrankeFunction(x, y)
 # z = SkrankeFunction(x, y)
 
 # Highest order polynomial we fit with
-N = 15
+N = 10
 bootstraps = 100
 
 # Do the linear_regression
