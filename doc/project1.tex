@@ -20,7 +20,7 @@
 
 \section*{a}
 
-We have defined $\bm{y}$ as a function of a matrix multiplication $X\bm{\beta}$
+$\bm{y}$ is defined as a $f\bm{x} + \bm{\epsilon}$. This can be approximated as a matrix multiplication $X\bm{\beta}$
 plus an error vector $\bm{\epsilon}$. This means that each element of the vector
 $\bm{y}$ can be expressed as follows:
 
@@ -47,13 +47,13 @@ We can use expectation values to calculate the variance as well:
 Distributing the outer expectation value function:
 
 \[ var[y_i] = E[y_i^2] - 2E\left[E[y_i]\right]E[y_i] + E\left[E[y]^2\right] \]
-\[ = E[y_i^2] - 2E\left[E[y_i]\right]E[y_i] + E\left[E[y]^2\right] \]
+% \[ = E[y_i^2] - 2E\left[E[y_i]\right]E[y_i] + E\left[E[y]^2\right] \]
 \[ = E[y_i^2] - 2E\left[E[y_i]\right]E[y_i] + E\left[E[y]\right]E\left[E[y]\right] \]
 
 The result of calculating the expectation value is non-stochastic. This means that
 $E[E[X]] = E[X]$. From this it follows that
 
-\[ = E[y_i^2] - 2E[y_i]E[y_i] + E[y_i]E[y_i] \]
+\[ var[y_i] = E[y_i^2] - 2E[y_i]E[y_i] + E[y_i]E[y_i] \]
 \[ = E[y_i^2] - E[y_i]E[y_i] \]
 \[ = E[y_i^2] - E[y_i]^2 \]
 
@@ -83,6 +83,8 @@ And of course, we know that the variance of $\epsilon_i$ by definition is $\sigm
 
 \[ var[y_i] = E[\epsilon_i^2] = var[\epsilon_i] = \sigma^2 \]
 
+\section{b}
+
 Proof of $E[\hat{\beta}] = \beta$
 $$E[\hat{\beta}] = E[(X^{T}X)^{-1}X^{T}y]$$
 Because we are assuming $(X^{T}X)^{-1}X^{T}$ to be deterministic, $E[(X^{T}X)^{-1}X^{T}] = (X^{T}X)^{-1}X^{T}$. Moreover, we know $E[y] = y$, and we can thus rewrite the equation as follows:
@@ -101,4 +103,72 @@ We know var(y) = $\sigma^{2}$, and since it is a scalar it is commutative. Thus 
 $$ = \sigma^{2}(X^{T}X)^{-1}X^{T}X(X^{T}X)^{-1} $$
 $$ = \sigma^{2}(X^{T}X)^{-1} $$
 $\blacksquare$
+
+
+\section{c}
+
+\subsection{Proof of the bias-variance decomposition}
+
+Given data $\bm{y} = f(\bm{x}) + \bm{\epsilon}$ and a OLS model $\bm{\tilde{y}} = X\bm{\beta}$, we define
+the Mean Squared Error as follows
+
+\[C(X,\beta) = \frac{1}{n}\sum_{i=0}^{n-1}(y_i - \tilde{y_i})^2\]
+
+This is simply the expectation value of $(\bm{y} - \bm{\tilde{y}})^2$
+
+\[ C(X,\beta) = E\left[(\bm{y} - \bm{\tilde{y}})^2\right] \]
+
+To derive the bias variance decomposition, we now add $E[\bm{\tilde{y}}] - E[\bm{\tilde{y}}]$ 
+as a sneaky trick. We will also replace $\bm{y}$ with our definition $\bm{y} = \bm{f} + \bm{\epsilon}$
+
+\[ C(X,\beta) = E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}] + E[\bm{\tilde{y}}] - \bm{\tilde{y}})^2\right] \]
+\[ = E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2 + 2\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])(E[\bm{\tilde{y}}] - \bm{\tilde{y}})\right] +(E[\bm{\tilde{y}}] - \bm{\tilde{y}})^2\right] \]
+\[ = E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2\right] + 2E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])(E[\bm{\tilde{y}}] - \bm{\tilde{y}})\right] + E\left[(E[\bm{\tilde{y}}] - \bm{\tilde{y}})^2\right] \]
+
+Let us focus our attention on the middle term first.
+
+\[ 2E\left[(\bm{f} + \bm{\epsilon} + E[\bm{\tilde{y}}])(E[\bm{\tilde{y}}] - \bm{\tilde{y}})\right] \]
+
+Expanding the multiplication:
+
+\[ 2E\left[\bm{f}E[\bm{\tilde{y}}] + \bm{\epsilon}E[\bm{\tilde{y}}] - E[\bm{\tilde{y}}]E[\bm{\tilde{y}}] - \bm{f}\bm{\tilde{y}} - \bm{\epsilon}\bm{\tilde{y}} + E[\bm{\tilde{y}}]\bm{\tilde{y}}\right] \]
+
+Distributing the expectation value:
+
+\[ 2\left[E[\bm{f}E[\bm{\tilde{y}}]] + E[\bm{\epsilon}E[\bm{\tilde{y}}]] - E[E[\bm{\tilde{y}}]E[\bm{\tilde{y}}]] - E[\bm{f}\bm{\tilde{y}}] - E[\bm{\epsilon}\bm{\tilde{y}}] + E[E[\bm{\tilde{y}}]\bm{\tilde{y}}]\right] \]
+
+We know that $\bm{\tilde{y}}$ and $\bm{f}$ are non-stochastic, and we know that the expectation value of $\bm{\epsilon}$ is $0$. We also know that 
+$\bm{\epsilon}$ and $\bm{\tilde{y}}$ are independent, which means we can write $E[\bm{\epsilon}\bm{\tilde{y}}]$ as $E[\bm{\epsilon}]E[\bm{\tilde{y}}]$ We therefore have
+
+\[ 2\left[\bm{f}\bm{\tilde{y}} + 0 - \bm{\tilde{y}}\bm{\tilde{y}} - \bm{f}\bm{\tilde{y}} - 0 + \bm{\tilde{y}}\bm{\tilde{y}}\right] = 0 \]
+
+We then have
+
+\[ C(X,\beta) = E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2\right] + E\left[(E[\bm{\tilde{y}}] - \bm{\tilde{y}})^2\right] \]
+
+The second term is by definition the variance of model.
+
+\[ C(X,\beta) = E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2\right] + var[\bm{\tilde{f}}] \]
+
+And now the final term
+
+\[ E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2\right] \]
+
+\[ = E\left[\bm{f}^2 + \bm{f}\bm{\epsilon} - \bm{f}E[\bm{\tilde{y}}] + \bm{f\epsilon} + \bm{\epsilon}^2 - \bm{\epsilon}E[\bm{\tilde{y}}] - \bm{f}E[\bm{\tilde{y}}] - \bm{\epsilon}E[\bm{\tilde{y}}] + E[\bm{\tilde{y}}]^2 \right] \]
+
+After distributing the expectation value we get the following, keeping in mind that $E[\bm{f}] = E[\bm{y} - \bm{\epsilon}] = E[\bm{y}] - E[\bm{\epsilon}] = \bm{y}$
+
+\[ \bm{y}^2 - 2\bm{y}\bm{\tilde{y}} + E[\bm{\tilde{y}}]^2 + \sigma^2\]
+
+\[ (\bm{y} + E[\bm{\tilde{y}}]^2 + \sigma^2 \]
+
+We see that the quadratic form is equal to $bias[\bm{\tilde{y}}]^2$. We can then conclude that the cost function can be rewritten as follows:
+
+\[ C(X,\beta) = bias[\bm{\tilde{y}}]^2 + var[\bm{\tilde{f}}] + \sigma^2 \]
+
+
+
+% The first term here represents the bias, the second term is equal to zero and the last term represents the variance.
+
+
 \end{document}
