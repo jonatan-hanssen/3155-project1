@@ -226,10 +226,12 @@ def evaluate_model(X, X_train, X_test, z_train, model, *, lam=0, scaling=False):
     # presumed scikit model
     else:
         model.fit(X_train, z_train)
+        beta = model.coef_
         z_pred_test = model.predict(X_test)
+        z_pred_test = X_test @ beta
         z_pred_train = model.predict(X_train)
         z_pred = model.predict(X)
-        beta = model.coef_
+        print(f"{beta=}")
     return beta, z_pred_train, z_pred_test, z_pred
 
 
