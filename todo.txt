@@ -1,7 +1,8 @@
 FØR RAPPORT:
 - oppgave g
-- cross validation i ridge
+- cross validation i ridge [DONE]
 - scaling
 - variation i ridge beta verdier plot
-- oppgave c beviset
+- oppgave c beviset [DONE]
 - fix lasso not converging
+- gridsearch beste lambda

@@ -20,7 +20,7 @@ z = FrankeFunction(x, y)
 
 # Highest order polynomial we fit with
 N = 20
-scaling = True
+scaling = False
 
 # Do the linear_regression
 z += 0.05 * np.random.standard_normal(z.shape)
@@ -118,7 +118,7 @@ plt.plot(MSE_train_sk, "r--", label="train ScikitLearn")
 plt.plot(MSE_test_sk, "g--", label="test ScikitLearn")
 plt.ylabel("MSE score")
 plt.xlabel("Polynomial degree")
-plt.ylim(0, 0.2)
+plt.ylim(0, 0.1)
 plt.legend()
 plt.title("MSE scores over model complexity")
 
@@ -129,6 +129,7 @@ plt.plot(R2_train_sk, "r--", label="train ScikitLearn")
 plt.plot(R2_test_sk, "g--", label="test ScikitLearn")
 plt.ylabel("R2 score")
 plt.xlabel("Polynomial degree")
+plt.ylim(-2, 1)
 plt.legend()
 plt.title("R2 scores over model complexity")
 
