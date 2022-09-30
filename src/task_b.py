@@ -19,8 +19,8 @@ z = FrankeFunction(x, y)
 # z = SkrankeFunction(x, y)
 
 # Highest order polynomial we fit with
-N = 15
-scaling = False
+N = 20
+scaling = True
 
 # Do the linear_regression
 z += 0.05 * np.random.standard_normal(z.shape)
@@ -33,11 +33,11 @@ MSE_train, R2_train = scores(z_train, z_preds_train)
 MSE_test, R2_test = scores(z_test, z_preds_test)
 
 # ScikitLearn OLS for comparison
-OLS_model = LinearRegression(fit_intercept=scaling)
-OLS_model.fit(X_train, z_train)
+OLS_scikit = LinearRegression(fit_intercept=scaling)
+OLS_scikit.fit(X_train, z_train)
 
 _, z_preds_train_sk, z_preds_test_sk, _ = linreg_to_N(
-    X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS_model
+    X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS_scikit
 )
 
 MSE_train_sk, R2_train_sk = scores(z_train, z_preds_train_sk)
@@ -118,6 +118,7 @@ plt.plot(MSE_train_sk, "r--", label="train ScikitLearn")
 plt.plot(MSE_test_sk, "g--", label="test ScikitLearn")
 plt.ylabel("MSE score")
 plt.xlabel("Polynomial degree")
+plt.ylim(0, 0.2)
 plt.legend()
 plt.title("MSE scores over model complexity")
 

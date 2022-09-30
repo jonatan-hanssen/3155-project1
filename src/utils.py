@@ -6,6 +6,7 @@ import numpy as np
 from random import random, seed
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler
 from sklearn.utils import resample
 from typing import Tuple, Callable
 
@@ -18,6 +19,7 @@ def FrankeFunction(x, y):
     return term1 + term2 + term3 + term4
 
 
+# debug function
 def SkrankeFunction(x, y):
     return x**2 + y**2
 
@@ -129,13 +131,7 @@ def bootstrap(
     for i in range(bootstraps):
         X_, z_ = resample(X_train, z_train)
         _, _, z_pred_test, _ = evaluate_model(
-            X,
-            X_,
-            X_test,
-            z_,
-            model,
-            lam=lam,
-            scaling=scaling,
+            X, X_, X_test, z_, model, lam=lam, scaling=scaling
         )
         # print(f"{z_pred_test=}")
         z_preds_test[:, i] = z_pred_test
@@ -201,15 +197,27 @@ def bias_variance(z_test: np.ndarray, z_preds: np.ndarray):
     return error, bias, variance
 
 
-def preprocess(x: np.ndarray, y: np.ndarray, z: np.ndarray, N, test_size):
+def preprocess(
+    x: np.ndarray, y: np.ndarray, z: np.ndarray, N, test_size, *, scaling=False
+):
     X = create_X(x, y, N)
+
     zflat = np.ravel(z)
     X_train, X_test, z_train, z_test = train_test_split(X, zflat, test_size=test_size)
 
     return X, X_train, X_test, z_train, z_test
 
 
-def evaluate_model(X, X_train, X_test, z_train, model, *, lam=0, scaling=False):
+def evaluate_model(
+    X,
+    X_train,
+    X_test,
+    z_train,
+    model,
+    *,
+    lam: float = 0,
+    scaling: bool = False,
+):
     if isinstance(model, Callable):
         if model.__name__ == "OLS":
             beta, z_pred_train, z_pred_test, z_pred = model(
@@ -226,7 +234,12 @@ def evaluate_model(X, X_train, X_test, z_train, model, *, lam=0, scaling=False):
             )
     # presumed scikit model
     else:
+        # scaler = StandardScaler()
+        # X_train = scaler.fit_transform(X_train)
+        # X_test = scaler.transform(X_test)
         model.fit(X_train, z_train)
+        # X_train = scaler.inverse_transform(X_train)
+        # X_test = scaler.inverse_transform(X_test)
         beta = model.coef_
         z_pred_test = model.predict(X_test)
         z_pred_test = X_test @ beta

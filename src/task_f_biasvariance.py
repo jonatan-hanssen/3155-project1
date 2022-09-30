@@ -21,19 +21,19 @@ z = FrankeFunction(x, y)
 
 # Highest order polynomial we fit with
 N = 15
-bootstraps = 50
+bootstraps = 20
 
 # Do the linear_regression
 z += 0.05 * np.random.standard_normal(z.shape)
-X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
+X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2, scaling=True)
 
 lambdas = np.logspace(-12, -4, 6)
+lambdas = [0.0001]
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
     plt.suptitle(f"MSE by polynomial degree for different values of lambda")
     # model_Lasso = Lasso(lambdas[i], tol=0.001, max_iter=30, normalize=True)
-    model_Lasso = Lasso(lambdas[i], tol=0.01, max_iter=19, normalize=True, fit_intercept=False)
-    model_Ridge = Ridge(lambdas[i], fit_intercept=False)
+    model_Lasso = Lasso(lambdas[i], tol=0.01, max_iter=100, fit_intercept=True)
 
     errors = np.zeros(N)
     biases = np.zeros(N)
@@ -49,7 +49,6 @@ for i in range(len(lambdas)):
             z_train,
             z_test,
             bootstraps,
-            scaling=False,
             model=model_Lasso,
             lam=lambdas[i],
         )
@@ -62,7 +61,7 @@ for i in range(len(lambdas)):
     print(f"{variances=}")
     print(f"{biases=}")
     print(f"{errors=}")
-    plt.plot(errors, "b--", label="MSE test")
+    plt.plot(errors, "g--", label="MSE test")
     plt.plot(biases, label="bias")
     plt.plot(variances, label="variance")
     # plt.ylim(0, 0.1)
