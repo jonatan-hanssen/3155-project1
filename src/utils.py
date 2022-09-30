@@ -160,9 +160,7 @@ def bias_variance(z_test: np.ndarray, z_preds: np.ndarray):
     return error, bias, variance
 
 
-def preprocess(
-    x: np.ndarray, y: np.ndarray, z: np.ndarray, N, test_size, *, scaling=False
-):
+def preprocess(x: np.ndarray, y: np.ndarray, z: np.ndarray, N, test_size):
     X = create_X(x, y, N)
 
     zflat = np.ravel(z)
@@ -183,7 +181,6 @@ def evaluate_model(
 ):
     if isinstance(model, Callable):
         if scaling:
-            print("we are in here")
             X_train = X_train[:, 1:]
             X_test = X_test[:, 1:]
             X = X[:, 1:]
@@ -226,12 +223,16 @@ def evaluate_model(
 
     # presumed scikit model
     else:
-        # scaler = StandardScaler()
-        # X_train = scaler.fit_transform(X_train)
-        # X_test = scaler.transform(X_test)
-        model.fit(X_train, z_train)
-        # X_train = scaler.inverse_transform(X_train)
-        # X_test = scaler.inverse_transform(X_test)
+        if scaling:
+            scaler = StandardScaler()
+            X_train = scaler.fit_transform(X_train)
+            X_test = scaler.fit_transform(X_test)
+            model.fit(X_train, z_train)
+            # X_train = scaler.inverse_transform(X_train)
+            # X_test = scaler.inverse_transform(X_test)
+        else:
+            model.fit(X_train, z_train)
+
         beta = model.coef_
         z_pred_test = model.predict(X_test)
         z_pred_test = X_test @ beta

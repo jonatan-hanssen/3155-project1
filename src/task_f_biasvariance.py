@@ -25,15 +25,14 @@ bootstraps = 20
 
 # Do the linear_regression
 z += 0.05 * np.random.standard_normal(z.shape)
-X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2, scaling=True)
+X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 
-lambdas = np.logspace(-12, -4, 6)
-lambdas = [0.0001]
+lambdas = np.logspace(-8, -1, 6)
+# lambdas = [0.00000000001]
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
     plt.suptitle(f"MSE by polynomial degree for different values of lambda")
-    # model_Lasso = Lasso(lambdas[i], tol=0.001, max_iter=30, normalize=True)
-    model_Lasso = Lasso(lambdas[i], tol=0.01, max_iter=100, fit_intercept=True)
+    model_Lasso = Lasso(lambdas[i], tol=0.01, max_iter=200, fit_intercept=False)
 
     errors = np.zeros(N)
     biases = np.zeros(N)
@@ -51,6 +50,7 @@ for i in range(len(lambdas)):
             bootstraps,
             model=model_Lasso,
             lam=lambdas[i],
+            scaling=True,
         )
 
         error, bias, variance = bias_variance(z_test, z_preds)
@@ -64,7 +64,7 @@ for i in range(len(lambdas)):
     plt.plot(errors, "g--", label="MSE test")
     plt.plot(biases, label="bias")
     plt.plot(variances, label="variance")
-    # plt.ylim(0, 0.1)
+    plt.ylim(0, 0.25)
     plt.xlabel("Polynomial Degree")
     plt.tight_layout(h_pad=0.001)
 

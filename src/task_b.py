@@ -20,7 +20,7 @@ z = FrankeFunction(x, y)
 
 # Highest order polynomial we fit with
 N = 20
-scaling = False
+scaling = True
 
 # Do the linear_regression
 z += 0.05 * np.random.standard_normal(z.shape)
@@ -33,7 +33,9 @@ MSE_train, R2_train = scores(z_train, z_preds_train)
 MSE_test, R2_test = scores(z_test, z_preds_test)
 
 # ScikitLearn OLS for comparison
-OLS_scikit = LinearRegression(fit_intercept=scaling)
+OLS_scikit = LinearRegression(
+    fit_intercept=False
+)  # false because we use our own scaling
 OLS_scikit.fit(X_train, z_train)
 
 _, z_preds_train_sk, z_preds_test_sk, _ = linreg_to_N(
@@ -62,7 +64,6 @@ fig.colorbar(surf, shrink=0.5, aspect=5)
 # Subplot for the prediction
 # Plot the surface.
 ax = fig.add_subplot(1, 2, 2, projection="3d")
-# print(f"{z=} {z=}")
 # Plot the surface.
 surf = ax.plot_surface(
     x,
@@ -79,24 +80,8 @@ ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
 ax.set_title("Polynomial fit of Franke Function")
 fig.colorbar(surf, shrink=0.5, aspect=5)
 
-# Subplot with overlayed prediction
-# ax = fig.add_subplot(1,3,3,projection='3d')
-# # print(f"{z=} {z=}")
-# # Plot the surface.
-# surf = ax.plot_wireframe(x, y, np.reshape(z_pred, z.shape), cstride=1, rstride=1)
-# surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-# # Customize the z axis.
-# ax.set_zlim(-0.10, 1.40)
-# ax.zaxis.set_major_locator(LinearLocator(10))
-# ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-# ax.set_title('Fit overlayed on Franke Function')
 
 plt.show()
-
-# np.set_printoptions(suppress=True)
-# roundbetas = np.round(betas,4)
-# print(f"{roundbetas=}")
-
 
 # ---------------- PLOTTING GRAPHS --------------
 plt.subplot(221)
