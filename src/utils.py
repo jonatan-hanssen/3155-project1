@@ -137,6 +137,7 @@ def bootstrap(
             lam=lam,
             scaling=scaling,
         )
+        # print(f"{z_pred_test=}")
         z_preds_test[:, i] = z_pred_test
 
     return z_preds_test
@@ -231,7 +232,6 @@ def evaluate_model(X, X_train, X_test, z_train, model, *, lam=0, scaling=False):
         z_pred_test = X_test @ beta
         z_pred_train = model.predict(X_train)
         z_pred = model.predict(X)
-        print(f"{beta=}")
     return beta, z_pred_train, z_pred_test, z_pred
 
 
