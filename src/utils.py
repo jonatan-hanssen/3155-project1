@@ -58,26 +58,10 @@ def OLS(
     *,
     scaling: bool = False,
 ):
-    if scaling:
-        X_train = X_train[:, 1:]
-        X_test = X_test[:, 1:]
-        X = X[:, 1:]
-        z_train_mean = np.mean(z_train, axis=0)
-        X_train_mean = np.mean(X_train, axis=0)
-        beta = (
-            np.linalg.pinv((X_train - X_train_mean).T @ (X_train - X_train_mean))
-            @ (X_train - X_train_mean).T
-            @ (z_train - z_train_mean)
-        )
-        intercept = np.mean(z_train_mean - X_train_mean @ beta)
-        z_pred_train = X_train @ beta + intercept
-        z_pred_test = X_test @ beta + intercept
-        z_pred = X @ beta + intercept
-    else:
-        beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ z_train
-        z_pred_train = X_train @ beta
-        z_pred_test = X_test @ beta
-        z_pred = X @ beta
+    beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ z_train
+    z_pred_train = X_train @ beta
+    z_pred_test = X_test @ beta
+    z_pred = X @ beta
 
     return beta, z_pred_train, z_pred_test, z_pred
 
@@ -85,31 +69,10 @@ def OLS(
 def ridge(X, X_train, X_test, z_train, lam, *, scaling=False):
     L = X_train.shape[1]
 
-    if scaling:
-        X_train = X_train[:, 1:]
-        X_test = X_test[:, 1:]
-        X = X[:, 1:]
-        z_train_mean = np.mean(z_train, axis=0)
-        X_train_mean = np.mean(X_train, axis=0)
-        beta = (
-            np.linalg.pinv(
-                (X_train - X_train_mean).T @ (X_train - X_train_mean)
-                + lam * np.eye(L - 1)
-            )
-            @ (X_train - X_train_mean).T
-            @ (z_train - z_train_mean)
-        )
-        intercept = np.mean(z_train_mean - X_train_mean @ beta)
-        z_pred_train = X_train @ beta + intercept
-        z_pred_test = X_test @ beta + intercept
-        z_pred = X @ beta + intercept
-    else:
-        beta = (
-            np.linalg.pinv(X_train.T @ X_train + lam * np.eye(L)) @ X_train.T @ z_train
-        )
-        z_pred_train = X_train @ beta
-        z_pred_test = X_test @ beta
-        z_pred = X @ beta
+    beta = np.linalg.pinv(X_train.T @ X_train + lam * np.eye(L)) @ X_train.T @ z_train
+    z_pred_train = X_train @ beta
+    z_pred_test = X_test @ beta
+    z_pred = X @ beta
 
     return beta, z_pred_train, z_pred_test, z_pred
 
@@ -219,19 +182,48 @@ def evaluate_model(
     scaling: bool = False,
 ):
     if isinstance(model, Callable):
-        if model.__name__ == "OLS":
-            beta, z_pred_train, z_pred_test, z_pred = model(
-                X, X_train, X_test, z_train, scaling=scaling
-            )
-        elif model.__name__ == "ridge":
-            beta, z_pred_train, z_pred_test, z_pred = model(
-                X,
-                X_train,
-                X_test,
-                z_train,
-                lam,
-                scaling=scaling,
-            )
+        if scaling:
+            print("we are in here")
+            X_train = X_train[:, 1:]
+            X_test = X_test[:, 1:]
+            X = X[:, 1:]
+            z_train_mean = np.mean(z_train, axis=0)
+            X_train_mean = np.mean(X_train, axis=0)
+
+            if model.__name__ == "OLS":
+                beta, z_pred_train, z_pred_test, z_pred = model(
+                    X, (X_train - X_train_mean), X_test, (z_train - z_train_mean)
+                )
+
+            elif model.__name__ == "ridge":
+                beta, z_pred_train, z_pred_test, z_pred = model(
+                    X,
+                    (X_train - X_train_mean),
+                    X_test,
+                    (z_train - z_train_mean),
+                    lam,
+                )
+
+            intercept = np.mean(z_train_mean - X_train_mean @ beta)
+            z_pred_train = X_train @ beta + intercept
+            z_pred_test = X_test @ beta + intercept
+            z_pred = X @ beta + intercept
+
+        else:
+            if model.__name__ == "OLS":
+                beta, z_pred_train, z_pred_test, z_pred = model(
+                    X, X_train, X_test, z_train
+                )
+
+            elif model.__name__ == "ridge":
+                beta, z_pred_train, z_pred_test, z_pred = model(
+                    X,
+                    X_train,
+                    X_test,
+                    z_train,
+                    lam,
+                )
+
     # presumed scikit model
     else:
         # scaler = StandardScaler()
