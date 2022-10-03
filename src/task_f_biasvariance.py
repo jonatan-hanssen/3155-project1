@@ -13,33 +13,35 @@ from utils import *
 
 np.random.seed(42069)
 # Make data.
-x = np.arange(0, 1, 0.05)
-y = np.arange(0, 1, 0.05)
+x = np.arange(0, 1, 0.1)
+y = np.arange(0, 1, 0.1)
 x, y = np.meshgrid(x, y)
 z = FrankeFunction(x, y)
 # z = SkrankeFunction(x, y)
 
 # Highest order polynomial we fit with
-N = 15
-bootstraps = 20
+N = 12
+bootstraps = 100
 
 # Do the linear_regression
-z += 0.05 * np.random.standard_normal(z.shape)
+z += 0.15 * np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 # X, X_train, X_test, z, z_train, z_test = normalize_task_g(
 #     X, X_train, X_test, z, z_train, z_test
 # )
 
-lambdas = np.logspace(-8, -1, 6)
-lambdas = [0.00000000001]
+lambdas = np.logspace(-12, -1, 2)
+lambdas[0] = 0
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
     plt.suptitle(f"MSE by polynomial degree for different values of lambda")
-    model_Lasso = Lasso(lambdas[i], tol=0.01, max_iter=200, fit_intercept=False)
+    model_Lasso = Lasso(lambdas[i], tol=0.0001, max_iter=500, fit_intercept=True)
 
     errors = np.zeros(N)
     biases = np.zeros(N)
     variances = np.zeros(N)
+    if i == 0:
+        model_Lasso = OLS
 
     for n in range(N):
         print(n)
@@ -65,7 +67,7 @@ for i in range(len(lambdas)):
     plt.plot(errors, "g--", label="MSE test")
     plt.plot(biases, label="bias")
     plt.plot(variances, label="variance")
-    plt.ylim(0, 0.25)
+    # plt.ylim(0, 0.25)
     plt.xlabel("Polynomial Degree")
     plt.tight_layout(h_pad=0.001)
 

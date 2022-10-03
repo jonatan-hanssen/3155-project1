@@ -232,7 +232,7 @@ def evaluate_model(
 
         beta = model.coef_
         z_pred_test = model.predict(X_test)
-        z_pred_test = X_test @ beta
+        # z_pred_test = X_test @ beta
         z_pred_train = model.predict(X_train)
         z_pred = model.predict(X)
     return beta, z_pred_train, z_pred_test, z_pred

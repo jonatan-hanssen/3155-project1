@@ -15,7 +15,7 @@ y = np.arange(0, 1, 0.05)
 x, y = np.meshgrid(x, y)
 z = FrankeFunction(x, y)
 # z = SkrankeFunction(x, y)
-N = 15
+N = 12
 bootstraps = 100
 
 np.random.seed(42069)
