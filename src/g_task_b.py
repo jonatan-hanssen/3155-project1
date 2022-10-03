@@ -7,6 +7,7 @@ from random import random, seed
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from imageio import imread
+from sklearn.preprocessing import StandardScaler
 
 # Our own library of functions
 from utils import *
@@ -14,11 +15,10 @@ from utils import *
 np.random.seed(42069)
 
 # Load the terrain
-z_terrain1 = np.asarray(imread("../data/small_SRTM_data_Norway_1.tif"), dtype=float)
+z_terrain1 = np.asarray(imread("../data/tiny_SRTM_data_Norway_1.tif"), dtype=float)
 x_terrain1 = np.arange(z_terrain1.shape[0])
 y_terrain1 = np.arange(z_terrain1.shape[1])
-x1, y1 = np.meshgrid(x_terrain1, y_terrain1)
-
+x1, y1 = np.meshgrid(x_terrain1, y_terrain1, indexing="ij")
 
 z_terrain2 = imread("../data/SRTM_data_Norway_2.tif")
 # x_terrain2 = np.arange(z_terrain2.shape[0])
@@ -41,7 +41,7 @@ plt.ylabel("X")
 plt.show()
 
 # Highest order polynomial we fit with
-N = 30
+N = 10
 scaling = False
 
 
@@ -49,18 +49,33 @@ def task_b(x, y, z, N, scaling):
     # Do the linear_regression
     print(z)
     z += 0.05 * np.random.standard_normal(z.shape)
-    X, X_train, X_test, z_train, z_test, z = preprocess(x, y, z, N, 0.001, order="F")
+    X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.001)
 
-    print(f"{X_train[1+3*z_terrain1.shape[0],:]=}")
-    print(f"{z_train[1+3*z_terrain1.shape[0]]=}")
+    the_forbidden_scaler = StandardScaler()
+    scaler = StandardScaler()
+    scaler.fit(X_train)
+    X_train = scaler.transform(X_train)
+    X_test = scaler.transform(X_test)
+    X = scaler.transform(X)
 
-    print(f"{z.ravel()[1]=}")
-    # print(f"{X[1,:]=}")
+    the_forbidden_scaler.fit(z_train.reshape((z_train.shape[0], 1)))
+    z_train = np.ravel(
+        the_forbidden_scaler.transform(z_train.reshape((z_train.shape[0], 1)))
+    )
+    z_test = np.ravel(
+        the_forbidden_scaler.transform(z_test.reshape((z_test.shape[0], 1)))
+    )
+    shape = z.shape
+    z = np.ravel(
+        the_forbidden_scaler.transform(z.ravel().reshape((z.ravel().shape[0], 1)))
+    )
+    z = z.reshape(shape)
+
     betas, z_preds_train, z_preds_test, z_preds = linreg_to_N(
         X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS
     )
 
-    pred_map = z_preds[:, 12].reshape(z_terrain1.shape, order="F")
+    pred_map = z_preds[:, -1].reshape(z_terrain1.shape)
 
     print(f"{z=}")
     print(f"{z_preds[:, -1]=}")
@@ -81,53 +96,44 @@ def task_b(x, y, z, N, scaling):
     # MSE_test_sk, R2_test_sk = scores(z_test, z_preds_test_sk)
 
     # ------------ PLOTTING 3D -----------------------
-    # fig = plt.figure(figsize=plt.figaspect(0.3))
+    fig = plt.figure(figsize=plt.figaspect(0.3))
 
     # Subplot for Franke Function
-    # ax = fig.add_subplot(1, 2, 1, projection="3d")
+    ax = fig.add_subplot(121, projection="3d")
     # Plot the surface.
-    # surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    print(f"{x.shape=}")
+    print(f"{y.shape=}")
+    print(f"{z.shape=}")
+    surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
     # Customize the z axis.
     # ax.set_zlim(-0.10, 1.40)
-    # ax.zaxis.set_major_locator(LinearLocator(10))
-    # ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
-    # ax.set_title("Franke Function")
+    ax.zaxis.set_major_locator(LinearLocator(10))
+    ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
+    ax.set_title("Scaled terrain")
+    fig.colorbar(surf, shrink=0.5, aspect=5)
     # Add a color bar which maps values to colors.
-    # fig.colorbar(surf, shrink=0.5, aspect=5)
 
     # Subplot for the prediction
     # Plot the surface.
-    # ax = fig.add_subplot(1, 2, 2, projection="3d")
+    ax = fig.add_subplot(122, projection="3d")
     # print(f"{z=} {z=}")
     # Plot the surface.
-    # surf = ax.plot_surface(
-    # x,
-    # y,
-    # np.reshape(z_preds[:, N], z.shape),
-    # cmap=cm.coolwarm,
-    # linewidth=0,
-    # antialiased=False,
-    # )
+    surf = ax.plot_surface(
+        x,
+        y,
+        np.reshape(z_preds[:, N], z.shape),
+        cmap=cm.coolwarm,
+        linewidth=0,
+        antialiased=False,
+    )
     # Customize the z axis.
     # ax.set_zlim(-0.10, 1.40)
-    # ax.zaxis.set_major_locator(LinearLocator(10))
-    # ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
-    # ax.set_title("Polynomial fit of Franke Function")
-    # fig.colorbar(surf, shrink=0.5, aspect=5)
+    ax.zaxis.set_major_locator(LinearLocator(10))
+    ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
+    ax.set_title("Polynomial fit of scaled terrain")
+    fig.colorbar(surf, shrink=0.5, aspect=5)
 
-    # Subplot with overlayed prediction
-    # ax = fig.add_subplot(1,3,3,projection='3d')
-    # # print(f"{z=} {z=}")
-    # # Plot the surface.
-    # surf = ax.plot_wireframe(x, y, np.reshape(z_pred, z.shape), cstride=1, rstride=1)
-    # surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-    # # Customize the z axis.
-    # ax.set_zlim(-0.10, 1.40)
-    # ax.zaxis.set_major_locator(LinearLocator(10))
-    # ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-    # ax.set_title('Fit overlayed on Franke Function')
-
-    # plt.show()
+    plt.show()
 
     # np.set_printoptions(suppress=True)
     # roundbetas = np.round(betas,4)
@@ -136,11 +142,13 @@ def task_b(x, y, z, N, scaling):
     # ---------------- PLOTTING GRAPHS --------------
     plt.subplot(121)
     plt.title("Terrain 1")
+    plt.imshow(z)
+    plt.colorbar()
 
-    plt.imshow(z_terrain1, cmap="gray")
     plt.subplot(122)
     plt.title("Predicted terrain 1")
-    plt.imshow(pred_map, cmap="gray")
+    plt.imshow(pred_map)
+    plt.colorbar()
     plt.show()
 
     plt.subplot(221)

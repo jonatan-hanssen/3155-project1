@@ -160,13 +160,13 @@ def bias_variance(z_test: np.ndarray, z_preds: np.ndarray):
     return error, bias, variance
 
 
-def preprocess(x: np.ndarray, y: np.ndarray, z: np.ndarray, N, test_size, *, order="C"):
+def preprocess(x: np.ndarray, y: np.ndarray, z: np.ndarray, N, test_size):
     X = create_X(x, y, N)
 
-    zflat = np.ravel(z, order=order)
+    zflat = np.ravel(z)
     X_train, X_test, z_train, z_test = train_test_split(X, zflat, test_size=test_size)
 
-    return X, X_train, X_test, z_train, z_test, zflat
+    return X, X_train, X_test, z_train, z_test
 
 
 def evaluate_model(
@@ -228,8 +228,6 @@ def evaluate_model(
             X_train = scaler.fit_transform(X_train)
             X_test = scaler.fit_transform(X_test)
             model.fit(X_train, z_train)
-            # X_train = scaler.inverse_transform(X_train)
-            # X_test = scaler.inverse_transform(X_test)
         else:
             model.fit(X_train, z_train)
 
@@ -240,6 +238,7 @@ def evaluate_model(
         z_pred = model.predict(X)
     return beta, z_pred_train, z_pred_test, z_pred
 
+def normalize(X, X_train, X_test, z_train, z_test
 
 def linreg_to_N(
     X: np.ndarray,
