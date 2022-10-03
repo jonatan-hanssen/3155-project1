@@ -225,9 +225,8 @@ def evaluate_model(
     else:
         if scaling:
             scaler = StandardScaler()
-            # X_train = scaler.fit_transform(X_train)
-            # X_test = scaler.transform(X_test)
-            X_train, X_test = normalize(X_train, X_test)
+            X_train = scaler.fit_transform(X_train)
+            X_test = scaler.transform(X_test)
             model.fit(X_train, z_train)
         else:
             model.fit(X_train, z_train)
@@ -239,20 +238,30 @@ def evaluate_model(
         z_pred = model.predict(X)
     return beta, z_pred_train, z_pred_test, z_pred
 
+def normalize_task_g(X, X_train, X_test, z, z_train, z_test):
+    x_scaler = StandardScaler()
+    z_scaler = StandardScaler()
 
-def normalize(train, test):
-    means = np.outer(np.ones(train.shape[0]), train.mean(axis=0))
-    stds = np.outer(np.ones(train.shape[0]), train.std(axis=0))
-    stds[:, 0] = np.ones(train.shape[0])
-    stds = np.round(stds,10)
+    x_scaler.fit(X_train)
+    X_train = x_scaler.transform(X_train)
+    X_test = x_scaler.transform(X_test)
+    X = x_scaler.transform(X)
 
-    train -= means
-    train /= stds
+    z_shape = z.shape
 
-    test -= means[: test.shape[0], :]
-    test /= stds[: test.shape[0], :]
+    # make all zeds into 1 dimensional arrays for standardscaler
+    z_train = z_train.reshape((z_train.shape[0],1))
+    z_test = z_test.reshape((z_test.shape[0],1))
+    z = z.ravel().reshape((z.ravel().shape[0], 1))
 
-    return train, test
+    z_scaler.fit(z_train)
+    z_train = np.ravel(z_scaler.transform(z_train))
+    z_test = np.ravel(z_scaler.transform(z_test))
+    z = np.ravel(z_scaler.transform(z))
+    z = z.reshape(z_shape)
+
+    return X, X_train, X_test, z, z_train, z_test
+
 
 
 def linreg_to_N(

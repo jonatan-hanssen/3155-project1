@@ -52,28 +52,9 @@ def task_b(x, y, z, N, scaling):
 
     X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.001)
 
-    the_forbidden_scaler = StandardScaler()
-    scaler = StandardScaler()
-    scaler.fit(X_train)
-    # X_train = scaler.transform(X_train)
-    # X_test = scaler.transform(X_test)
-    X_train, X_test = normalize(X_train, X_test)
-    print(f"{X_train=}")
-    print(f"{X_test=}")
-    X = scaler.transform(X)
-
-    the_forbidden_scaler.fit(z_train.reshape((z_train.shape[0], 1)))
-    z_train = np.ravel(
-        the_forbidden_scaler.transform(z_train.reshape((z_train.shape[0], 1)))
+    X, X_train, X_test, z, z_train, z_test = normalize_task_g(
+        X, X_train, X_test, z, z_train, z_test
     )
-    z_test = np.ravel(
-        the_forbidden_scaler.transform(z_test.reshape((z_test.shape[0], 1)))
-    )
-    shape = z.shape
-    z = np.ravel(
-        the_forbidden_scaler.transform(z.ravel().reshape((z.ravel().shape[0], 1)))
-    )
-    z = z.reshape(shape)
 
     betas, z_preds_train, z_preds_test, z_preds = linreg_to_N(
         X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS
