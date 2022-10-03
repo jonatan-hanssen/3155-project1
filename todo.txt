@@ -6,3 +6,5 @@ FØR RAPPORT:
 - oppgave c beviset [DONE]
 - fix lasso not converging
 - gridsearch beste lambda
+- sjekk scikit scaling om vi har fjernet første kolonne 2 ganger
+- refactor slik at modeller bare returnerer beta
