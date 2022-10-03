@@ -1,10 +1,12 @@
 FØR RAPPORT:
 - oppgave g
-- cross validation i ridge [DONE]
-- scaling
-- variation i ridge beta verdier plot
-- oppgave c beviset [DONE]
-- fix lasso not converging
 - gridsearch beste lambda
 - sjekk scikit scaling om vi har fjernet første kolonne 2 ganger
+- lage normalize for vanlig task_b, sammenlign med scikit standardscaler og vis at vi kan bruke de om hverandre
+
+
+
+
+ta om funny:
 - refactor slik at modeller bare returnerer beta
+- variation i ridge beta verdier plot
