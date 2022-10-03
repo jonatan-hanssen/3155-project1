@@ -49,13 +49,17 @@ def task_b(x, y, z, N, scaling):
     # Do the linear_regression
     print(z)
     z += 0.05 * np.random.standard_normal(z.shape)
+
     X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.001)
 
     the_forbidden_scaler = StandardScaler()
     scaler = StandardScaler()
     scaler.fit(X_train)
-    X_train = scaler.transform(X_train)
-    X_test = scaler.transform(X_test)
+    # X_train = scaler.transform(X_train)
+    # X_test = scaler.transform(X_test)
+    X_train, X_test = normalize(X_train, X_test)
+    print(f"{X_train=}")
+    print(f"{X_test=}")
     X = scaler.transform(X)
 
     the_forbidden_scaler.fit(z_train.reshape((z_train.shape[0], 1)))

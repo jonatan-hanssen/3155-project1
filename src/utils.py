@@ -238,7 +238,22 @@ def evaluate_model(
         z_pred = model.predict(X)
     return beta, z_pred_train, z_pred_test, z_pred
 
-def normalize(X, X_train, X_test, z_train, z_test
+
+def normalize(train, test):
+    means = np.outer(np.ones(train.shape[0]), train.mean(axis=0))
+    stds = np.outer(np.ones(train.shape[0]), train.std(axis=0))
+    stds[:,0] = np.ones(train.shape[0])
+    print(f"{means[:,1]=}")
+    print(f"{stds[:,1]=}")
+
+    train -= means
+    train /= stds
+
+    test -= means[:test.shape[0],:]
+    test /= stds[:test.shape[0],:]
+
+    return train, test
+
 
 def linreg_to_N(
     X: np.ndarray,
