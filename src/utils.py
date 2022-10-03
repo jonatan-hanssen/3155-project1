@@ -160,13 +160,13 @@ def bias_variance(z_test: np.ndarray, z_preds: np.ndarray):
     return error, bias, variance
 
 
-def preprocess(x: np.ndarray, y: np.ndarray, z: np.ndarray, N, test_size):
+def preprocess(x: np.ndarray, y: np.ndarray, z: np.ndarray, N, test_size, *, order="C"):
     X = create_X(x, y, N)
 
-    zflat = np.ravel(z)
+    zflat = np.ravel(z, order=order)
     X_train, X_test, z_train, z_test = train_test_split(X, zflat, test_size=test_size)
 
-    return X, X_train, X_test, z_train, z_test
+    return X, X_train, X_test, z_train, z_test, zflat
 
 
 def evaluate_model(
