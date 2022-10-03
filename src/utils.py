@@ -181,11 +181,11 @@ def evaluate_model(
 ):
     if isinstance(model, Callable):
         if scaling:
-            # X_train = X_train[:, 1:]
-            # X_test = X_test[:, 1:]
-            # X = X[:, 1:]
-            # z_train_mean = np.mean(z_train, axis=0)
-            # X_train_mean = np.mean(X_train, axis=0)
+            X_train = X_train[:, 1:]
+            X_test = X_test[:, 1:]
+            X = X[:, 1:]
+            z_train_mean = np.mean(z_train, axis=0)
+            X_train_mean = np.mean(X_train, axis=0)
 
             if model.__name__ == "OLS":
                 beta, z_pred_train, z_pred_test, z_pred = model(
