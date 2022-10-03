@@ -30,18 +30,18 @@ plt.plot()
 plt.subplot(121)
 plt.title("Terrain over Norway 1")
 plt.imshow(z_terrain1, cmap="gray")
-plt.xlabel("X")
-plt.ylabel("Y")
+plt.xlabel("Y")
+plt.ylabel("X")
 
 plt.subplot(122)
 plt.title("Terrain over Norway 2")
 plt.imshow(z_terrain2, cmap="gray")
-plt.xlabel("X")
-plt.ylabel("Y")
+plt.xlabel("Y")
+plt.ylabel("X")
 plt.show()
 
 # Highest order polynomial we fit with
-N = 12
+N = 30
 scaling = False
 
 
@@ -49,12 +49,18 @@ def task_b(x, y, z, N, scaling):
     # Do the linear_regression
     print(z)
     z += 0.05 * np.random.standard_normal(z.shape)
-    X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
+    X, X_train, X_test, z_train, z_test, z = preprocess(x, y, z, N, 0.001, order="F")
+
+    print(f"{X_train[1+3*z_terrain1.shape[0],:]=}")
+    print(f"{z_train[1+3*z_terrain1.shape[0]]=}")
+
     print(f"{z.ravel()[1]=}")
-    print(f"{X[1,:]=}")
+    # print(f"{X[1,:]=}")
     betas, z_preds_train, z_preds_test, z_preds = linreg_to_N(
         X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS
     )
+
+    pred_map = z_preds[:, 12].reshape(z_terrain1.shape, order="F")
 
     print(f"{z=}")
     print(f"{z_preds[:, -1]=}")
@@ -67,13 +73,12 @@ def task_b(x, y, z, N, scaling):
     OLS_scikit = LinearRegression(fit_intercept=scaling)
     # OLS_scikit.fit(X_train, z_train)
 
-    _, z_preds_train_sk, z_preds_test_sk, z_preds = linreg_to_N(
-        X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS_scikit
-    )
-    pred_map = z_preds[:, -1].reshape(z_terrain1.shape, order="F")
+    # _, z_preds_train_sk, z_preds_test_sk, z_preds = linreg_to_N(
+    #     X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS_scikit
+    # )
 
-    MSE_train_sk, R2_train_sk = scores(z_train, z_preds_train_sk)
-    MSE_test_sk, R2_test_sk = scores(z_test, z_preds_test_sk)
+    # MSE_train_sk, R2_train_sk = scores(z_train, z_preds_train_sk)
+    # MSE_test_sk, R2_test_sk = scores(z_test, z_preds_test_sk)
 
     # ------------ PLOTTING 3D -----------------------
     # fig = plt.figure(figsize=plt.figaspect(0.3))
@@ -131,6 +136,7 @@ def task_b(x, y, z, N, scaling):
     # ---------------- PLOTTING GRAPHS --------------
     plt.subplot(121)
     plt.title("Terrain 1")
+
     plt.imshow(z_terrain1, cmap="gray")
     plt.subplot(122)
     plt.title("Predicted terrain 1")
@@ -152,8 +158,8 @@ def task_b(x, y, z, N, scaling):
 
     plt.plot(MSE_train, label="train implementation")
     plt.plot(MSE_test, label="test implementation")
-    plt.plot(MSE_train_sk, "r--", label="train ScikitLearn")
-    plt.plot(MSE_test_sk, "g--", label="test ScikitLearn")
+    # plt.plot(MSE_train_sk, "r--", label="train ScikitLearn")
+    # plt.plot(MSE_test_sk, "g--", label="test ScikitLearn")
     plt.ylabel("MSE score")
     plt.xlabel("Polynomial degree")
     # plt.ylim(0, 0.1)
@@ -163,8 +169,8 @@ def task_b(x, y, z, N, scaling):
     plt.subplot(223)
     plt.plot(R2_train, label="train implementation")
     plt.plot(R2_test, label="test implementation")
-    plt.plot(R2_train_sk, "r--", label="train ScikitLearn")
-    plt.plot(R2_test_sk, "g--", label="test ScikitLearn")
+    # plt.plot(R2_train_sk, "r--", label="train ScikitLearn")
+    # plt.plot(R2_test_sk, "g--", label="test ScikitLearn")
     plt.ylabel("R2 score")
     plt.xlabel("Polynomial degree")
     # plt.ylim(-2, 1)
