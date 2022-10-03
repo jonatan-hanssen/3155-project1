@@ -26,9 +26,12 @@ bootstraps = 20
 # Do the linear_regression
 z += 0.05 * np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
+# X, X_train, X_test, z, z_train, z_test = normalize_task_g(
+#     X, X_train, X_test, z, z_train, z_test
+# )
 
 lambdas = np.logspace(-8, -1, 6)
-# lambdas = [0.00000000001]
+lambdas = [0.00000000001]
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
     plt.suptitle(f"MSE by polynomial degree for different values of lambda")
@@ -58,9 +61,7 @@ for i in range(len(lambdas)):
         biases[n] = bias
         variances[n] = variance
 
-    print(f"{variances=}")
-    print(f"{biases=}")
-    print(f"{errors=}")
+    # variances *= 10
     plt.plot(errors, "g--", label="MSE test")
     plt.plot(biases, label="bias")
     plt.plot(variances, label="variance")

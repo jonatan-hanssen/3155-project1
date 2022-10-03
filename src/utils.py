@@ -96,7 +96,6 @@ def bootstrap(
         _, _, z_pred_test, _ = evaluate_model(
             X, X_, X_test, z_, model, lam=lam, scaling=scaling
         )
-        # print(f"{z_pred_test=}")
         z_preds_test[:, i] = z_pred_test
 
     return z_preds_test
@@ -238,6 +237,7 @@ def evaluate_model(
         z_pred = model.predict(X)
     return beta, z_pred_train, z_pred_test, z_pred
 
+
 def normalize_task_g(X, X_train, X_test, z, z_train, z_test):
     x_scaler = StandardScaler()
     z_scaler = StandardScaler()
@@ -250,8 +250,8 @@ def normalize_task_g(X, X_train, X_test, z, z_train, z_test):
     z_shape = z.shape
 
     # make all zeds into 1 dimensional arrays for standardscaler
-    z_train = z_train.reshape((z_train.shape[0],1))
-    z_test = z_test.reshape((z_test.shape[0],1))
+    z_train = z_train.reshape((z_train.shape[0], 1))
+    z_test = z_test.reshape((z_test.shape[0], 1))
     z = z.ravel().reshape((z.ravel().shape[0], 1))
 
     z_scaler.fit(z_train)
@@ -261,7 +261,6 @@ def normalize_task_g(X, X_train, X_test, z, z_train, z_test):
     z = z.reshape(z_shape)
 
     return X, X_train, X_test, z, z_train, z_test
-
 
 
 def linreg_to_N(
