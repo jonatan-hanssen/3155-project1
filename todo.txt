@@ -10,3 +10,13 @@ FØR RAPPORT:
 ta om funny:
 - refactor slik at modeller bare returnerer beta
 - variation i ridge beta verdier plot
+
+
+checklist for refactor modeller
+
+linreg to n
+evaluate model 			x
+crossval
+bootstrap
+ols 					x
+ridge 					x

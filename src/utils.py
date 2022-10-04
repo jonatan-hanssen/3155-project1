@@ -51,30 +51,22 @@ def MSE(y_data, y_model):
 
 
 def OLS(
-    X: np.ndarray,
     X_train: np.ndarray,
-    X_test: np.ndarray,
     z_train: np.ndarray,
     *,
     scaling: bool = False,
 ):
     beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ z_train
-    z_pred_train = X_train @ beta
-    z_pred_test = X_test @ beta
-    z_pred = X @ beta
 
-    return beta, z_pred_train, z_pred_test, z_pred
+    return beta
 
 
-def ridge(X, X_train, X_test, z_train, lam, *, scaling=False):
+def ridge(X_train, z_train, lam, *, scaling=False):
     L = X_train.shape[1]
 
     beta = np.linalg.pinv(X_train.T @ X_train + lam * np.eye(L)) @ X_train.T @ z_train
-    z_pred_train = X_train @ beta
-    z_pred_test = X_test @ beta
-    z_pred = X @ beta
 
-    return beta, z_pred_train, z_pred_test, z_pred
+    return beta
 
 
 def bootstrap(
@@ -179,6 +171,7 @@ def evaluate_model(
     scaling: bool = False,
 ):
     if isinstance(model, Callable):
+        intercept = 0
         if scaling:
             X_train = X_train[:, 1:]
             X_test = X_test[:, 1:]
@@ -187,38 +180,31 @@ def evaluate_model(
             X_train_mean = np.mean(X_train, axis=0)
 
             if model.__name__ == "OLS":
-                beta, z_pred_train, z_pred_test, z_pred = model(
-                    X, (X_train - X_train_mean), X_test, (z_train - z_train_mean)
-                )
+                beta = model((X_train - X_train_mean), (z_train - z_train_mean))
 
             elif model.__name__ == "ridge":
-                beta, z_pred_train, z_pred_test, z_pred = model(
-                    X,
+                beta = model(
                     (X_train - X_train_mean),
-                    X_test,
                     (z_train - z_train_mean),
-                    lam,
+                    lam
                 )
 
             intercept = np.mean(z_train_mean - X_train_mean @ beta)
-            z_pred_train = X_train @ beta + intercept
-            z_pred_test = X_test @ beta + intercept
-            z_pred = X @ beta + intercept
 
         else:
             if model.__name__ == "OLS":
-                beta, z_pred_train, z_pred_test, z_pred = model(
-                    X, X_train, X_test, z_train
-                )
+                beta = model(X_train, z_train)
 
             elif model.__name__ == "ridge":
-                beta, z_pred_train, z_pred_test, z_pred = model(
-                    X,
+                beta = model(
                     X_train,
-                    X_test,
                     z_train,
                     lam,
                 )
+        # intercept is zero if no scaling
+        z_pred_train = X_train @ beta + intercept
+        z_pred_test = X_test @ beta + intercept
+        z_pred = X @ beta + intercept
 
     # presumed scikit model
     else:
@@ -231,10 +217,9 @@ def evaluate_model(
             model.fit(X_train, z_train)
 
         beta = model.coef_
-        z_pred_test = model.predict(X_test)
-        # z_pred_test = X_test @ beta
-        z_pred_train = model.predict(X_train)
-        z_pred = model.predict(X)
+        z_pred_train = X_train @ beta
+        z_pred_test = X_test @ beta
+        z_pred = X @ beta
     return beta, z_pred_train, z_pred_test, z_pred
 
 
