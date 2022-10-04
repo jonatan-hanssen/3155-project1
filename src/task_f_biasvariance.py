@@ -15,6 +15,8 @@ np.random.seed(42069)
 # Make data.
 x = np.arange(0, 1, 0.15)
 y = np.arange(0, 1, 0.15)
+# x = np.arange(0, 1, 0.05)
+# y = np.arange(0, 1, 0.05)
 x, y = np.meshgrid(x, y)
 z = FrankeFunction(x, y)
 # z = SkrankeFunction(x, y)
@@ -31,7 +33,7 @@ X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 # )
 
 lambdas = np.logspace(-6, -1, 6)
-# lambdas[0] = 0
+lambdas[-1] = 0.0006951
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
     plt.suptitle(f"Bias variance tradeoff for different values of lambda")
@@ -73,6 +75,43 @@ for i in range(len(lambdas)):
 
     plt.legend()
 
+
 plt.show()
+# ------------ PLOTTING 3D -----------------------
+# fig = plt.figure(figsize=plt.figaspect(0.3))
+#
+# # Subplot for Franke Function
+# ax = fig.add_subplot(121, projection="3d")
+# # Plot the surface.
+# surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+# # Customize the z axis.
+# ax.set_zlim(-0.10, 1.40)
+# ax.zaxis.set_major_locator(LinearLocator(10))
+# ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
+# ax.set_title("Franke Function")
+# # Add a color bar which maps values to colors.
+# fig.colorbar(surf, shrink=0.5, aspect=5)
+#
+#
+# # Subplot for the prediction
+# # Plot the surface.
+# ax = fig.add_subplot(122, projection="3d")
+# # Plot the surface.
+# surf = ax.plot_surface(
+#     x,
+#     y,
+#     np.reshape(z_preds2[:, N], z.shape),
+#     cmap=cm.coolwarm,
+#     linewidth=0,
+#     antialiased=False,
+# )
+# # Customize the z axis.
+# ax.set_zlim(-0.10, 1.40)
+# ax.zaxis.set_major_locator(LinearLocator(10))
+# ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
+# ax.set_title("Polynomial fit of Franke Function")
+# fig.colorbar(surf, shrink=0.5, aspect=5)
+#
+# plt.show()
 
 # linear_regression(x,y,z)

@@ -5,15 +5,15 @@ from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 from random import random, seed
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, Ridge
 
 # Our own library of functions
 from utils import *
 
 np.random.seed(42069)
 # Make data.
-x = np.arange(0, 1, 0.05)
-y = np.arange(0, 1, 0.05)
+x = np.arange(0, 1, 0.1)
+y = np.arange(0, 1, 0.1)
 x, y = np.meshgrid(x, y)
 z = FrankeFunction(x, y)
 # z = SkrankeFunction(x, y)
@@ -26,7 +26,8 @@ bootstraps = 100
 z += 0.05 * np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 
-lambdas = np.logspace(-12, -4, 6)
+lambdas = np.logspace(-10, 0, 6)
+# lambdas[-1] = 1.83 * (10 ** (-5))
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
     plt.suptitle("Bias-variance tradeoff for ridge regression")
@@ -61,7 +62,7 @@ for i in range(len(lambdas)):
     plt.plot(errors, label="MSE test")
     plt.plot(biases, label="bias")
     plt.plot(variances, label="variance")
-    plt.ylim(0, 0.1)
+    # plt.ylim(0, 0.1)
     plt.xlabel("Polynomial Degree")
     plt.tight_layout(h_pad=0.001)
 
