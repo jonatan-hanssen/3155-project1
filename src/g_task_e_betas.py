@@ -7,13 +7,11 @@ from random import random, seed
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from imageio import imread
-from sklearn.preprocessing import StandardScaler
 
 # Our own library of functions
 from utils import *
 
-# Load the terrain
-z_terrain1 = np.asarray(imread("../data/tiny_SRTM_data_Norway_1.tif"), dtype=float)
+z_terrain1 = imread("../data/tiny_SRTM_data_Norway_1.tif")
 x_terrain1 = np.arange(z_terrain1.shape[0])
 y_terrain1 = np.arange(z_terrain1.shape[1])
 x1, y1 = np.meshgrid(x_terrain1, y_terrain1, indexing="ij")
@@ -38,47 +36,40 @@ plt.xlabel("Y")
 plt.ylabel("X")
 plt.show()
 
-N = 15
-bootstraps = 100
-scaling = False
-
 np.random.seed(42069)
+# Make data.
 
-def task_c(x, y, z, N, scaling, bootstraps):
+# Highest order polynomial we fit with
+N = 30
+
+def task_e_betas(x, y, z, N):
     X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 
     X, X_train, X_test, z, z_train, z_test = normalize_task_g(
         X, X_train, X_test, z, z_train, z_test
     )
-    errors = np.zeros(N)
-    biases = np.zeros(N)
-    variances = np.zeros(N)
 
-    for n in range(N):
-        print(n)
-        l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
-        z_preds = bootstrap(
-            X[:, :l],
-            X_train[:, :l],
-            X_test[:, :l],
+    lambdas = np.logspace(-15, -9, 6)
+    lambdas[-1] = 10000000000
+    for i in range(len(lambdas)):
+        plt.subplot(321 + i)
+        betas, z_preds_train, z_preds_test, _ = linreg_to_N(
+            X,
+            X_train,
+            X_test,
             z_train,
             z_test,
-            bootstraps,
-            scaling=scaling,
+            N,
+            model=ridge,
+            scaling=False,
+            lam=lambdas[i],
         )
+        for col in range(9):
+            plt.plot(betas[col, :], label=f"beta{col}")
 
-        error, bias, variance = bias_variance(z_test, z_preds)
-        errors[n] = error
-        biases[n] = bias
-        variances[n] = variance
+        plt.title(f"Beta progression for lambda = {lambdas[i]:.5}")
+        plt.legend()
 
-    plt.plot(errors, 'b--', label="error")
-    plt.plot(biases, label="biases")
-    plt.plot(variances, label="variances")
-    plt.xlabel("Polynomial degree")
-    plt.title("Bias-variance tradeoff over model complexity")
-    plt.legend()
     plt.show()
 
-task_c(x1, y1, z_terrain1, N, scaling ,bootstraps)
-#task_c(x2, y2, z_terrain2, N, scaling ,bootstraps)
+task_e_betas(x1, y1, z_terrain1, N)
