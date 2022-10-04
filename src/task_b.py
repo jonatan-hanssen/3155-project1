@@ -36,11 +36,15 @@ MSE_test, R2_test = scores(z_test, z_preds_test)
 OLS_scikit = LinearRegression(
     fit_intercept=False
 )  # false because we use our own scaling
-OLS_scikit.fit(X_train, z_train)
 
 _, z_preds_train_sk, z_preds_test_sk, _ = linreg_to_N(
     X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS_scikit
 )
+
+# X, X_train, X_test, z, z_train, z_test = normalize_task_g(
+#     X, X_train, X_test, z, z_train, z_test
+# )
+
 
 MSE_train_sk, R2_train_sk = scores(z_train, z_preds_train_sk)
 MSE_test_sk, R2_test_sk = scores(z_test, z_preds_test_sk)
@@ -49,7 +53,7 @@ MSE_test_sk, R2_test_sk = scores(z_test, z_preds_test_sk)
 fig = plt.figure(figsize=plt.figaspect(0.3))
 
 # Subplot for Franke Function
-ax = fig.add_subplot(1, 2, 1, projection="3d")
+ax = fig.add_subplot(121, projection="3d")
 # Plot the surface.
 surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 # Customize the z axis.
@@ -63,7 +67,7 @@ fig.colorbar(surf, shrink=0.5, aspect=5)
 
 # Subplot for the prediction
 # Plot the surface.
-ax = fig.add_subplot(1, 2, 2, projection="3d")
+ax = fig.add_subplot(122, projection="3d")
 # Plot the surface.
 surf = ax.plot_surface(
     x,
@@ -91,6 +95,8 @@ plt.plot(betas[2, :], label="beta2")
 plt.plot(betas[3, :], label="beta3")
 plt.plot(betas[4, :], label="beta4")
 plt.plot(betas[5, :], label="beta5")
+plt.plot(betas[6, :], label="beta6")
+plt.plot(betas[7, :], label="beta7")
 plt.xlabel("Polynomial degree")
 plt.legend()
 plt.title("Beta progression")

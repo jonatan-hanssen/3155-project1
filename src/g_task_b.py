@@ -15,7 +15,7 @@ from utils import *
 np.random.seed(42069)
 
 # Load the terrain
-z_terrain1 = np.asarray(imread("../data/tiny_SRTM_data_Norway_1.tif"), dtype=float)
+z_terrain1 = np.asarray(imread("../data/small_SRTM_data_Norway_1.tif"), dtype=float)
 x_terrain1 = np.arange(z_terrain1.shape[0])
 y_terrain1 = np.arange(z_terrain1.shape[1])
 x1, y1 = np.meshgrid(x_terrain1, y_terrain1, indexing="ij")
@@ -41,7 +41,7 @@ plt.ylabel("X")
 plt.show()
 
 # Highest order polynomial we fit with
-N = 10
+N = 20
 scaling = False
 
 
