@@ -18,9 +18,28 @@
 
 \section*{Abstract}
 
+\section*{Introduction}
+
+This is done by assuming that we can model our observed values as a linear combination of continous functions of the input values. For example, we can assume that our observed values can be approximately modeled by different polynomial degrees of the input values, and try to find the linear coefficients which minimize the difference between our observed values and the values we predict. This approach is essentially 
+
+
+\section{Method}
+\subsection{Preprocessing: Creating the design matrix and normalizing our data}
+
+We have two datasets, one synthetic and one real. Regardless of the source of the data, we create the design matrix in a similar manner, as the relation between our input data and our target values are the same for both datasets, that is, for each combination of $x$ and $y$, we have a height $z$. For the Franke function this height is no more than the height over the $xy$-plane, but for our real data, this value represents the elevation in meters above ocean level for a terrain in Norway. As we want to do a polynomial fit of the data, we create our design matrix such that each row $i$ has the following values:
+
+\[ 1 \;\; x_i \;\; y_i \; x_i^2 \;\; x_i y_i \;\; y_i^2 \;\; ...\]
+
+
+These must be prepared in different ways to give us the best results. For the Franke function, we claim that no normalization is needed, as we generate the data ourselves to be between $0$ and $1$. Given that we are doing a polynomial fit, every element in our design matrix will be a multiplication of $x^i$ and $y^i$ for different $i$'s and $j$'s, which, given our choice of range for $x$ and $y$ guarantees that every element is between $0$ and $1$. This 
+
+\subsection{Linear regression}
+
+In this paper, we use three forms of linear regression to approximate both a synthetic dataset (the so called Franke Function) and a real dataset comprised of elevation data of a landscape in Norway. We use th
+
 \section*{a}
 
-$\bm{y}$ is defined as a $f\bm{x} + \bm{\epsilon}$. This can be approximated as a matrix multiplication $X\bm{\beta}$
+$\bm{y}$ is defined as the $f(\bm{x}) + \bm{\epsilon}$. This can be approximated as a matrix multiplication $X\bm{\beta}$
 plus an error vector $\bm{\epsilon}$. This means that each element of the vector
 $\bm{y}$ can be expressed as follows:
 
