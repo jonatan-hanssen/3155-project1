@@ -1,8 +1,10 @@
 """
-task g: performs ridge bias-variance analysis for real data on own implemented ridge
-        regression model
+task g: performs bias-variance tradeoff for lasso regression using the scikit learn
+        lasso model
 """
+from sklearn.linear_model import Lasso
 from imageio import imread
+
 
 # Our own library of functions
 from utils import *
@@ -21,33 +23,32 @@ y_terrain2 = np.arange(z_terrain2.shape[1])
 x2, y2 = np.meshgrid(x_terrain2, y_terrain2, indexing="ij")
 
 # Highest order polynomial we fit with
-N = 10
-bootstraps = 100
-lambdas = np.logspace(-15, -9, 6)
-lambdas[-1] = 10000000000
+N = 8
+bootstraps = 10
+lambdas = np.logspace(-6, -1, 6)
 
-def ridge_bias_variance(x, y, z, N, bootstraps, lambdas):
-    # split into training and test
+# todo use only gridsearched lambda
+def lasso_bias_variance(x, y, z, N, bootstraps, lambdas):
     X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 
-    # normalize data based on train
     X, X_train, X_test, z, z_train, z_test = normalize_task_g(
-        X, X_train, X_test, z, z_train, z_test
-    )
+         X, X_train, X_test, z, z_train, z_test
+     )
 
-    # run through different values of lambda
+    # loop through different lambda values
     for i in range(len(lambdas)):
         plt.subplot(321 + i)
-        plt.suptitle("Bias-variance tradeoff for ridge regression")
+        plt.suptitle(f"Bias variance tradeoff for lasso regression")
+
+        # model under testing
+        model_Lasso = Lasso(lambdas[i], max_iter=100, fit_intercept=False)
 
         # arrays for bias-variance
         errors = np.zeros(N)
         biases = np.zeros(N)
         variances = np.zeros(N)
 
-        # implemented model under testing
-        model = ridge
-
+        # for polynomial degree
         for n in range(N):
             print(n)
             l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
@@ -58,7 +59,7 @@ def ridge_bias_variance(x, y, z, N, bootstraps, lambdas):
                 z_train,
                 z_test,
                 bootstraps,
-                model=model,
+                model=model_Lasso,
                 lam=lambdas[i],
             )
 
@@ -69,9 +70,10 @@ def ridge_bias_variance(x, y, z, N, bootstraps, lambdas):
             variances[n] = variance
 
         # plot subplots
-        plt.plot(errors, label="MSE test")
+        plt.plot(errors, "g--", label="MSE test")
         plt.plot(biases, label="bias")
         plt.plot(variances, label="variance")
+        # plt.ylim(0, 0.25)
         plt.xlabel("Polynomial Degree")
         plt.tight_layout(h_pad=0.001)
 
@@ -81,4 +83,4 @@ def ridge_bias_variance(x, y, z, N, bootstraps, lambdas):
 
     plt.show()
 
-ridge_bias_variance(x1, y1, z_terrain1, N, bootstraps, lambdas)
+lasso_bias_variance(x1, y1, z_terrain1, N, bootstraps, lambdas)
