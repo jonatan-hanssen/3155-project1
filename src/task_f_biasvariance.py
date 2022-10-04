@@ -34,7 +34,7 @@ lambdas = np.logspace(-6, -1, 6)
 # lambdas[0] = 0
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
-    plt.suptitle(f"MSE by polynomial degree for different values of lambda")
+    plt.suptitle(f"Bias variance tradeoff for different values of lambda")
     model_Lasso = Lasso(lambdas[i], max_iter=500, fit_intercept=False)
 
     errors = np.zeros(N)

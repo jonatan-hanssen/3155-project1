@@ -41,7 +41,7 @@ plt.ylabel("X")
 plt.show()
 
 # Highest order polynomial we fit with
-N = 30
+N = 20
 scaling = False
 
 
