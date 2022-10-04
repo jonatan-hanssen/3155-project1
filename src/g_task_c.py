@@ -38,7 +38,7 @@ plt.xlabel("Y")
 plt.ylabel("X")
 plt.show()
 
-N = 5
+N = 15
 bootstraps = 100
 scaling = False
 
@@ -80,5 +80,5 @@ def task_c(x, y, z, N, scaling, bootstraps):
     plt.legend()
     plt.show()
 
-#task_c(x1, y1, z_terrain1, N, scaling ,bootstraps)
-task_c(x2, y2, z_terrain2, N, scaling ,bootstraps)
+task_c(x1, y1, z_terrain1, N, scaling ,bootstraps)
+#task_c(x2, y2, z_terrain2, N, scaling ,bootstraps)
