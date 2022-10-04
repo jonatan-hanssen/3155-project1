@@ -48,7 +48,6 @@ scaling = False
 def task_b(x, y, z, N, scaling):
     # Do the linear_regression
     print(z)
-    z += 0.05 * np.random.standard_normal(z.shape)
 
     X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.001)
 
