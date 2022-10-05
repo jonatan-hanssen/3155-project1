@@ -5,6 +5,7 @@ task b: plots 3D surface plot of Franke Function next to our approximated polyno
         for, and scaling for if we center our data or not. The noise parameter controls how much noise we add to our
         Franke Function output. Note that these plots are without resampling as specified in task b.
 """
+import matplotlib.pyplot as plt
 
 # Our own library of functions
 from utils import *
@@ -19,8 +20,8 @@ z = FrankeFunction(x, y)
 zs = SkrankeFunction(x, y)
 
 # parameters
-betas_to_plot = 5
-noise = 0.05
+betas_to_plot = 9
+noise = 0.1
 N = 20
 scaling = False
 
@@ -93,24 +94,26 @@ plt.show()
 
 # ---------------- PLOTTING GRAPHS --------------
 plt.subplot(221)
+plt.suptitle(f"Datapoints = {len(x)*len(y)}, Parameters: N = {N}, noise = {noise}, scaling = {scaling}", fontsize=6)
 if betas_to_plot <= betas.shape[0]:
     for beta in range(betas_to_plot):
         data = betas[beta, :]
         data[data==0] = np.nan
-        plt.plot(data, label=f"beta{beta}", marker ="o")
-    plt.xlabel("Polynomial degree")
+        plt.plot(data, label=f"beta{beta}", marker="o", markersize=3)
+    plt.xlabel("Polynomial degree (N)")
     plt.ylabel("Beta value")
     plt.legend()
     plt.title("Beta progression")
 
 plt.subplot(222)
 
+print(f"Minimal MSE_test value = {np.min(MSE_test)} for N = {np.argmin(MSE_test)}")
 plt.plot(MSE_train, label="train implementation")
 plt.plot(MSE_test, label="test implementation")
 plt.plot(MSE_train_sk, "r--", label="train ScikitLearn")
 plt.plot(MSE_test_sk, "g--", label="test ScikitLearn")
 plt.ylabel("MSE score")
-plt.xlabel("Polynomial degree")
+plt.xlabel("Polynomial degree (N)")
 plt.ylim(0, 0.1)
 plt.legend()
 plt.title("MSE scores over model complexity")
@@ -121,7 +124,7 @@ plt.plot(R2_test, label="test implementation")
 plt.plot(R2_train_sk, "r--", label="train ScikitLearn")
 plt.plot(R2_test_sk, "g--", label="test ScikitLearn")
 plt.ylabel("R2 score")
-plt.xlabel("Polynomial degree")
+plt.xlabel("Polynomial degree (N)")
 plt.ylim(-2, 1)
 plt.legend()
 plt.title("R2 scores over model complexity")

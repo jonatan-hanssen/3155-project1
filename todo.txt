@@ -20,3 +20,10 @@ crossval
 bootstrap
 ols 					x
 ridge 					x
+
+
+
+
+
+plots
+-difference between franke and predicted
