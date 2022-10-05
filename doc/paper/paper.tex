@@ -9,7 +9,34 @@
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{parskip}
+\usepackage{listings}
+\usepackage{xcolor}
 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=left,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+
+\lstset{breaklines=true, style=mystyle}
 %% The class has several options
 %  onecolumn/twocolumn - format for one or two columns per page
 %  10pt/11pt/12pt - use 10, 11, or 12 point font
@@ -160,16 +187,49 @@ A similar derivation as done in the previous section gives us the normal equatio
 
 However, the derivative of the absolute value is not continous, so there is sadly no analytical solution for the optimal parameters with this form of linear regression. We must then solve the problem numerically, which can be done by using Gradient Descent. Like Ridge regression, this form of regression controls the complexity of the model, with the added benifit that Lasso can drive parameters to exactly zero.
 
+With the theory explained, we can go on to describe how we have applied it to our problem.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Preprocessing: Creating the design matrix and normalizing our data}
 
+
+\subsection{Preprocessing: Creating the design matrix and normalizing our data}
 We have two datasets, one synthetic and one real. Regardless of the source of the data, we create the design matrix in a similar manner, as the relation between our input data and our target values are the same for both datasets, that is, for each combination of $x$ and $y$, we have a height $z$. For the Franke function this height is no more than the height over the $xy$-plane, but for our real data, this value represents the elevation in meters above ocean level for a terrain in Norway. As we want to do a polynomial fit of the data, we create our design matrix such that each row $i$ has the following values:
 
 \begin{equation}
 X_{i*} = 1 \;\; x_i \;\; y_i \; x_i^2 \;\; x_i y_i \;\; y_i^2 \;\; ... \;\; x_i^p y_i^p
 \end{equation}
 
-While the creating of the design matrix is equivalent for the two datasets, the preprocessing of the data afterwards is not. For the Franke function, we claim that no normalization is needed, as we generate the data ourselves to be between $0$ and $1$. Given that we are doing a polynomial fit, every element in our design matrix will be a multiplication of $x^p$ and $y^k$ for different $p$'s and $k$'s, which, given our choice of range for $x$ and $y$, guarantees that every element is between $0$ and $1$. However, we have included a centering of the data, which has no effect on the Ordinary Least Squares regression, but which is used when applying Ridge and Lasso regression, to avoid punishing the intercept. The centering is done by
+	Below is the python code used to create the design matrix, which can be found in \texttt{src/utils.py}.
+
+\lstinputlisting[language=Python, firstline=27, lastline=42]{../../src/utils.py}
+
+	While the creating of the design matrix is equivalent for the two datasets, the preprocessing of the data afterwards is not. For the Franke function, we claim that no normalization is needed, as we generate the data ourselves to be between $0$ and $1$. Given that we are doing a polynomial fit, every element in our design matrix will be a multiplication of $x^p$ and $y^k$ for different $p$'s and $k$'s, which, given our choice of range for $x$ and $y$, guarantees that every element is between $0$ and $1$. However, we have included a centering of the data, which has no effect on the Ordinary Least Squares regression, but which is used when applying Ridge and Lasso regression, to avoid punishing the intercept. The centering is done as follows: First, the first coloumn of the design matrix (the intercept coloumn) is discarderd. Then we calculate the mean for the target values and the design matrix (the mean for the design matrix is a vector with mean values for each coloumn). We subtract this from the design matrix and target values when performing the fit giving us a vector $\bm{\beta}$. Afterwards we calculate the intercept with the following equation
+
+\begin{equation}
+	intercept = mean(\bar{y} - \bm{\bar{X}_c}^T \bm{\beta})
+\end{equation}
+
+	where $\bar{y}$ is the mean value of $\bm{y}$ and $\bm{\bar{X}_c}$ is a vector of size $p$ with $\bar{X}_i = mean(X_i)$ (the mean of each coloumn in $X$). We finally create our prediction by using the $\bm{\beta}$, $X$ and intercept we calculated above:
+
+\begin{equation}
+	\bm{\hat{y}} = X \bm{\beta} + intercept
+\end{equation}
+
+The code for this, taken from the \texttt{evaluate\_model} function in \texttt{src/utils.py} is as follows: \footnote{Some intermediate parts of our implementation not related to this have been removed for readability}
+
+\begin{lstlisting}[language=Python]
+X_train = X_train[:, 1:]
+z_train_mean = np.mean(z_train, axis=0)
+X_train_mean = np.mean(X_train, axis=0)
+beta = model((X_train - X_train_mean), (z_train - z_train_mean))
+intercept = np.mean(z_train_mean - X_train_mean @ beta)
+z_pred_train = X_train @ beta + intercept
+\end{lstlisting}
+
+Where \texttt{model} calculates \texttt{beta} using the normal equations for OLS.
+
+For the real elevation data, normalization is definitely required, as the values for $x$, $y$ reach several hundred and $z$ reaches over a thousand. For polynomial degree $10$ and an $x$ value which reaches $400$, we will have a design matrix with values from $0$ to $400^{10}$. This large range of values makes our linear regression perform poorly (WHY?). We have therefore chosen to scale our design matrix using Scikit's \texttt{StandardScaler}, which removes the mean value and divides by the variance for each coloumn, giving us a design matrix where each feature coloumn has a mean value of $0$ and variance of $1$. The calculation of mean and variance is done on the training data, and applied to both the training and test data. We have done the same with the values for $z$. This gives a much more stable model. The code for doing this on the design matrix is as follows, taken from \texttt{src/utils.py}:
+
+\lstinputlisting[language=Python, firstline=238, lastline=245]{../../src/utils.py}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
