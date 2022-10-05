@@ -86,6 +86,9 @@ Please use this template to test how your figures will look on the printed journ
 }
 \end{abstract}
 
+% \tableofcontents
+% \newpage
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % \begin{nomenclature}
 % \entry{A}{You may include nomenclature here.}
@@ -191,7 +194,8 @@ With the theory explained, we can go on to describe how we have applied it to ou
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\subsection{Preprocessing: Creating the design matrix and normalizing our data}
+\subsection{Implementation}
+\subsubsection{Preprocessing: Creating the design matrix and normalizing our data}
 We have two datasets, one synthetic and one real. Regardless of the source of the data, we create the design matrix in a similar manner, as the relation between our input data and our target values are the same for both datasets, that is, for each combination of $x$ and $y$, we have a height $z$. For the Franke function this height is no more than the height over the $xy$-plane, but for our real data, this value represents the elevation in meters above ocean level for a terrain in Norway. As we want to do a polynomial fit of the data, we create our design matrix such that each row $i$ has the following values:
 
 \begin{equation}
@@ -233,22 +237,20 @@ For the real elevation data, normalization is definitely required, as the values
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Implementation of linear regression}
+\subsubsection{Implementation of linear regression}
 
-The third-level of heading follows the style of the second-level heading.
+Linear regression for OLS and Ridge are implemented by using NumPy's \texttt{numpy.linalg.pinv} and the normal equations. We have implemented them as functions which take in the target values and the design matrix and return $\bm{\hat{\beta}}$. They are called from a wrapper function called \texttt{evaluate\_model} which takes care of the scaling and works with both SciKit models and our own. Below are the functions, taken from \texttt{src/utils.py}:
 
+\lstinputlisting[language=Python, firstline=53, lastline=64]{../../src/utils.py}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Use of SI Units}
+For repeated calls of these functions with different polynomial degrees, we use the function \texttt{linreg\_to\_N}, which passes the correctly sliced design matrix to the regression functions and saves the predictions and various performance metrics for each polynomial degree for easy plotting.
 
-An ASME paper should use SI units.  When preference is given to SI units, the U.S. customary units may be given in parentheses or omitted. When U.S. customary units are given preference, the SI equivalent {\em shall} be provided in parentheses or in a supplementary table. 
+For Lasso regression, we use SciKit's implementation. We also use SciKit's implementation for OLS and Ridge for comparisons with our own implementation.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Footnotes\protect\footnotemark}
+\subsubsection{Implementation of resampling methods}
 
+Crossvalidation is implemented in the function \texttt{crossval} in \texttt{src/utils.py}. We split the data into k folds by slicing with NumPy taking consecutive rows of the design matrix and target vector. But before we do this, we resample the data with Scikit's \texttt{resample}. This is important because our $x$'s and $y$'s are not normal distributions but consecutive values between $0$ and $1$, and therefore consecutive rows correspond specific areas of our data, which is not wanted.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Mathematics}
 
 Equations should be numbered consecutively beginning with (1) to the end of the paper, including any appendices.  The number should be enclosed in parentheses and set flush right in the column on the same line as the equation.  An extra line of space should be left above and below a displayed equation or formula. \LaTeX\ can automatically keep track of equation numbers in the paper and format almost any equation imaginable. An example is shown in Eqn.~(\ref{eq_ASME}). The number of a referenced equation in the text should be preceded by Eqn.\ unless the reference starts a sentence in which case Eqn.\ should be expanded to Equation.
