@@ -1,8 +1,14 @@
 
 %%% use twocolumn and 10pt options with the asme2ej format
-\documentclass[twocolumn,10pt]{asme2ej}
+\documentclass[twocolumn,10pt,cleanfoot]{asme2ej}
 
 \usepackage{graphicx} %% for loading jpg figures
+\usepackage{bm}
+\usepackage{nicefrac}
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{parskip}
 
 %% The class has several options
 %  onecolumn/twocolumn - format for one or two columns per page
@@ -15,7 +21,6 @@
 %  
 %% The default is oneside, onecolumn, 10pt, final
 
-
 \title{Linear regression for approximating real and synthetic data}
 
 %%% first author
@@ -25,8 +30,7 @@
 	The faculty of Mathmatics and Natural Sciences\\
 	Department of Informatics\\
     Email: jonatahh@ifi.uio.no
-    Email: jonatanindahouse@gmail.com
-    }	
+    }
 }
 
 \author{Eric E. Reber
@@ -35,20 +39,14 @@
 	The faculty of Mathmatics and Natural Sciences\\
 	Department of Informatics\\
     Email: ericer@ifi.uio.no
-    }	
+    }
 }
-
-%%% second author
-%%% remove the following entry for single author papers
-%%% add more entries for additional authors
-%%% third author
-%%% remove the following entry for single author papers
-%%% add more entries for additional authors
 
 
 \begin{document}
 
-\maketitle    
+
+\maketitle
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
@@ -88,18 +86,88 @@ Furthermore, we will compare different models of linear regression, namely Ordin
 
 This sections covers the theoretic background which underlies the methods used in this paper.
 
-\subsubsection{Ordinary Least Squares}
+\subsubsection{Linear regression}
 
-\subsubsection{Proofs}
-% The heading is boldface with upper and lower case letters. 
-% If the heading should run into more than one line, the run-over is not left-flushed.
+To describe how linear regression works, let us first describe the problem it aims to solve. Assume we have a dataset, which contains a series of inputs $\{x_i\}$, and corresponding target values $\{y_i\}$. Our assumption is that there is some relationship $y_i = f(x_i) + \epsilon_i$ where $\epsilon_i \sim N(0,\sigma^2)$, and we wish to create a model which approximates this relationship. More specifically, we wish to find a vector $\beta$ which gives us the "best" approximation $\bm{y_{pred}}$ of $\bm{y}$, by using the parameters in the following equation:
+
+\begin{equation}
+X \bm{\beta} = \bm{\tilde{y}}
+\end{equation}
+
+$X$ is called the design matrix, and is an $n$ by $p$ matrix created by our input data and our choice of basis functions, where $n$ is the amount of different input states we have (for our problem, $n$ is the number of distinct $x$ values times the number of distinct $y$ values) and $p$ is the number of features we use for our fit (in our case, $p$ is based on the polynomial degree we use). The element $X_{ij}$ is calculated by evaluating the basis function corresponding the coloumn $j$ for the input data corresponding to the row $j$. As we can see, each row of this matrix is scalar multiplied by the vector $\beta$, giving us a linear combination of the values of $X_{i*}$ for each $y_i$ in the target vector $\bm{y}$. This vector is called the parameter vector, and finding the optimal values $\hat{\bm{\beta}}$ is the problem we wish to solve. But for this, we need to define what an "optimal" prediction $\bm{\tilde{y}}$ is.
+
+\subsubsection{The cost function}
+
+The define the optimal prediction, we use a cost function, and the choice of cost function greatly influences what optimal parameters we get. FOOTNOTE: It is here important to keep in mind that the cost function used when fitting the model (training) rarely is the same as the one used for testing our prediction, as described in <somewhere>. An intuitive cost function is the mean squared error (MSE). This function simply computes the average distance between our prediction and the target value, squared:
+
+\begin{equation}
+	C_{mse}(\tilde{\bm{y}}) = \sum_{i=0}^{n-1}(y_i-\tilde{y_i})^2
+\end{equation}
+
+We may now plug in the definition of $\bm{\tilde{y}}$.
+
+\begin{equation}
+	C_{mse}(\bm{\beta}) = \sum_{i=0}^{n-1}(y_i-X_{i*}\bm{\beta})^2
+\end{equation}
+
+We see that we have a function of our parameters $\bm{\beta}$, which describe how much our prediction deviates from our target values. Our problem now is to optimize this function, that is, find the values of $\beta$ which give MSE the lowest value. Luckily for us, it can be proven that the second derivative of this function is always positive (WHERE?), which means that we can find the global minimum by solving the equation
+
+Hastie 45
+
+\begin{gather}
+\frac{\delta}{\delta \beta} \sum_{i=0}^{n-1}(y_i-X_{i*}\bm{\beta})^2 = 0 \\
+ - \frac{2}{n} X^T(\bm{y} - X\bm{\beta}) = 0
+\end{gather}
+
+Solving this for $\beta$ gives us the so called normal equation, an analytical solution\footnote{This solution requires that $X^TX$ is non-singular, which may not be the case. This is solved by using the singular value decomposition of the design matrix, which we will not go into here} for the optimal $\hat{\beta}$.
+
+% \begin{equation}
+\begin{gather}
+- \frac{2}{n} X^T(\bm{y} - X\bm{\beta}) = 0 \\
+X^T(\bm{y} - X\bm{\beta}) = 0 \\
+X^T\bm{y} - X^TX\bm{\beta} = 0 \\
+X^T\bm{y} = X^TX\bm{\beta} \\
+\bm{\hat{\beta}} = (X^TX)^{-1}X^T\bm{y}
+\end{gather}
+
+The process we have just described, with MSE as the cost function, is the what is known as Ordinary Least Squares (OLS) regression. Using different cost functions when fitting the model leads to different equations for $\bm{\hat{\beta}}$. This leads us to the two next forms of linear regression we use in this paper.
+
+\subsubsection{Ridge Regression}
+
+	A common problem with OLS is what is known as overfitting (we will discuss this in greater detail in later sections). A symptom of overfitting is that the values in the parameter vector $\bm{\beta}$ grow very large, and vary wildly for small changes in our dataset. To counteract this, we can add to the cost function a term which increases with the values in $\bm{\beta}$. Optimizing the cost function would now not only mean finding the smallest difference between target and predicted values, but also keeping the parameters small. We now define a new cost function
+
+\begin{equation}
+	C_{lasso}(\bm{\beta}) = \sum_{i=0}^{n-1}(y_i-X_{i*}\bm{\beta})^2 + \lambda \sum_{j=0}^{p-1} \beta_j^2
+\end{equation}
+
+	$||\beta||_2^2$ is equal to $\beta^T\beta$ and is simply the norm of the parameter vector, squared. With the new hyperparameter $\lambda \in (0, \inf)$ , we can decide how harshly we should punish large values in our parameter vector. Finding an optimal $\lambda$ is an important step in the process of finding the best parameters for our model.
+
+A similar derivation as done in the previous section gives us the normal equation for Ridge regression:
+
+\begin{equation}
+	\bm{\hat{\beta}} = (X^TX + \lambda I)^{-1}X^T\bm{y}
+\end{equation}
+
+	We see that this equation, with a $\lambda > 0$ avoids the problem of an inversion of a non-singular matrix, and gives us an analytical solution for $\bm{\hat{\beta}}$ yet again. \footnote{We should cherish this analytical solution, as it may well be the last time we see a cost function that can be optimized analytically.} By using ridge regresison, we can control the complexity of our model and effectively hinder overfitting.
+
+\subsubsection{Lasso Regression}
+
+	Another cost function is one where we add the L1-norm (the sum of the absolute values of the parameters), instead of the L2-norm. The new cost function is as follows.
+
+\begin{equation}
+	C_{lasso}(\bm{\beta}) = \sum_{i=0}^{n-1}(y_i-X_{i*}\bm{\beta})^2 + \lambda \sum_{j=0}^{p-1} |\beta_j|
+\end{equation}
+
+However, the derivative of the absolute value is not continous, so there is sadly no analytical solution for the optimal parameters with this form of linear regression. We must then solve the problem numerically, which can be done by using Gradient Descent. Like Ridge regression, this form of regression controls the complexity of the model, with the added benifit that Lasso can drive parameters to exactly zero.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Preprocessing: Creating the design matrix and normalizing our data}
 
 We have two datasets, one synthetic and one real. Regardless of the source of the data, we create the design matrix in a similar manner, as the relation between our input data and our target values are the same for both datasets, that is, for each combination of $x$ and $y$, we have a height $z$. For the Franke function this height is no more than the height over the $xy$-plane, but for our real data, this value represents the elevation in meters above ocean level for a terrain in Norway. As we want to do a polynomial fit of the data, we create our design matrix such that each row $i$ has the following values:
 
-\[ X_{i*} = 1 \;\; x_i \;\; y_i \; x_i^2 \;\; x_i y_i \;\; y_i^2 \;\; ... \;\; x_i^p y_i^p\]
+\begin{equation}
+X_{i*} = 1 \;\; x_i \;\; y_i \; x_i^2 \;\; x_i y_i \;\; y_i^2 \;\; ... \;\; x_i^p y_i^p
+\end{equation}
 
 While the creating of the design matrix is equivalent for the two datasets, the preprocessing of the data afterwards is not. For the Franke function, we claim that no normalization is needed, as we generate the data ourselves to be between $0$ and $1$. Given that we are doing a polynomial fit, every element in our design matrix will be a multiplication of $x^p$ and $y^k$ for different $p$'s and $k$'s, which, given our choice of range for $x$ and $y$, guarantees that every element is between $0$ and $1$. However, we have included a centering of the data, which has no effect on the Ordinary Least Squares regression, but which is used when applying Ridge and Lasso regression, to avoid punishing the intercept. The centering is done by
 
@@ -117,9 +185,7 @@ An ASME paper should use SI units.  When preference is given to SI units, the U.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Footnotes\protect\footnotemark}
-\footnotetext{Examine the input file, asme2ej.tex, to see how a footnote is given in a head.}
 
-Footnotes are referenced with superscript numerals and are numbered consecutively from 1 to the end of the paper\footnote{Avoid footnotes if at all possible.}. Footnotes should appear at the bottom of the column in which they are referenced.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
