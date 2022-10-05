@@ -78,7 +78,7 @@ ax = fig.add_subplot(122, projection="3d")
 surf = ax.plot_surface(
     x,
     y,
-    np.reshape(z_preds[:, N], z.shape),
+    np.reshape(z_preds[:, np.argmin(MSE_test)], z.shape),
     cmap=cm.coolwarm,
     linewidth=0,
     antialiased=False,
@@ -87,46 +87,46 @@ surf = ax.plot_surface(
 ax.set_zlim(-0.10, 1.40)
 ax.zaxis.set_major_locator(LinearLocator(10))
 ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
-ax.set_title("Polynomial fit of Franke Function")
+ax.set_title(f"Best polynomial fit of Franke Function, N={np.argmin(MSE_test)}")
 fig.colorbar(surf, shrink=0.5, aspect=5)
 
 plt.show()
 
 # ---------------- PLOTTING GRAPHS --------------
-plt.subplot(221)
 plt.suptitle(f"Datapoints = {len(x)*len(y)}, Parameters: N = {N}, noise = {noise}, scaling = {scaling}", fontsize=6)
 if betas_to_plot <= betas.shape[0]:
     for beta in range(betas_to_plot):
         data = betas[beta, :]
         data[data==0] = np.nan
         plt.plot(data, label=f"beta{beta}", marker="o", markersize=3)
-    plt.xlabel("Polynomial degree (N)")
-    plt.ylabel("Beta value")
-    plt.legend()
-    plt.title("Beta progression")
+        plt.xlabel("Polynomial degree (N)")
+        plt.ylabel("Beta value")
+        plt.title("Beta progression")
+        plt.legend()
+    plt.show()
 
-plt.subplot(222)
 
 print(f"Minimal MSE_test value = {np.min(MSE_test)} for N = {np.argmin(MSE_test)}")
-plt.plot(MSE_train, label="train implementation")
-plt.plot(MSE_test, label="test implementation")
-plt.plot(MSE_train_sk, "r--", label="train ScikitLearn")
-plt.plot(MSE_test_sk, "g--", label="test ScikitLearn")
+plt.suptitle(f"Datapoints = {len(x)*len(y)}, Parameters: N = {N}, noise = {noise}, scaling = {scaling}", fontsize=6)
+plt.plot(MSE_train, label="train implementation", marker="o", markersize=3)
+plt.plot(MSE_test, label="test implementation", marker="o", markersize=3)
+plt.plot(MSE_train_sk, "r--", label="train ScikitLearn", marker="o", markersize=3)
+plt.plot(MSE_test_sk, "g--", label="test ScikitLearn", marker="o", markersize=3)
 plt.ylabel("MSE score")
 plt.xlabel("Polynomial degree (N)")
+plt.title("MSE scores over model complexity")
 plt.ylim(0, 0.1)
 plt.legend()
-plt.title("MSE scores over model complexity")
+plt.show()
 
-plt.subplot(223)
-plt.plot(R2_train, label="train implementation")
-plt.plot(R2_test, label="test implementation")
-plt.plot(R2_train_sk, "r--", label="train ScikitLearn")
-plt.plot(R2_test_sk, "g--", label="test ScikitLearn")
+plt.suptitle(f"Datapoints = {len(x)*len(y)}, Parameters: N = {N}, noise = {noise}, scaling = {scaling}", fontsize=6)
+plt.plot(R2_train, label="train implementation", marker="o", markersize=3)
+plt.plot(R2_test, label="test implementation", marker="o", markersize=3)
+plt.plot(R2_train_sk, "r--", label="train ScikitLearn", marker="o", markersize=3)
+plt.plot(R2_test_sk, "g--", label="test ScikitLearn", marker="o", markersize=3)
 plt.ylabel("R2 score")
 plt.xlabel("Polynomial degree (N)")
 plt.ylim(-2, 1)
-plt.legend()
 plt.title("R2 scores over model complexity")
-
+plt.legend()
 plt.show()

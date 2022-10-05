@@ -27,3 +27,5 @@ ridge 					x
 
 plots
 -difference between franke and predicted
+-plot for ulik noise for egen implementation
+-bytte ut scaling -> centering
