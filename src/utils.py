@@ -53,8 +53,6 @@ def MSE(y_data, y_model):
 def OLS(
     X_train: np.ndarray,
     z_train: np.ndarray,
-    *,
-    scaling: bool = False,
 ):
     beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ z_train
 
@@ -206,37 +204,33 @@ def evaluate_model(
     else:
         intercept = 0
         if scaling:
+            # if width is 1, simply return the intercept
             if X_train.shape[1] == 1:
-                print("we here")
                 beta = np.zeros(1)
                 intercept = np.mean(z_train, axis=0)
                 z_pred_train = np.ones(X_train.shape[0]) * intercept
                 z_pred_test = np.ones(X_test.shape[0]) * intercept
                 z_pred = np.ones(X.shape[0]) * intercept
-                print(f"{z_pred_train=}")
 
                 return beta, z_pred_train, z_pred_test, z_pred
 
-            # scaler = StandardScaler()
-            # X_train = scaler.fit_transform(X_train)
-            # X_test = scaler.transform(X_test)
-            # model.fit(X_train, z_train)
             X_train = X_train[:, 1:]
             X_test = X_test[:, 1:]
             X = X[:, 1:]
             z_train_mean = np.mean(z_train, axis=0)
             X_train_mean = np.mean(X_train, axis=0)
 
-            model.fit(X_train, z_train)
+            model.fit((X_train - X_train_mean), (z_train - z_train_mean))
             beta = model.coef_
             intercept = np.mean(z_train_mean - X_train_mean @ beta)
         else:
             model.fit(X_train, z_train)
 
         beta = model.coef_
-        z_pred_train = X_train @ beta + intercept
-        z_pred_test = X_test @ beta + intercept
-        z_pred = X @ beta + intercept
+        z_pred = model.predict(X) + intercept
+        z_pred_train = model.predict(X_train) + intercept
+        z_pred_test = model.predict(X_test) + intercept
+
     return beta, z_pred_train, z_pred_test, z_pred
 
 
