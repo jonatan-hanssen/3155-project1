@@ -1,12 +1,3 @@
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
-import numpy as np
-from random import random, seed
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-
 # Our own library of functions
 from utils import *
 
@@ -20,7 +11,7 @@ bootstraps = 100
 
 np.random.seed(42069)
 
-z += 0.15 * np.random.standard_normal(z.shape)
+z += 0.05 * np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 
 errors = np.zeros(N)
@@ -45,6 +36,7 @@ for n in range(N):
     biases[n] = bias
     variances[n] = variance
 
+print(f"Minimal MSE_test value = {np.min(errors)} for N = {np.argmin(errors)}")
 plt.plot(errors, label="error")
 plt.plot(biases, label="biases")
 plt.plot(variances, label="variances")
