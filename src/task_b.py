@@ -22,7 +22,6 @@ z = FrankeFunction(x, y)
 N = 20
 scaling = True
 
-# Do the linear_regression
 z += 0.05 * np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 betas, z_preds_train, z_preds_test, z_preds = linreg_to_N(
@@ -40,7 +39,7 @@ OLS_scikit = LinearRegression(
 _, z_preds_train_sk, z_preds_test_sk, _ = linreg_to_N(
     X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS_scikit
 )
-
+assert np.allclose(z_preds_test_sk[:3, :], z_preds_test[:3,:])
 # X, X_train, X_test, z, z_train, z_test = normalize_task_g(
 #     X, X_train, X_test, z, z_train, z_test
 # )
