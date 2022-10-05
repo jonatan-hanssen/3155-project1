@@ -1,50 +1,56 @@
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
-import numpy as np
-from random import random, seed
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
+"""
+task b: plots 3D surface plot of Franke Function next to our approximated polynomial fit of the Franke Function, beta
+        progression over polynomial degree, and MSE and R2 scores of our implemented OLS model compared with the scikit
+        OLS model. The parameter betas_to_plot changes how many betas are plotted, N how many polynomial degrees we test
+        for, and scaling for if we center our data or not. The noise parameter controls how much noise we add to our
+        Franke Function output. Note that these plots are without resampling as specified in task b.
+"""
 
 # Our own library of functions
 from utils import *
 
 np.random.seed(42069)
-# Make data.
+
+# make data
 x = np.arange(0, 1, 0.05)
 y = np.arange(0, 1, 0.05)
 x, y = np.meshgrid(x, y)
 z = FrankeFunction(x, y)
-# z = SkrankeFunction(x, y)
+zs = SkrankeFunction(x, y)
 
-# Highest order polynomial we fit with
+# parameters
+betas_to_plot = 5
+noise = 0.05
 N = 20
-scaling = True
+scaling = False
 
-z += 0.05 * np.random.standard_normal(z.shape)
+# add noise
+z += noise * np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
+
+# model under testing
+OLS_model = OLS
+
+# perform linear regression
 betas, z_preds_train, z_preds_test, z_preds = linreg_to_N(
-    X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS
+    X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS_model
 )
-# Calculate scores OLS without resampling
+
+# calculate OLS scores without resampling
 MSE_train, R2_train = scores(z_train, z_preds_train)
 MSE_test, R2_test = scores(z_test, z_preds_test)
 
-# ScikitLearn OLS for comparison
+# scikitLearn OLS for comparison
 OLS_scikit = LinearRegression(
     fit_intercept=False
 )  # false because we use our own scaling
 
+# perform linear regression scikit
 _, z_preds_train_sk, z_preds_test_sk, _ = linreg_to_N(
     X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS_scikit
 )
-assert np.allclose(z_preds_test_sk[:3, :], z_preds_test[:3,:])
-# X, X_train, X_test, z, z_train, z_test = normalize_task_g(
-#     X, X_train, X_test, z, z_train, z_test
-# )
 
-
+# calculate OLS scikit scores without resampling
 MSE_train_sk, R2_train_sk = scores(z_train, z_preds_train_sk)
 MSE_test_sk, R2_test_sk = scores(z_test, z_preds_test_sk)
 
@@ -83,22 +89,19 @@ ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
 ax.set_title("Polynomial fit of Franke Function")
 fig.colorbar(surf, shrink=0.5, aspect=5)
 
-
 plt.show()
 
 # ---------------- PLOTTING GRAPHS --------------
 plt.subplot(221)
-plt.plot(betas[0, :], label="beta0")
-plt.plot(betas[1, :], label="beta1")
-plt.plot(betas[2, :], label="beta2")
-plt.plot(betas[3, :], label="beta3")
-plt.plot(betas[4, :], label="beta4")
-plt.plot(betas[5, :], label="beta5")
-plt.plot(betas[6, :], label="beta6")
-plt.plot(betas[7, :], label="beta7")
-plt.xlabel("Polynomial degree")
-plt.legend()
-plt.title("Beta progression")
+if betas_to_plot <= betas.shape[0]:
+    for beta in range(betas_to_plot):
+        data = betas[beta, :]
+        data[data==0] = np.nan
+        plt.plot(data, label=f"beta{beta}", marker ="o")
+    plt.xlabel("Polynomial degree")
+    plt.ylabel("Beta value")
+    plt.legend()
+    plt.title("Beta progression")
 
 plt.subplot(222)
 
@@ -124,5 +127,3 @@ plt.legend()
 plt.title("R2 scores over model complexity")
 
 plt.show()
-
-# linear_regression(x,y,z)
