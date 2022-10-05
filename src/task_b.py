@@ -22,13 +22,11 @@ z = FrankeFunction(x, y)
 N = 20
 scaling = True
 
-# Do the linear_regression
 z += 0.05 * np.random.standard_normal(z.shape)
 X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 betas, z_preds_train, z_preds_test, z_preds = linreg_to_N(
     X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS
 )
-
 # Calculate scores OLS without resampling
 MSE_train, R2_train = scores(z_train, z_preds_train)
 MSE_test, R2_test = scores(z_test, z_preds_test)
@@ -38,17 +36,10 @@ OLS_scikit = LinearRegression(
     fit_intercept=False
 )  # false because we use our own scaling
 
-betas_sk, z_preds_train_sk, z_preds_test_sk, z_preds_sk = linreg_to_N(
+_, z_preds_train_sk, z_preds_test_sk, _ = linreg_to_N(
     X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS_scikit
 )
-
-for i in range(N):
-    print(i)
-    print("own")
-    print(betas[:5, i])
-    print("scikit")
-    print(betas_sk[:5, i])
-
+assert np.allclose(z_preds_test_sk[:3, :], z_preds_test[:3,:])
 # X, X_train, X_test, z, z_train, z_test = normalize_task_g(
 #     X, X_train, X_test, z, z_train, z_test
 # )
@@ -80,7 +71,7 @@ ax = fig.add_subplot(122, projection="3d")
 surf = ax.plot_surface(
     x,
     y,
-    np.reshape(z_preds_sk[:, 1], z.shape),
+    np.reshape(z_preds[:, N], z.shape),
     cmap=cm.coolwarm,
     linewidth=0,
     antialiased=False,

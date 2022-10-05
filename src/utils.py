@@ -108,7 +108,6 @@ def crossval(
     for k in range(K):
         if k == K - 1:
             # if we are on the last, take all thats left
-            X_test = np.zeros((X.shape[0] - K * chunksize, X.shape[1]))
             X_test = X[k * chunksize :, :]
             z_test = z[k * chunksize :]
         else:
