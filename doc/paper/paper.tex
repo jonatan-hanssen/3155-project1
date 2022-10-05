@@ -24,7 +24,8 @@
 	Bachelor Student, Robotics and Intelligent Systems\\
 	The faculty of Mathmatics and Natural Sciences\\
 	Department of Informatics\\
-    Email: jonatan.hanssen@outlook.com
+    Email: jonatahh@ifi.uio.no
+    Email: jonatanindahouse@gmail.com
     }	
 }
 
@@ -33,7 +34,7 @@
 	Bachelor Student, Robotics and Intelligent Systems\\
 	The faculty of Mathmatics and Natural Sciences\\
 	Department of Informatics\\
-    Email: jonatan.hanssen@outlook.com
+    Email: ericer@ifi.uio.no
     }	
 }
 
@@ -78,8 +79,18 @@ However, in order to create an optimal model, we require optimal parameters whic
 Furthermore, we will compare different models of linear regression, namely Ordinary Least Squares (OLS), Ridge and Lasso regression, and employ resampling methods, namely bootstrap and cross-validation to ensure that we draw conclusive results as these help us reduce the randomness in our parameters based off how we split our data. <source?>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
 \section{Method}
 
+\subsection{Theory}
+
+This sections covers the theoretic background which underlies the methods used in this paper.
+
+\subsubsection{Ordinary Least Squares}
+
+\subsubsection{Proofs}
 % The heading is boldface with upper and lower case letters. 
 % If the heading should run into more than one line, the run-over is not left-flushed.
 
@@ -90,10 +101,11 @@ We have two datasets, one synthetic and one real. Regardless of the source of th
 
 \[ X_{i*} = 1 \;\; x_i \;\; y_i \; x_i^2 \;\; x_i y_i \;\; y_i^2 \;\; ... \;\; x_i^p y_i^p\]
 
-While the creating of the design matrix is equivalent for the two datasets, the preprocessing of the data afterwards is not. For the Franke function, we claim that no normalization is needed, as we generate the data ourselves to be between $0$ and $1$. Given that we are doing a polynomial fit, every element in our design matrix will be a multiplication of $x^p$ and $y^k$ for different $p$'s and $k$'s, which, given our choice of range for $x$ and $y$, guarantees that every element is between $0$ and $1$. However, we have included a centering of the data, which has no effect on the Ordinary Least Squares regression, but which is used when applying Ridge and Lasso regression, to avoid punishing the intercept.
+While the creating of the design matrix is equivalent for the two datasets, the preprocessing of the data afterwards is not. For the Franke function, we claim that no normalization is needed, as we generate the data ourselves to be between $0$ and $1$. Given that we are doing a polynomial fit, every element in our design matrix will be a multiplication of $x^p$ and $y^k$ for different $p$'s and $k$'s, which, given our choice of range for $x$ and $y$, guarantees that every element is between $0$ and $1$. However, we have included a centering of the data, which has no effect on the Ordinary Least Squares regression, but which is used when applying Ridge and Lasso regression, to avoid punishing the intercept. The centering is done by
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsubsection{Third-Level Heading.}
+
+\subsection{Implementation of linear regression}
 
 The third-level of heading follows the style of the second-level heading.
 
