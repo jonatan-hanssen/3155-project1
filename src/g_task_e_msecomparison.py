@@ -35,7 +35,7 @@ def ridge_mse_compare_resampling(x, y, z, N, K, bootstraps):
     X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 
     # normalize data based on train
-    X, X_train, X_test, z, z_train, z_test = normalize_task_g(
+    X, X_train, X_test, z, z_train, z_test = minmax_dataset(
         X, X_train, X_test, z, z_train, z_test
     )
 

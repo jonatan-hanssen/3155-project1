@@ -235,7 +235,7 @@ def evaluate_model(
     return beta, z_pred_train, z_pred_test, z_pred
 
 
-def normalize_task_g(X, X_train, X_test, z, z_train, z_test):
+def minmax_dataset(X, X_train, X_test, z, z_train, z_test):
     x_scaler = MinMaxScaler()
     z_scaler = MinMaxScaler()
 

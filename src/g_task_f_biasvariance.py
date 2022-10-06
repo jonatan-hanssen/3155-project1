@@ -31,7 +31,7 @@ lambdas = np.logspace(-6, -1, 6)
 def lasso_bias_variance(x, y, z, N, bootstraps, lambdas):
     X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 
-    X, X_train, X_test, z, z_train, z_test = normalize_task_g(
+    X, X_train, X_test, z, z_train, z_test = minmax_dataset(
          X, X_train, X_test, z, z_train, z_test
      )
 
@@ -41,7 +41,7 @@ def lasso_bias_variance(x, y, z, N, bootstraps, lambdas):
         plt.suptitle(f"Bias variance tradeoff for lasso regression")
 
         # model under testing
-        model_Lasso = Lasso(lambdas[i], max_iter=100, fit_intercept=False)
+        model_Lasso = Lasso(lambdas[i], max_iter=200, fit_intercept=False)
 
         # arrays for bias-variance
         errors = np.zeros(N)
