@@ -69,7 +69,7 @@ def task_b(x, y, z, N):
     OLS_scikit.fit(X_train, z_train)
 
     # perform linear regression
-    _, z_preds_train_sk, z_preds_test_sk, z_preds = linreg_to_N(
+    _, z_preds_train_sk, z_preds_test_sk, z_preds_sk = linreg_to_N(
         X, X_train, X_test, z_train, z_test, N, model=OLS_scikit
     )
 
@@ -143,7 +143,7 @@ def task_b(x, y, z, N):
     plt.ylabel("MSE score")
     plt.xlabel("Polynomial degree (N)")
     plt.title("MSE scores over model complexity")
-    plt.ylim(0, 0.1)
+#    plt.ylim(0, 0.1)
     plt.legend()
     plt.show()
 
@@ -154,7 +154,7 @@ def task_b(x, y, z, N):
     plt.plot(R2_test_sk, "g--", label="test ScikitLearn", marker="o", markersize=3)
     plt.ylabel("R2 score")
     plt.xlabel("Polynomial degree (N)")
-    plt.ylim(-2, 1)
+#    plt.ylim(-2, 1)
     plt.title("R2 scores over model complexity")
     plt.legend()
     plt.show()
