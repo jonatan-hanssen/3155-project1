@@ -4,11 +4,14 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 from random import random, seed
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.utils import resample
 from typing import Tuple, Callable
+from imageio import imread
+import sys
+import argparse
 
 
 def FrankeFunction(x, y):
@@ -144,7 +147,9 @@ def crossval(
 def bias_variance(z_test: np.ndarray, z_preds_test: np.ndarray):
     MSEs, _ = scores(z_test, z_preds_test)
     error = np.mean(MSEs)
-    bias = np.mean((z_test - np.mean(z_preds_test, axis=1, keepdims=True).flatten()) ** 2)
+    bias = np.mean(
+        (z_test - np.mean(z_preds_test, axis=1, keepdims=True).flatten()) ** 2
+    )
     variance = np.mean(np.var(z_preds_test, axis=1, keepdims=True))
 
     return error, bias, variance
@@ -311,3 +316,67 @@ def scores(z, z_preds):
         R2s[n] = R2(z, z_preds[:, n])
 
     return MSEs, R2s
+
+
+def find_best_lambda(X, z, model, lambdas, N, K):
+    model = GridSearchCV(
+        estimator=model,
+        param_grid={"alpha": list(lambdas)},
+        scoring="neg_mean_squared_error",
+        cv=K,
+    )
+    best_polynomial = 0
+    best_lambda = 0
+    best_MSE = 10**10
+
+    for n in range(N):
+        print(n)
+        l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
+        model.fit(X[:, :l], z)
+
+        if -model.best_score_ < best_MSE:
+            best_MSE = -model.best_score_
+            best_lambda = model.best_params_["alpha"]
+            best_polynomial = n
+
+    return best_lambda, best_MSE, best_polynomial
+
+
+def read_in_dataset(N, scaling, noise):
+    argv = sys.argv[1:]
+
+    parser = argparse.ArgumentParser(description="Compute task g.b")
+
+    # filename is optional
+    parser.add_argument("-f", "--file", help="The filename to apply filter to")
+
+    # parse arguments and call run_filter
+    args = parser.parse_args()
+
+    if args.file:
+        # Load the terrain
+        z = np.asarray(imread(args.file), dtype="float64")
+        x = np.arange(z.shape[0])
+        y = np.arange(z.shape[1])
+        x, y = np.meshgrid(x, y, indexing="ij")
+
+        # split data into test and train
+        X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
+
+        # normalize data
+        scaling = False
+        X, X_train, X_test, z, z_train, z_test = minmax_dataset(
+            X, X_train, X_test, z, z_train, z_test
+        )
+    else:
+        # create synthetic data
+        x = np.arange(0, 1, 0.05)
+        y = np.arange(0, 1, 0.05)
+        x, y = np.meshgrid(x, y)
+        z = FrankeFunction(x, y)
+
+        # add noise
+        z += noise * np.random.standard_normal(z.shape)
+        X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
+
+    return X, X_train, X_test, z, z_train, z_test, scaling, x, y, z

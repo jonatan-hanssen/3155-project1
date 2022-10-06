@@ -21,7 +21,7 @@ zs = SkrankeFunction(x, y)
 
 # parameters
 betas_to_plot = 9
-noise = 0.1
+noise = 0.05
 N = 20
 scaling = False
 

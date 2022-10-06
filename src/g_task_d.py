@@ -47,7 +47,7 @@ np.random.seed(42069)
 def task_d(x, y, z, N, K, bootstraps, scaling):
     X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 
-    X, X_train, X_test, z, z_train, z_test = normalize_task_g(
+    X, X_train, X_test, z, z_train, z_test = minmax_dataset(
         X, X_train, X_test, z, z_train, z_test
     )
 

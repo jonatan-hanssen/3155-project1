@@ -1,46 +1,40 @@
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
-import numpy as np
-from random import random, seed
-from sklearn.linear_model import Ridge, Lasso, LinearRegression
-from sklearn.model_selection import train_test_split, cross_validate, KFold
+"""
+task f: Plots MSE comparison between OLS, ridge and lasso with cross validation for real and synthetic data.
+"""
+from sklearn.linear_model import Ridge, Lasso
+from sklearn.model_selection import cross_validate, KFold
+from imageio import imread
 
 # Our own library of functions
 from utils import *
 
-np.random.seed(42069)
-# Make data.
-x = np.arange(0, 1, 0.05)
-y = np.arange(0, 1, 0.05)
-x, y = np.meshgrid(x, y)
-z = FrankeFunction(x, y)
-# z = SkrankeFunction(x, y)
-scaling = True
-
-# Highest order polynomial we fit with
-N = 8
+# parameters
+N = 20
 K = 10
+noise = 0.05
 kfolds = KFold(n_splits=K)
-
-# Do the linear_regression
-z += 0.05 * np.random.standard_normal(z.shape)
-X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
-z = z.ravel()
-
+scaling = False
 lambdas = np.logspace(-12, -4, 6)
+
+errors_OLS = np.zeros(N)
+errors_Ridge = np.zeros(N)
+errors_Lasso = np.zeros(N)
+
+# read in data
+X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(N, scaling, noise)
+
+# test different values of lambda
 for i in range(len(lambdas)):
+    z = z.ravel()
     plt.subplot(321 + i)
     plt.suptitle(f"MSE by polynomial degree for OLS, Ridge and Lasso regression")
 
-    errors_OLS = np.zeros(N)
-    errors_Ridge = np.zeros(N)
-    errors_Lasso = np.zeros(N)
-
+    # models under testing
     Ridge_model = Ridge(lambdas[i], fit_intercept=scaling)
-    Lasso_model = Lasso(lambdas[i], fit_intercept=scaling, max_iter=2000)
+    Lasso_model = Lasso(lambdas[i], fit_intercept=scaling, max_iter=200)
     OLS_model = LinearRegression(fit_intercept=scaling)
+
+    # cross validate, get error
     print("OLS")
     for n in range(N):
         print(n)
@@ -73,15 +67,14 @@ for i in range(len(lambdas)):
         )
         errors_Lasso[n] = np.mean(-scores_Lasso["test_score"])
 
-    plt.plot(errors_OLS, label="OLS")
-    plt.plot(errors_Ridge, label="Ridge")
-    plt.plot(errors_Lasso, label="Lasso")
-    plt.xlabel("Model Polynomial Degree")
-
-    plt.ylim(0, 0.1)
+    # plot
+    plt.plot(errors_OLS, 'r--', label="OLS")
+    plt.plot(errors_Ridge, 'b--', label="Ridge")
+    plt.plot(errors_Lasso, 'g--', label="Lasso")
+    plt.ylabel("MSE score")
+    plt.xlabel("Polynomial degree (N)")
+    plt.title(f"lambda = {lambdas[i]:.5}")
     plt.tight_layout(h_pad=0.001)
     plt.legend()
-
-    plt.title(f"lambda = {lambdas[i]:.5}")
 
 plt.show()
