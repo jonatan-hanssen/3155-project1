@@ -546,7 +546,7 @@ Std of noise & Best MSE & Best degree \\
 
 \subsubsection{Ridge}
 
-Using Ridge regression, we see from Fig.~\ref{frankiedifflambdas} that larger and larger values of $\lambda$ efficiently prevents overfitting and reduces the variance between predictions. Using Scikit's gridsearch, we find the optimal $\lambda$ to be NUMBER and the optimal polynomial degree to be DEGREE, with an average MSE of NUMBER, which is lower than OLS for the Franke function with an added stochastic noise $\epsilon \sim N(0,0.05)$. Ridge regression successfully reduces the model complexity and prevents overfitting for higher polynomial degrees.
+Using Ridge regression, we see from Fig.~\ref{frankiedifflambdas} that larger and larger values of $\lambda$ efficiently prevents overfitting and reduces the variance between predictions. Using Scikit's gridsearch, we find the optimal $\lambda$ to be $10^{-8}$ and the optimal polynomial degree to be 7, with an average MSE of $0.0037999$, which is very slightly lower than OLS for the Franke function with an added stochastic noise $\epsilon \sim N(0,0.05)$. We see from this that Ridge regression has not really had much of an effect in decreasing the MSE. A possible reason for this is again the form of our synthetic data.
 
 \begin{figure} 
 \centerline{\includegraphics[width=3.25in]{figure/frankiedifflambdas.png}}
