@@ -6,7 +6,7 @@ import numpy as np
 from random import random, seed
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.utils import resample
 from typing import Tuple, Callable
 
@@ -236,8 +236,8 @@ def evaluate_model(
 
 
 def normalize_task_g(X, X_train, X_test, z, z_train, z_test):
-    x_scaler = StandardScaler()
-    z_scaler = StandardScaler()
+    x_scaler = MinMaxScaler()
+    z_scaler = MinMaxScaler()
 
     x_scaler.fit(X_train)
     X_train = x_scaler.transform(X_train)
