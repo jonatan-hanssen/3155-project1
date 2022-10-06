@@ -3,20 +3,24 @@ task g: plot terrain, approximate terrain with OLS and calculate MSE, R2
         beta over model complexity for real data. Performs task_b, so no
         resampling.
 """
+import numpy as np
 from imageio import imread
+import sys
 
 # Our own library of functions
 from utils import *
 
 np.random.seed(42069)
 
+argv = sys.argv[1:]
+
 # Load the terrain
-z_terrain1 = imread("../data/small_SRTM_data_Norway_1.tif")
+z_terrain1 = np.asarray(imread(argv[0]), dtype="float64")
 x_terrain1 = np.arange(z_terrain1.shape[0])
 y_terrain1 = np.arange(z_terrain1.shape[1])
 x1, y1 = np.meshgrid(x_terrain1, y_terrain1, indexing="ij")
 
-z_terrain2 = imread("../data/SRTM_data_Norway_2.tif")
+z_terrain2 = np.asarray(imread("../data/SRTM_data_Norway_2.tif"), dtype="float64")
 x_terrain2 = np.arange(z_terrain2.shape[0])
 y_terrain2 = np.arange(z_terrain2.shape[1])
 x2, y2 = np.meshgrid(x_terrain2, y_terrain2, indexing="ij")
@@ -37,8 +41,8 @@ plt.ylabel("X")
 plt.show()
 
 # Highest order polynomial we fit with
-N = 5
-betas_to_plot = 9
+N = 20
+betas_to_plot = 7
 
 def task_b(x, y, z, N):
     # split data into test and train
@@ -63,7 +67,7 @@ def task_b(x, y, z, N):
     # Calculate OLS scores
     MSE_train, R2_train = scores(z_train, z_preds_train)
     MSE_test, R2_test = scores(z_test, z_preds_test)
-
+    """
     # scikit model under testing
     OLS_scikit = LinearRegression(fit_intercept=False)
     OLS_scikit.fit(X_train, z_train)
@@ -77,6 +81,7 @@ def task_b(x, y, z, N):
     MSE_train_sk, R2_train_sk = scores(z_train, z_preds_train_sk)
     MSE_test_sk, R2_test_sk = scores(z_test, z_preds_test_sk)
 
+"""
     # ------------ PLOTTING 3D -----------------------
     fig = plt.figure(figsize=plt.figaspect(0.3))
 
@@ -138,8 +143,8 @@ def task_b(x, y, z, N):
 #    plt.suptitle(f"Datapoints = {len(x)*len(y)}, Parameters: N = {N}, noise = {noise}, scaling = {scaling}", fontsize=6)
     plt.plot(MSE_train, label="train implementation", marker="o", markersize=3)
     plt.plot(MSE_test, label="test implementation", marker="o", markersize=3)
-    plt.plot(MSE_train_sk, "r--", label="train ScikitLearn", marker="o", markersize=3)
-    plt.plot(MSE_test_sk, "g--", label="test ScikitLearn", marker="o", markersize=3)
+#    plt.plot(MSE_train_sk, "r--", label="train ScikitLearn", marker="o", markersize=3)
+#    plt.plot(MSE_test_sk, "g--", label="test ScikitLearn", marker="o", markersize=3)
     plt.ylabel("MSE score")
     plt.xlabel("Polynomial degree (N)")
     plt.title("MSE scores over model complexity")
@@ -150,8 +155,8 @@ def task_b(x, y, z, N):
     #plt.suptitle(f"Datapoints = {len(x)*len(y)}, Parameters: N = {N}, noise = {noise}, scaling = {scaling}", fontsize=6)
     plt.plot(R2_train, label="train implementation", marker="o", markersize=3)
     plt.plot(R2_test, label="test implementation", marker="o", markersize=3)
-    plt.plot(R2_train_sk, "r--", label="train ScikitLearn", marker="o", markersize=3)
-    plt.plot(R2_test_sk, "g--", label="test ScikitLearn", marker="o", markersize=3)
+#    plt.plot(R2_train_sk, "r--", label="train ScikitLearn", marker="o", markersize=3)
+#    plt.plot(R2_test_sk, "g--", label="test ScikitLearn", marker="o", markersize=3)
     plt.ylabel("R2 score")
     plt.xlabel("Polynomial degree (N)")
 #    plt.ylim(-2, 1)
@@ -159,4 +164,4 @@ def task_b(x, y, z, N):
     plt.legend()
     plt.show()
 
-task_b(x2, y2, z_terrain2, N)
+task_b(x1, y1, z_terrain1, N)
