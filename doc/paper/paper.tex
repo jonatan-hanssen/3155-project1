@@ -155,7 +155,121 @@ X^T\bm{y} = X^TX\bm{\beta} \\
 \bm{\hat{\beta}} = (X^TX)^{-1}X^T\bm{y}
 \end{gather}
 
-The process we have just described, with MSE as the cost function, is the what is known as Ordinary Least Squares (OLS) regression. Using different cost functions when fitting the model leads to different equations for $\bm{\hat{\beta}}$. This leads us to the two next forms of linear regression we use in this paper.
+The process we have just described, with MSE as the cost function, is the what is known as Ordinary Least Squares (OLS) regression. Using different cost functions when fitting the model leads to different equations for $\bm{\hat{\beta}}$. This leads us to the two next forms of linear regression we use in this paper. But before this, a...
+
+\subsubsection{Brief statistical intermission}
+
+We must remember that our target values are defined as $y_i = f + \epsilon_i$, that is, they are distorted by a stochastic noise $\epsilon_i \sim N(0,\sigma^2)$. We should therefore take a brief intermission to prove some of the statistical qualities of the method we have just described, so as to reassure ourselves that we are justified in applying linear regression to noisy data. We will start by showing that
+
+\begin{equation}
+E[y_i] = \sum_j X_{ij}\beta_j
+\end{equation}
+
+The proof is as follows:
+
+$\bm{y}$ is defined as the $f(\bm{x}) + \bm{\epsilon}$. We make an assumption that this can be approximated as a matrix multiplication $X\bm{\beta}$ plus an error vector $\bm{\epsilon}$. This means that each element of the vector
+$\bm{y}$ can be expressed as follows:
+
+\begin{equation}
+y_i = \sum_j x_{ij}\beta_j + \epsilon_i
+\end{equation}
+
+If we take the expectation value of this expression we get the following:
+
+\begin{gather}
+E[y_i] = E\left[\sum_j x_{ij}\beta_j + \epsilon_i\right] \\
+E[y_i] = E\left[\sum_j x_{ij}\beta_j\right] + E[\epsilon_i]
+\end{gather}
+
+However, the elements of $X$ are not stochastic, and neither are the elements of $\beta$ and therefore the first expectation value is simply the sum itself. Furthermore, $\epsilon$ is explicitly defined as a normal distribution $N(0,\sigma^2)$, and will by definition have the expectation value $0$. Therefore, we end up with the final expression:
+
+\begin{equation}
+E[y_i] = \sum_j x_{ij}\beta_j = \bm{X}_{i,*}\bm{\beta}
+\end{equation}
+
+Next, we show that the variance of $y_i$ is equal to the variance of the noise:
+
+\begin{gather}
+var[y_i] = E\left[(y_i - E[y_i])^2\right]  \\
+= E\left[y_i^2 - 2E[y_i]y_i + E[y_i]^2\right]
+\end{gather}
+
+Distributing the outer expectation value function:
+
+\begin{gather}
+var[y_i] = E[y_i^2] - 2E\left[E[y_i]\right]E[y_i] + E\left[E[y]^2\right]  \\
+= E[y_i^2] - 2E\left[E[y_i]\right]E[y_i] + E\left[E[y]\right]E\left[E[y]\right]
+\end{gather}
+
+The result of calculating the expectation value is non-stochastic. This means that $E[E[X]] = E[X]$. From this it follows that
+
+\begin{gather}
+var[y_i] = E[y_i^2] - 2E[y_i]E[y_i] + E[y_i]E[y_i]  \\
+= E[y_i^2] - E[y_i]E[y_i]  \\
+= E[y_i^2] - E[y_i]^2
+\end{gather}
+
+The expectation value in the second summand has been proven to be equal to $\bm{X}_{i,*}\bm{\beta}$ above. We therefore have
+
+\begin{gather}
+var[y_i] = E[y_i^2] - (\bm{X}_{i,*}\bm{\beta})^2  \\
+= E\left[(X_{i,*}\bm{\beta})^2 + X_{i,*}\bm{\beta}\epsilon_i + \epsilon_i^2\right] - (\bm{X}_{i,*}\bm{\beta})^2  \\
+= E\left[(X_{i,*}\bm{\beta})^2\right] + E[X_{i,*}\bm{\beta}\epsilon_i] + E[\epsilon_i^2] - (\bm{X}_{i,*}\bm{\beta})^2
+\end{gather}
+
+$X_{i,*}\bm{\beta}$ and $\epsilon_i$ are both scalars. Therefore the expectation value can be written as $E[X_{i,*}\bm{\beta}]E[\epsilon_i]$. However, $E[\epsilon_i]$ is by definition $0$, because $\epsilon_i$ is defined as a normal distribution of mean $0$ and variance $\sigma^2$. Furthermore, the expectation value of the non-stochastic $(X_{i,*}\bm{\beta})^2$ is simply the expression itself. We therefore have
+
+\begin{gather}
+var[y_i] = (X_{i,*}\bm{\beta})^2 + E[X_{i,*}\bm{\beta}]\cdot 0 + E[\epsilon_i^2] - (\bm{X}_{i,*}\bm{\beta})^2  \\
+= E[\epsilon_i^2]
+\end{gather}
+
+We can prove that this is equal to the variance of $\epsilon_i$:
+
+\begin{gather}
+E[\epsilon_i^2] = \frac{1}{n} \sum_i \epsilon_i^2 \\
+var[\epsilon_i] = \frac{1}{n} \sum_i (\epsilon_i - \bar{\epsilon_i})^2 \\
+var[\epsilon_i] = \frac{1}{n} \sum_i (\epsilon_i - 0)^2 \\
+var[\epsilon_i] = \frac{1}{n} \sum_i \epsilon_i^2 = E[\epsilon_i^2]
+\end{gather}
+
+And of course, we know that the variance of $\epsilon_i$ by definition is $\sigma^2$.
+
+\begin{gather}
+var[y_i] = E[\epsilon_i^2] = var[\epsilon_i] = \sigma^2 
+\end{gather}
+
+We should also prove some qualities about or parameters. We start by proving that $E[\hat{\beta}] = \beta$
+
+Because we are assuming $(X^{T}X)^{-1}X^{T}$ to be deterministic, $E[(X^{T}X)^{-1}X^{T}] = (X^{T}X)^{-1}X^{T}$. Moreover, we know $E[y] = y$, and we can thus rewrite the equation as follows:
+
+\begin{equation}
+E[(X^{T}X)^{-1}X^{T}y] = (X^{T}X)^{-1}X^{T}y = \beta
+\end{equation}
+
+Next, we prove that $var(\beta) = \sigma^{2}(X^{T}X)^{-1}$.
+
+$$var(\beta) = var((X^{T}X)^{-1}X^{T}y)$$
+
+Because we are assuming $(X^{T}X)^{-1}X^{T}$ to be deterministic and $y$ to be stochastic, we can rewrite the $var(\beta)$ as following:
+
+\begin{gather}
+var(\beta) = (X^{T}X)^{-1}X^{T}var(y)((X^{T}X)^{-1}X^{T})^{T} \\
+= (X^{T}X)^{-1}X^{T}var(y)(X^{T})^{T}((X^{T}X)^{-1})^{T}
+\end{gather}
+
+Since $(X^{T})^{T} = X$ and $(X^{T}X)^{-1})^{T}$ = $(X^{T}X)^{T})^{-1} = (X^{T}X)^{-1}$
+
+\begin{gather}
+= (X^{T}X)^{-1}X^{T}var(y)X(X^{T}X)^{-1}
+\end{gather}
+
+We know var(y) = $\sigma^{2}$, and since it is a scalar it is commutative. Thus we may move it freely
+
+\begin{gather}
+= \sigma^{2}(X^{T}X)^{-1}X^{T}X(X^{T}X)^{-1} \\
+= \sigma^{2}(X^{T}X)^{-1}
+\end{gather}
 
 \subsubsection{Ridge Regression}
 
@@ -184,6 +298,121 @@ A similar derivation as done in the previous section gives us the normal equatio
 \end{equation}
 
 However, the derivative of the absolute value is not continous, so there is sadly no analytical solution for the optimal parameters with this form of linear regression. We must then solve the problem numerically, which can be done by using Gradient Descent. Like Ridge regression, this form of regression controls the complexity of the model, with the added benifit that Lasso can drive parameters to exactly zero.
+
+\subsubsection{Resampling methods: The bootstrap}
+
+Bootstrap is a resampling method divided into simple steps. First, we reshuffle our dataset with replacement, which will provide us with a new dataset. Note that we will already have split our data into train and test data before we begin the bootstrap, so when we reshuffle, we will only reshuffle the training data. The reshuffled datasets act as our samples.
+
+Secondly, we will perform our linear regression on this new dataset and store the predictions of the test data. Thirdly, we repeat for a given large number of iterations. Since we use all the test predictions to calculate the MSE, bias and variance, we will then according to the central limit theorem <reference?> obtain a normal distribution of these variables. The law of large numbers <reference?> then tells us that the mean sample values of the MSE, bias and variance approach the true value of MSE, bias and variance. This is dependent on our assumption that our data is independently and identically distributed.
+
+These approximations of the true value of MSE, bias and variance will become useful when performing our bias-variance trade-off analysis.
+
+
+\subsubsection{Cross validation}
+
+Cross validation is another resampling technique, in which we reshuffle our data and then split them into k-folds, where k specifies the number of folds. One fold is used as our test data, and the rest is used as training data. We run our linear regression, then switch up which fold is used for testing until all folds have been used. As in bootstrapping, we will approach the true values of for example the mean squared error for our model. 
+Theoretically, because both two resampling techniques use the central limit theorem and the law of large numbers, they should return the same values for the MSE, bias and variance given the same dataset. Though resampling techniques can be computationally expensive, they make up for it by aiding in model evaluation by supplying us with variables obtained from a larger number of samples. 
+
+\subsubsection{Bias-variance trade-off}
+
+A crucial part of model evaluation is ensuring that the model is neither underfitted nor overfitted, which we can determine by observing the relationship between the bias and the variance. Bias is defined as $(Bias[\tilde{y}])^2 = (y-E[\tilde{y}])^2$, the difference between the expected value of our prediction and the observed value. Models with high bias are usually underfitted, whilst models with low bias are the opposite. Variance on the other hand is defined as $var[\tilde{f}] = \frac{1}{n}\sum(\tilde{y_i}-E[\tilde{y}])^2$, how far away predictions are from the mean prediction. Models with high variance are usually overfitted to the training data, whilst low variance models are the opposite.
+
+A good rule of thumb for finding a good fit is looking at the intercept between bias and variance. This is because the cost function can be decomposed into these two elements. The proof for this is as follows:
+
+Given data $\bm{y} = f(\bm{x}) + \bm{\epsilon}$ and a OLS model $\bm{\tilde{y}} = X\bm{\beta}$, we define
+the Mean Squared Error as follows
+
+\begin{gather}
+C(X,\beta) = \frac{1}{n}\sum_{i=0}^{n-1}(y_i - \tilde{y_i})^2
+\end{gather}
+
+This is simply the expectation value of $(\bm{y} - \bm{\tilde{y}})^2$
+
+\begin{gather}
+C(X,\beta) = E\left[(\bm{y} - \bm{\tilde{y}})^2\right]
+\end{gather}
+
+To derive the bias variance decomposition, we now add $E[\bm{\tilde{y}}] - E[\bm{\tilde{y}}]$ 
+as a sneaky trick. We will also replace $\bm{y}$ with our definition $\bm{y} = \bm{f} + \bm{\epsilon}$
+
+\begin{gather}
+C(X,\beta) = E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}] + E[\bm{\tilde{y}}] - \bm{\tilde{y}})^2\right]
+\end{gather}
+%%%%%%%%%%%%%%%%%5
+\begin{multline}
+= E[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2 + 2[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])(E[\bm{\tilde{y}}] \\
+	- \bm{\tilde{y}})] +(E[\bm{\tilde{y}}] - \bm{\tilde{y}})^2]
+\end{multline}
+
+\begin{multline}
+= E[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2] + \\
+	2E[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])(E[\bm{\tilde{y}}] - \bm{\tilde{y}})] + E[(E[\bm{\tilde{y}}] - \bm{\tilde{y}})^2]
+\end{multline}
+
+Let us focus our attention on the middle term first.
+
+\begin{gather}
+2E\left[(\bm{f} + \bm{\epsilon} + E[\bm{\tilde{y}}])(E[\bm{\tilde{y}}] - \bm{\tilde{y}})\right] 
+\end{gather}
+
+Expanding the multiplication:
+
+\begin{gather}
+2E\left[\bm{f}E[\bm{\tilde{y}}] + \bm{\epsilon}E[\bm{\tilde{y}}] - E[\bm{\tilde{y}}]E[\bm{\tilde{y}}] - \bm{f}\bm{\tilde{y}} - \bm{\epsilon}\bm{\tilde{y}} + E[\bm{\tilde{y}}]\bm{\tilde{y}}\right] 
+\end{gather}
+
+Distributing the expectation value:
+
+\begin{gather}
+2\left[E[\bm{f}E[\bm{\tilde{y}}]] + E[\bm{\epsilon}E[\bm{\tilde{y}}]] - E[E[\bm{\tilde{y}}]E[\bm{\tilde{y}}]] - E[\bm{f}\bm{\tilde{y}}] - E[\bm{\epsilon}\bm{\tilde{y}}] + E[E[\bm{\tilde{y}}]\bm{\tilde{y}}]\right] 
+\end{gather}
+
+We know that $\bm{\tilde{y}}$ and $\bm{f}$ are non-stochastic, and we know that the expectation value of $\bm{\epsilon}$ is $0$. We also know that 
+$\bm{\epsilon}$ and $\bm{\tilde{y}}$ are independent, which means we can write $E[\bm{\epsilon}\bm{\tilde{y}}]$ as $E[\bm{\epsilon}]E[\bm{\tilde{y}}]$ We therefore have
+
+\begin{gather}
+2\left[\bm{f}\bm{\tilde{y}} + 0 - \bm{\tilde{y}}\bm{\tilde{y}} - \bm{f}\bm{\tilde{y}} - 0 + \bm{\tilde{y}}\bm{\tilde{y}}\right] = 0 
+\end{gather}
+
+We then have
+
+\begin{gather}
+C(X,\beta) = E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2\right] + E\left[(E[\bm{\tilde{y}}] - \bm{\tilde{y}})^2\right] 
+\end{gather}
+
+The second term is by definition the variance of model.
+
+\begin{gather}
+C(X,\beta) = E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2\right] + var[\bm{\tilde{f}}] 
+\end{gather}
+
+And now the final term
+
+\begin{gather}
+E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2\right]
+\end{gather}
+
+\begin{multline}
+= E[\bm{f}^2 + \bm{f}\bm{\epsilon} - \bm{f}E[\bm{\tilde{y}}] + \bm{f\epsilon} + \bm{\epsilon}^2 - \\ 
+	\bm{\epsilon}E[\bm{\tilde{y}}] - \bm{f}E[\bm{\tilde{y}}] - \bm{\epsilon}E[\bm{\tilde{y}}] + E[\bm{\tilde{y}}]^2]
+\end{multline}
+
+After distributing the expectation value we get the following, keeping in mind that $E[\bm{f}] = E[\bm{y} - \bm{\epsilon}] = E[\bm{y}] - E[\bm{\epsilon}] = \bm{y}$
+
+\begin{gather}
+\bm{y}^2 - 2\bm{y}\bm{\tilde{y}} + E[\bm{\tilde{y}}]^2 + \sigma^2 \\
+(\bm{y} + E[\bm{\tilde{y}}]^2 + \sigma^2 
+\end{gather}
+
+We see that the quadratic form is equal to $bias[\bm{\tilde{y}}]^2$. We can then conclude that the cost function can be rewritten as follows:
+
+\begin{gather}
+C(X,\beta) = bias[\bm{\tilde{y}}]^2 + var[\bm{\tilde{f}}] + \sigma^2 
+\end{gather}
+
+
+Because the cost function is a sum of the bias and the variance, the lowest error will generally occur when both bias and variance are low. This also fits our understanding of the definitions of bias and variance, as we wish to obtain a model that is neither high in bias (underfitted) or high in variance (overfitted).
+
 
 With the theory explained, we can go on to describe how we have applied it to our problem.
 
@@ -268,43 +497,62 @@ To gain insight into how the three different regression methods work, we experim
 %%%%%%% FIGURES %%%%%%%%%
 \begin{figure*} 
 \centerline{\includegraphics[width=6.85in]{figure/frankenonoise.png}}
-\caption{A comparison the our prediction and the Franke function with no noise}
+\caption{A comparison of our best OLS prediction and the Franke function with no noise, at polynomial degree 10}
 \label{frankenonoise}
 \end{figure*}
 
 \begin{figure} 
 \centerline{\includegraphics[width=3.25in]{figure/frankenonoisemse.png}}
-\caption{Test and train MSE for the Franke function with no noise}
+\caption{Test and train MSE for the Franke function with no noise, using OLS}
 \label{frankenonoisemse}
 \end{figure}
 
-\begin{figure} 
-\centerline{\includegraphics[width=3.25in]{figure/frankenonoiser2.png}}
-\caption{Test and train R2-score for the Franke function with no noise}
-\label{frankenonoiser2}
-\end{figure}
+We find that OLS creates a good fit for the Franke Function. We can increase our polynomial degree to around 20 before we see signs of overfitting. \footnote{Here we also see something a bit surprising: We see that our own implementation of OLS follows Scikit's implementation up to around polynomial degree 10, at which point scikit's MSE increases rapidly. We chalk this up to numerical errors and differing implementation of the normal equations, as we simply use the normal equation exactly, while scikit uses an implementation which is probably computationally more efficient but gives slight differences when comparing to the normal equation. These differences seem to create a large error after a certain size of the design matrix is reached, which we can not adequately explain.} This is most likely because the Franke function is a sum of exponents, which can be expanded into polynomials. We would expect to see higher polynomial degrees give us better and better prediction, up to a certain point. When we reach degrees higher than around 20, we see that our test error increases slightly, a sign of overfitting. This is also to be expected, as even if the continual Franke function could be expanded into a series of polynomials, we are working with a limited dataset of only 400 samples (and only 320 of those in our training set). As we reach higher and higher degrees, we are more and more likely to see unlucky train-test-splits where the best fit for the training data leads to large errors for the test data. See Fig.~\ref{frankenonoise} for a comparison between the Franke function and our best prediction, which shows that they are essentially identical. Fig.~\ref{frankenonoisemse} shows the train and test MSE by polynomial degree. The MSE for test in these plots is the average MSE for 100 bootstraps. 
+
+However, when we introduce a stochastic noise, we see that overfitting happens rapidly. Without a regularization hyperparameter, parameters fluctuate wildly and our prediction suffers. Fig.~\ref{frankenoisemse} shows our MSE up to polynomial degree 25 with an added stochastic noise $\epsilon \sim N(0,0.05)$, where we see that we are overfitting severely. See Fig.~\ref{frankienoisecomparison} in the appendix for test MSE for more and more noisy target values. 
 
 \begin{figure} 
 \centerline{\includegraphics[width=3.25in]{figure/frankenoisemse.png}}
-\caption{Test and train MSE for the Franke function with noise}
+\caption{Test and train MSE for the Franke function with noise, using OLS}
 \label{frankenoisemse}
 \end{figure}
 
+By using bootstrap resampling, we can study the bias-variance-tradeoff, which shows how the variance of our model between different bootstraps iterations increases as our model overfits our noisy data. See Fig.~\ref{frankiebiasvariance}. Clearly, we need to introduce regularization if we want a model that does not overfit.
+
 \begin{figure} 
-\centerline{\includegraphics[width=3.25in]{figure/frankenoiser2.png}}
-\caption{Test and train R2-score for the Franke function no noise}
-\label{frankenoiser2}
+\centerline{\includegraphics[width=3.25in]{figure/frankiebiasvariance.png}}
+\caption{Bias, variance and test MSE plotted over polynomial degree for our OLS prediction on the Franke function with an added stochastic noise $\epsilon \sim N(0,0.05)$}
+\label{frankiebiasvariance}
 \end{figure}
 
-We find that OLS creates a good fit for the Franke Function. We see few signs of overfitting, even for large polynomial degrees. This is most likely because the Franke function is a sum of exponents, which can be expanded into polynomials. We would expect to see higher polynomial degrees give us better and better prediction, when there is no noise that could give rise to overfitting. See Fig.~\ref{frankenonoise} for a comparison between the Franke function and our prediction, which shows that they are essentially identical. Fig.~\ref{frankenonoisemse} and Fig.~\ref{frankenonoiser2} shows the train and test MSE and R2 by polynomial degree, and shows that we are not overfitting even for polynomial degree 25. The MSE for test in these plots is the average MSE for 100 bootstraps.
+Table. ~\ref{ols_mse_table} shows the best polynomial degree and MSE for regular and noisy data. Here we see that the best degree without noise is 10, which shows that even without noise, the low amount of data leads to a slight overfit even at very small polynomial degrees. This is not surprising, as at $N = 10$ we have $66$ features, which is a substantial amount compared to our measly 320 training datapoints. We could of course arbitrarily increase our dataset to ludicrous levels, but doing linear regression with this amount of data gives valuable insight into how our performance is dependent on our availiable data.
 
-However, when we introduce a stochastic noise, we see that overfitting happens rapidly. Without a regularization hyperparameter, we see that the parameters fluctuate wildly and our prediction suffers. Fig.~\ref{frankenoisemse} and Fig.~\ref{frankenoiser2} shows our MSE and R2 up to polynomial degree 25, where we see that we are overfitting severely. See Fig.~\ref{frankienoisecomparison} in the appendix for test MSE for more and more noisy target values. Here we also see something a bit surprising: We see that our own implementation of OLS follows Scikit's implementation up to around polynomial degree DEGREE, at which point scikit's MSE increases rapidly. We chalk this up to numerical errors and differing implementation of the normal equations, as we simply use the normal equation exactly, while scikit uses an implementation which is probably computationally more efficient but gives slight differences when comparing to the normal equation. These differences seem to create a large error when the model is overfitted, which we can not adequately explain.
-
-By using bootstrap resampling, we can study the bias-variance-tradeoff, which shows how the variance between different bootstraps iterations increases as our model overfits our noisy data. See Fig. 3. Clearly, we need to introduce regularization if we want a model that does not overfit.
+\begin{table}[t]
+\caption{Best MSE and polynomial degree for OLS}
+\begin{center}
+\label{ols_mse_table}
+\begin{tabular}{c l l}
+& & \\ % put some space after the caption
+\hline
+Std of noise & Best MSE & Best degree \\
+\hline
+0 & 0.0004335 & 10\\
+0.05 & 0.0038302 & 7 \\
+0.10 & 0.0139833 & 7 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
 
 \subsubsection{Ridge}
 
-Using Ridge regression, we see from Fig. NUMBER that larger and larger values of $\lambda$ efficiently prevents overfitting and reduces the variance between predictions. Using Scikit's gridsearch, we find the optimal $\lambda$ to be NUMBER and the optimal polynomial degree to be DEGREE, with an average MSE of NUMBER, which is lower than OLS for the Franke function with an added stochastic noise $\epsilon \sim N(0,0.05)$. Ridge regression successfully reduces the model complexity and prevents overfitting for higher polynomial degrees.
+Using Ridge regression, we see from Fig.~\ref{frankiedifflambdas} that larger and larger values of $\lambda$ efficiently prevents overfitting and reduces the variance between predictions. Using Scikit's gridsearch, we find the optimal $\lambda$ to be $10^{-8}$ and the optimal polynomial degree to be 7, with an average MSE of $0.0037999$, which is very slightly lower than OLS for the Franke function with an added stochastic noise $\epsilon \sim N(0,0.05)$. We see from this that Ridge regression has not really had much of an effect in decreasing the MSE. A possible reason for this is again the form of our synthetic data.
+
+\begin{figure} 
+\centerline{\includegraphics[width=3.25in]{figure/frankiedifflambdas.png}}
+\caption{Bias, variance and test MSE plotted over polynomial degree for our Ridge prediction on the Franke function with an added stochastic noise $\epsilon \sim N(0,0.05)$, using lambdas of increasing size. Here we have reduced the number of datapoints to only 100 to force overfitting earlier.}
+\label{frankiedifflambdas}
+\end{figure}
 
 \subsubsection{Lasso}
 
@@ -316,133 +564,52 @@ With the confidence that our methods work as expected on synthetic data, we turn
 
 \subsubsection{Ordinary Least Squares}
 
-Here we find some limitations of linear regression. We see from Fig. NUMBER that the we are able to fit the terrain up to a certain point, gaining an MSE of NUMBER with OLS with polynomial degree DEGREE. However, we see that beyond this, we have little to gain. This can be seen when we increase the polynomial degree to very large amounts, without seeing any decrease in MSE (Fig. NUMBER). Looking at the beta progression for selected betas (Fig. NUMBER), we see that the parameters stabilize, which implies that we are not overfitting, but simply reaching our best possible prediction for polynomial regression. The fact that we are not overfitting is further reinforced by looking at the bias-variance plot in Fig. NUMBER, which shows no increase in variance. It is reasonable to expect that our model will not overfit, due to the large increase in data we now use for the fit. Our synthetic data used $20 x 20 = 400$ datapoints, while we now have $320 x 640 = 204 800$ datapoints. This means that for a 50th order polynomial, which will have $1326$ features, our number of features are less than $1\%$ of our datapoints. If we decrease the number of datapoints used for training considerably, we can see overfitting start to occur (see Appendix 1). So we are not overfitting, but we are not decreasing our MSE either. This is likely because the elevation data has a jagged and complex shape, which cannot be accurately recreated, even with a polynomial of degree $50$. We should remember that the Franke function can be expanded into a series of polynomials, which is why we can decrease our MSE as much as we like by increasing our model complexity (as long as our data is not noisy). The same is not true for our elevation data, and as such we have little to gain from increasing our model complexity after a certain point. Clearly, linear regression does not offer a very good tradeoff between computational cost and performance for this data.
+Here we find some limitations of linear regression. We see from Fig. NUMBER that the we are able to fit the terrain up to a certain point, gaining an MSE of NUMBER with OLS with polynomial degree DEGREE. However, we see that beyond this, we have little to gain. This can be seen when we increase the polynomial degree to very large amounts, without seeing any decrease in MSE (Fig. NUMBER). Looking at the beta progression for selected betas (Fig. NUMBER), we see that the parameters stabilize, which implies that we are not overfitting, but simply reaching our best possible prediction for polynomial regression. The fact that we are not overfitting is further reinforced by looking at the bias-variance plot in Fig. NUMBER, which shows no increase in variance. It is reasonable to expect that our model will not overfit, due to the large increase in data we now use for the fit. Our synthetic data used $20 x 20 = 400$ datapoints, while we now have $320 x 640 = 204 800$ datapoints. This means that for a 50th order polynomial, which will have $1326$ features, our number of features are less than $1\%$ of our datapoints. If we decrease the number of datapoints used for training considerably, we can see overfitting start to occur (see Appendix 1). So we are not overfitting, but we are not decreasing our MSE either. This is likely because the elevation data has a jagged and complex shape, which cannot be accurately recreated, even with a polynomial of degree $50$. We should remember that the Franke function can be expanded into a series of polynomials, which is why we can expect to get a lower and lower MSE as the polynomial degree increases (so long as we have enough data and it is not noisy). The same is not true for our elevation data, and as such we have little to gain from increasing our model complexity after a certain point. Clearly, linear regression does not offer a very good tradeoff between computational cost and performance for this data.
 
 \subsubsection{Ridge Regression}
 
 As our model is not overfitting, we do not expect Ridge to offer much improvement. 
 
-\newpage
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Figures}
-\label{sect_figure}
-
-All figures should be positioned at the top of the page where possible.  All figures should be numbered consecutively and centered under the figure as shown in Fig.~\ref{figure_ASME}. All text within the figure should be no smaller than 7~pt. There should be a minimum two line spaces between figures and text. The number of a referenced figure or table in the text should be preceded by Fig.\ or Tab.\ respectively unless the reference starts a sentence in which case Fig.\ or Tab.\ should be expanded to Figure or Table.
+% All figures should be positioned at the top of the page where possible.  All figures should be numbered consecutively and centered under the figure as shown in Fig.~\ref{figure_ASME}. All text within the figure should be no smaller than 7~pt. There should be a minimum two line spaces between figures and text. The number of a referenced figure or table in the text should be preceded by Fig.\ or Tab.\ respectively unless the reference starts a sentence in which case Fig.\ or Tab.\ should be expanded to Figure or Table.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%% begin figure %%%%%%%%%%%%%%%%%%%
-\begin{figure}[t]
-\begin{center}
-\setlength{\unitlength}{0.012500in}%
-\begin{picture}(115,35)(255,545)
-\thicklines
-\put(255,545){\framebox(115,35){}}
-\put(275,560){Beautiful Figure}
-\end{picture}
-\end{center}
-\caption{The caption of a single sentence does not have period at the end}
-\label{figure_ASME} 
-\end{figure}
+% \begin{figure}[t]
+% \begin{center}
+% \setlength{\unitlength}{0.012500in}%
+% \begin{picture}(115,35)(255,545)
+% \thicklines
+% \put(255,545){\framebox(115,35){}}
+% \put(275,560){Beautiful Figure}
+% \end{picture}
+% \end{center}
+% \caption{The caption of a single sentence does not have period at the end}
+% \label{figure_ASME} 
+% \end{figure}
 %%%%%%%%%%%%%%%% end figure %%%%%%%%%%%%%%%%%%% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In the following subsections, I have inserted figures that have been provided by authors in order to demonstrate what to avoid.  In each case the authors provided figures that are 3.25in wide and 600dpi in the .tif graphics format.  The papers containing these figures have been held from production due to their poor quality. 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{The 1st Example of Bad Figure}
 
 %%%%%%%%%%%%%%%% begin figure %%%%%%%%%%%%%%%%%%%
-%%% 3.34in is the maximum width you can have for a figure
-\begin{figure} 
-\centerline{\includegraphics[width=3.34in]{figure/FMANU_MD_05_1107_11.jpg}}
-\caption{Example taken from a paper that was held from production because the image quality is poor.  ASME sets figures captions in 8pt, Helvetica Bold.}
-\label{fig_example1.jpg}
-\end{figure}
-%%%%%%%%%%%%%%%% end figure %%%%%%%%%%%%%%%%%%%
-
-In order to place the figure in this template using MSWord, select Insert Picture from File, and use wrapping that is top and bottom. Make sure the figure is 3.25in wide.
- 
-Figure~`\ref{fig_example1.jpg}
-was taken from a recent paper that was held from publication, because the text is fuzzy and unreadable. It was probably obtained by taking a screen shot of the computer output of the authors software. This means the original figure was 72dpi (dots per inch) on a computer screen. There is no way to improve the quality such a low resolution figure.
- 
-In order to understand how poor the quality of this figure is, please zoom in slightly, say to 200\%.  Notice that while the font of the paper is clear at this size, the font in the figures is fuzzy and blurred.  It is impossible to make out the small symbol beside the numbers along the abscissa of the graph.  Now consider the labels Time and Cost. They are clearly in fonts larger that the text of the article, yet the pixilation or rasterization, associated with low resolution is obvious. This figure must be regenerated at higher resolution to ensure quality presentation.
-
-The poor quality of this figure is immediately obvious on the printed page, and reduces the impact of the research contribution of the paper, and in fact detracts from the perceived quality of the journal itself.
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{The 2nd Example of Bad Figure}
-
-%%%%%%%%%%%%%%%% begin figure %%%%%%%%%%%%%%%%%%%
-\begin{figure} 
-\centerline{\includegraphics[width=3.34in]{figure/FMANU_MD_05_1272_5.jpg}}
-\caption{While this figures is easily readable at a double column width of 6.5in, when it is shrunk to 3.25in column width the text is unreadable. This paper was held from production.}
-\label{fig_example2.jpg}
-\end{figure}
-%%%%%%%%%%%%%%%% end figure %%%%%%%%%%%%%%%%%%%
-
-Figure~\ref{fig_example2.jpg}
-demonstrates a common problem that arises when a figure is scaled down fit a single column width of 3.25in.  The original figure had labels that were readable at full size, but become unreadable when scaled to half size.  This figure also suffers from poor resolution as is seen in the jagged lines the ovals that form the chain.
-
-This problem can be addressed by increasing the size of the figure to a double column width of 6.5in, so the text is readable.  But this will not improve the line pixilation, and a large low resolution figure is less desirable than a small one.  This also significantly expands the length of the paper, and may cause it to exceed the JMD nine page limit.  Additional pages require page charges of \$200 per page.  It is best to regenerate the figure at the resolution that ensures a quality presentation.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{The 3rd Example of Bad Figure}
-%%%%%%%%%%%%%%%% begin figure %%%%%%%%%%%%%%%%%%%
-\begin{figure} 
-\centerline{\includegraphics[width=3.25in]{figure/FMANU_MD_04_1274_13.jpg}}
-\caption{Another example of a figure with unreadable text.  Even when the paper was expanded to double column width the text as shown in Fig.~\ref{fig_example4.jpg} was of such low quality that the paper was held from production.}
-\label{fig_example3.jpg}
-\end{figure}
+% \begin{figure} 
+% \centerline{\includegraphics[width=3.34in]{figure/FMANU_MD_05_1272_5.jpg}}
+% \caption{While this figures is easily readable at a double column width of 6.5in, when it is shrunk to 3.25in column width the text is unreadable. This paper was held from production.}
+% \label{fig_example2.jpg}
+% \end{figure}
 %%%%%%%%%%%%%%%% end figure %%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%% begin figure %%%%%%%%%%%%%%%%%%%
 %%% the maximum width in double column is 6.85in
-\begin{figure*} 
-\centerline{\includegraphics[width=6.85in]{figure/FMANU_MD_04_1274_13.jpg}}
-\caption{A figure expanded to double column width the text from Figure~\ref{fig_example3.jpg}}
-\label{fig_example4.jpg}
-\end{figure*}
+% \begin{figure*} 
+% \centerline{\includegraphics[width=6.85in]{figure/FMANU_MD_04_1274_13.jpg}}
+% \caption{A figure expanded to double column width the text from Figure~\ref{fig_example3.jpg}}
+% \label{fig_example4.jpg}
+% \end{figure*}
 %%%%%%%%%%%%%%%% end figure %%%%%%%%%%%%%%%%%%%
-An author provided the high resolution image 
-in Fig.~\ref{fig_example3.jpg}
-that was sized to a single column width of 3.25in.  Upon seeing the poor quality of the text, the publisher scaled the image to double column width as shown in Fig.~\ref{fig_example4.jpg} 
-at which point it took half of a page.  The publisher went on to do this for all eight figures generating four pages of figures that the author did not expect. ASME stopped production of the paper even with the larger figures due to the pixilation of the font.
-
-Clearly the text in this figure is unreadable, and it is doubtful that the author can print the output in a way that it is readable.  This is a problem that the author must solve, not the publisher. 
-
-As you might expect, I have many more examples, but in the end the author is the best judge of what is needed in each figure.  ASME simply requires that the image meet a minimum standard for font and line quality, specifically the font should be the appropriate size and not be blurred or pixilated, and that lines should be the appropriate weight and have minimal, preferably no, pixilation or rasterization.
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Tables}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%% begin table   %%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{table}[t]
-\caption{Figure and table captions do not end with a period}
-\begin{center}
-\label{table_ASME}
-\begin{tabular}{c l l}
-& & \\ % put some space after the caption
-\hline
-Example & Time & Cost \\
-\hline
-1 & 12.5 & \$1,000 \\
-2 & 24 & \$2,000 \\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
-%%%%%%%%%%%%%%%% end table %%%%%%%%%%%%%%%%%%% 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-All tables should be numbered consecutively  and centered above the table as shown in Table~\ref{table_ASME}. The body of the table should be no smaller than 7 pt.  There should be a minimum two line spaces between tables and text.
 
 
 \bibliographystyle{alpha}
@@ -454,7 +621,7 @@ All tables should be numbered consecutively  and centered above the table as sho
 
 \begin{figure} 
 \centerline{\includegraphics[width=3.25in]{figure/frankienoisecomparison.png}}
-\caption{Test and train MSE for the Franke function with no noise}
+\caption{Test and train MSE for the Franke function with an increasing amount of noise}
 \label{frankienoisecomparison}
 \end{figure}
 

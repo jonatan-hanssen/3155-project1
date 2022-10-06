@@ -1,14 +1,3 @@
-\begin{thebibliography}{GBC16}
-
-\bibitem[Bis06]{cmb}
-C.~M. Bishop.
-\newblock {\em Pattern Recognition and Machine Learning}.
-\newblock Springer, New York, NY, 2006.
-
-\bibitem[GBC16]{gbc}
-Ian Goodfellow, Yoshua Bengio, and Aaron Courville.
-\newblock {\em Deep Learning}.
-\newblock MIT Press, 2016.
-\newblock http://www.deeplearningbook.org.
+\begin{thebibliography}{}
 
 \end{thebibliography}
