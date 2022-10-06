@@ -316,7 +316,103 @@ Theoretically, because both two resampling techniques use the central limit theo
 \subsubsection{Bias-variance trade-off}
 
 A crucial part of model evaluation is ensuring that the model is neither underfitted nor overfitted, which we can determine by observing the relationship between the bias and the variance. Bias is defined as $(Bias[\tilde{y}])^2 = (y-E[\tilde{y}])^2$, the difference between the expected value of our prediction and the observed value. Models with high bias are usually underfitted, whilst models with low bias are the opposite. Variance on the other hand is defined as $var[\tilde{f}] = \frac{1}{n}\sum(\tilde{y_i}-E[\tilde{y}])^2$, how far away predictions are from the mean prediction. Models with high variance are usually overfitted to the training data, whilst low variance models are the opposite.
-A good rule of thumb for finding a good fit is looking at the intercept between bias and variance. This is because the cost function <PROOF task c>. Because the cost function is a sum of the bias and the variance, the lowest error will generally occur when both bias and variance are low. This also fits our understanding of the definitions of bias and variance, as we wish to obtain a model that is neither high in bias (underfitted) or high in variance (overfitted).
+
+A good rule of thumb for finding a good fit is looking at the intercept between bias and variance. This is because the cost function can be decomposed into these two elements. The proof for this is as follows:
+
+Given data $\bm{y} = f(\bm{x}) + \bm{\epsilon}$ and a OLS model $\bm{\tilde{y}} = X\bm{\beta}$, we define
+the Mean Squared Error as follows
+
+\begin{gather}
+C(X,\beta) = \frac{1}{n}\sum_{i=0}^{n-1}(y_i - \tilde{y_i})^2
+\end{gather}
+
+This is simply the expectation value of $(\bm{y} - \bm{\tilde{y}})^2$
+
+\begin{gather}
+C(X,\beta) = E\left[(\bm{y} - \bm{\tilde{y}})^2\right]
+\end{gather}
+
+To derive the bias variance decomposition, we now add $E[\bm{\tilde{y}}] - E[\bm{\tilde{y}}]$ 
+as a sneaky trick. We will also replace $\bm{y}$ with our definition $\bm{y} = \bm{f} + \bm{\epsilon}$
+
+\begin{gather}
+C(X,\beta) = E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}] + E[\bm{\tilde{y}}] - \bm{\tilde{y}})^2\right]
+\end{gather}
+%%%%%%%%%%%%%%%%%5
+\begin{multline}
+= E[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2 + 2[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])(E[\bm{\tilde{y}}] \\
+	- \bm{\tilde{y}})] +(E[\bm{\tilde{y}}] - \bm{\tilde{y}})^2]
+\end{multline}
+
+\begin{multline}
+= E[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2] + \\
+	2E[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])(E[\bm{\tilde{y}}] - \bm{\tilde{y}})] + E[(E[\bm{\tilde{y}}] - \bm{\tilde{y}})^2]
+\end{multline}
+
+Let us focus our attention on the middle term first.
+
+\begin{gather}
+2E\left[(\bm{f} + \bm{\epsilon} + E[\bm{\tilde{y}}])(E[\bm{\tilde{y}}] - \bm{\tilde{y}})\right] 
+\end{gather}
+
+Expanding the multiplication:
+
+\begin{gather}
+2E\left[\bm{f}E[\bm{\tilde{y}}] + \bm{\epsilon}E[\bm{\tilde{y}}] - E[\bm{\tilde{y}}]E[\bm{\tilde{y}}] - \bm{f}\bm{\tilde{y}} - \bm{\epsilon}\bm{\tilde{y}} + E[\bm{\tilde{y}}]\bm{\tilde{y}}\right] 
+\end{gather}
+
+Distributing the expectation value:
+
+\begin{gather}
+2\left[E[\bm{f}E[\bm{\tilde{y}}]] + E[\bm{\epsilon}E[\bm{\tilde{y}}]] - E[E[\bm{\tilde{y}}]E[\bm{\tilde{y}}]] - E[\bm{f}\bm{\tilde{y}}] - E[\bm{\epsilon}\bm{\tilde{y}}] + E[E[\bm{\tilde{y}}]\bm{\tilde{y}}]\right] 
+\end{gather}
+
+We know that $\bm{\tilde{y}}$ and $\bm{f}$ are non-stochastic, and we know that the expectation value of $\bm{\epsilon}$ is $0$. We also know that 
+$\bm{\epsilon}$ and $\bm{\tilde{y}}$ are independent, which means we can write $E[\bm{\epsilon}\bm{\tilde{y}}]$ as $E[\bm{\epsilon}]E[\bm{\tilde{y}}]$ We therefore have
+
+\begin{gather}
+2\left[\bm{f}\bm{\tilde{y}} + 0 - \bm{\tilde{y}}\bm{\tilde{y}} - \bm{f}\bm{\tilde{y}} - 0 + \bm{\tilde{y}}\bm{\tilde{y}}\right] = 0 
+\end{gather}
+
+We then have
+
+\begin{gather}
+C(X,\beta) = E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2\right] + E\left[(E[\bm{\tilde{y}}] - \bm{\tilde{y}})^2\right] 
+\end{gather}
+
+The second term is by definition the variance of model.
+
+\begin{gather}
+C(X,\beta) = E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2\right] + var[\bm{\tilde{f}}] 
+\end{gather}
+
+And now the final term
+
+\begin{gather}
+E\left[(\bm{f} + \bm{\epsilon} - E[\bm{\tilde{y}}])^2\right]
+\end{gather}
+
+\begin{multline}
+= E[\bm{f}^2 + \bm{f}\bm{\epsilon} - \bm{f}E[\bm{\tilde{y}}] + \bm{f\epsilon} + \bm{\epsilon}^2 - \\ 
+	\bm{\epsilon}E[\bm{\tilde{y}}] - \bm{f}E[\bm{\tilde{y}}] - \bm{\epsilon}E[\bm{\tilde{y}}] + E[\bm{\tilde{y}}]^2]
+\end{multline}
+
+After distributing the expectation value we get the following, keeping in mind that $E[\bm{f}] = E[\bm{y} - \bm{\epsilon}] = E[\bm{y}] - E[\bm{\epsilon}] = \bm{y}$
+
+\begin{gather}
+\bm{y}^2 - 2\bm{y}\bm{\tilde{y}} + E[\bm{\tilde{y}}]^2 + \sigma^2 \\
+(\bm{y} + E[\bm{\tilde{y}}]^2 + \sigma^2 
+\end{gather}
+
+We see that the quadratic form is equal to $bias[\bm{\tilde{y}}]^2$. We can then conclude that the cost function can be rewritten as follows:
+
+\begin{gather}
+C(X,\beta) = bias[\bm{\tilde{y}}]^2 + var[\bm{\tilde{f}}] + \sigma^2 
+\end{gather}
+
+
+Because the cost function is a sum of the bias and the variance, the lowest error will generally occur when both bias and variance are low. This also fits our understanding of the definitions of bias and variance, as we wish to obtain a model that is neither high in bias (underfitted) or high in variance (overfitted).
+
 
 With the theory explained, we can go on to describe how we have applied it to our problem.
 
