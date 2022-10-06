@@ -144,7 +144,9 @@ def crossval(
 def bias_variance(z_test: np.ndarray, z_preds_test: np.ndarray):
     MSEs, _ = scores(z_test, z_preds_test)
     error = np.mean(MSEs)
-    bias = np.mean((z_test - np.mean(z_preds_test, axis=1, keepdims=True).flatten()) ** 2)
+    bias = np.mean(
+        (z_test - np.mean(z_preds_test, axis=1, keepdims=True).flatten()) ** 2
+    )
     variance = np.mean(np.var(z_preds_test, axis=1, keepdims=True))
 
     return error, bias, variance

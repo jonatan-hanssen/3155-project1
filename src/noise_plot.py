@@ -3,6 +3,11 @@ own idea: make a plot MSE test error for different levels of noise
 """
 # Our own library of functions
 from utils import *
+import matplotlib
+
+font = {"family": "normal", "size": 25}
+
+matplotlib.rc("font", **font)
 
 np.random.seed(42069)
 
@@ -14,10 +19,11 @@ z = FrankeFunction(x, y)
 zs = SkrankeFunction(x, y)
 
 # parameters
-N = 20
+N = 10
 noises = np.linspace(0, 0.2, 5)
 scaling = False
 bootstraps = 100
+
 
 def noise_plot(x, y, z, N, noise, scaling, bootstraps):
     # add noise
@@ -50,7 +56,13 @@ def noise_plot(x, y, z, N, noise, scaling, bootstraps):
 for noise in noises:
     test_errors = noise_plot(x, y, z, N, noise, scaling, bootstraps)
     # plot
-    plt.plot(test_errors, label=f"test error noise={round(noise, 2)}", marker="o", markersize=3)
+    plt.plot(
+        test_errors,
+        label=f"test error noise={round(noise, 2)}",
+        marker="o",
+        markersize=4,
+        linewidth=3,
+    )
 plt.ylim(0, 0.3)
 plt.xlabel("Polynomial degree (N)")
 plt.ylabel("MSE score")

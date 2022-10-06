@@ -5,6 +5,7 @@ task b (and task g): plot terrain, approximate terrain with OLS and calculate MS
 from imageio import imread
 import sys
 import argparse
+import matplotlib
 
 # Our own library of functions
 from utils import *
@@ -13,9 +14,7 @@ np.random.seed(42069)
 
 argv = sys.argv[1:]
 
-parser = argparse.ArgumentParser(
-    description="Compute task g.b"
-)
+parser = argparse.ArgumentParser(description="Compute task g.b")
 
 # filename is optional
 parser.add_argument("-f", "--file", help="The filename to apply filter to")
@@ -24,7 +23,7 @@ parser.add_argument("-f", "--file", help="The filename to apply filter to")
 args = parser.parse_args()
 
 # parameters
-N = 20
+N = 25
 betas_to_plot = 9
 noise = 0.05
 scaling = False
@@ -91,6 +90,11 @@ MSE_test_sk, R2_test_sk = scores(z_test, z_preds_test_sk)
 pred_map = z_preds[:, -1].reshape(z.shape)
 
 # ------------ PLOTTING 3D -----------------------
+
+font = {"family": "normal", "size": 25}
+
+matplotlib.rc("font", **font)
+
 fig = plt.figure(figsize=plt.figaspect(0.3))
 
 # Subplot for terrain
@@ -137,7 +141,7 @@ plt.show()
 if betas_to_plot <= betas.shape[0]:
     for beta in range(betas_to_plot):
         data = betas[beta, :]
-        data[data==0] = np.nan
+        data[data == 0] = np.nan
         plt.plot(data, label=f"beta{beta}", marker="o", markersize=3)
         plt.xlabel("Polynomial degree (N)")
         plt.ylabel("Beta value")
@@ -147,21 +151,40 @@ if betas_to_plot <= betas.shape[0]:
 
 print(f"Minimal MSE_test value = {np.min(MSE_test)} for N = {np.argmin(MSE_test)}")
 #    plt.suptitle(f"Datapoints = {len(x)*len(y)}, Parameters: N = {N}, noise = {noise}, scaling = {scaling}", fontsize=6)
-plt.plot(MSE_train, label="train implementation", marker="o", markersize=3)
-plt.plot(MSE_test, label="test implementation", marker="o", markersize=3)
-plt.plot(MSE_train_sk, "r--", label="train ScikitLearn", marker="o", markersize=3)
-plt.plot(MSE_test_sk, "g--", label="test ScikitLearn", marker="o", markersize=3)
+plt.plot(
+    MSE_train, label="train own implementation", marker="o", markersize=4, linewidth=3
+)
+plt.plot(
+    MSE_test, label="test own implementation", marker="o", markersize=4, linewidth=3
+)
+plt.plot(
+    MSE_train_sk,
+    "r--",
+    label="train ScikitLearn",
+    marker="o",
+    markersize=4,
+    linewidth=3,
+)
+plt.plot(
+    MSE_test_sk, "g--", label="test ScikitLearn", marker="o", markersize=4, linewidth=3
+)
+plt.ylim(0, 0.1)
 plt.ylabel("MSE score")
 plt.xlabel("Polynomial degree (N)")
 plt.title("MSE scores over model complexity")
 plt.legend()
 plt.show()
 
-#plt.suptitle(f"Datapoints = {len(x)*len(y)}, Parameters: N = {N}, noise = {noise}, scaling = {scaling}", fontsize=6)
-plt.plot(R2_train, label="train implementation", marker="o", markersize=3)
-plt.plot(R2_test, label="test implementation", marker="o", markersize=3)
-plt.plot(R2_train_sk, "r--", label="train ScikitLearn", marker="o", markersize=3)
-plt.plot(R2_test_sk, "g--", label="test ScikitLearn", marker="o", markersize=3)
+# plt.suptitle(f"Datapoints = {len(x)*len(y)}, Parameters: N = {N}, noise = {noise}, scaling = {scaling}", fontsize=6)
+plt.plot(R2_train, label="train implementation", marker="o", markersize=4, linewidth=3)
+plt.plot(R2_test, label="test implementation", marker="o", markersize=4, linewidth=3)
+plt.plot(
+    R2_train_sk, "r--", label="train ScikitLearn", marker="o", markersize=4, linewidth=3
+)
+plt.plot(
+    R2_test_sk, "g--", label="test ScikitLearn", marker="o", markersize=4, linewidth=3
+)
+plt.ylim(-2, 1)
 plt.ylabel("R2 score")
 plt.xlabel("Polynomial degree (N)")
 plt.title("R2 scores over model complexity")
