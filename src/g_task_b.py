@@ -6,6 +6,7 @@ task g: plot terrain, approximate terrain with OLS and calculate MSE, R2
 import numpy as np
 from imageio import imread
 import sys
+import argparse
 
 # Our own library of functions
 from utils import *
@@ -14,8 +15,18 @@ np.random.seed(42069)
 
 argv = sys.argv[1:]
 
+parser = argparse.ArgumentParser(
+    description="Compute task g.b"
+)
+
+# filename is positional and required
+parser.add_argument("file", help="The filename to apply filter to")
+
+# parse arguments and call run_filter
+args = parser.parse_args()
+
 # Load the terrain
-z_terrain1 = np.asarray(imread(argv[0]), dtype="float64")
+z_terrain1 = np.asarray(imread(args.file), dtype="float64")
 x_terrain1 = np.arange(z_terrain1.shape[0])
 y_terrain1 = np.arange(z_terrain1.shape[1])
 x1, y1 = np.meshgrid(x_terrain1, y_terrain1, indexing="ij")
