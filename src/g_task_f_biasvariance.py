@@ -3,7 +3,6 @@ task g: performs bias-variance tradeoff for lasso regression using the scikit le
         lasso model
 """
 from sklearn.linear_model import Lasso
-
 # Our own library of functions
 from utils import *
 
@@ -13,7 +12,7 @@ np.random.seed(42069)
 N = 20
 K = 20
 bootstraps = 100
-plot_only_best_lambda = True
+plot_only_best_lambda = False
 lambdas = np.logspace(-12, -4, 6)
 # synthetic parameters
 noise = 0.05
@@ -25,7 +24,7 @@ z = z.ravel()
 
 # plot only the gridsearched lambda
 if plot_only_best_lambda:
-    lasso = Lasso(fit_intercept=scaling)
+    lasso = Lasso(fit_intercept=False)
     lam, _, _ = find_best_lambda(X, z, lasso, lambdas, N, K)
     lambdas = [lam]
 

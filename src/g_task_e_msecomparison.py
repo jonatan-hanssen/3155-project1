@@ -14,7 +14,7 @@ N = 20
 K = 20
 bootstraps = 100
 noise = 0.05
-scaling = False
+scaling = True
 kfolds = KFold(n_splits=K)
 
 # if true, plot only lambda that gives lowest MSE
@@ -30,7 +30,7 @@ z = z.ravel()
 
 # plot only the gridsearched lambda
 if plot_only_best_lambda:
-    ridge = Ridge(fit_intercept=scaling)
+    ridge = Ridge(fit_intercept=False)
     lam, _, _ = find_best_lambda(X, z, ridge, lambdas, N, K)
     lambdas = [lam]
 
@@ -46,7 +46,7 @@ for i in range(len(lambdas)):
     errors_boot = np.zeros(N)
 
     # scikit model under testing
-    Ridge_model = Ridge(lambdas[i], fit_intercept=scaling)
+    Ridge_model = Ridge(lambdas[i], fit_intercept=False)
 
     # implemented model under testing
     model = ridge

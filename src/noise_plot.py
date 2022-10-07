@@ -24,7 +24,6 @@ noises = np.linspace(0, 0.2, 5)
 scaling = False
 bootstraps = 100
 
-
 def noise_plot(x, y, z, N, noise, scaling, bootstraps):
     # add noise
     z += noise * np.random.standard_normal(z.shape)
