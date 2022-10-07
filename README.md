@@ -5,11 +5,14 @@ This is the repo for the first assignment in FYS-STK3155. All code pair-programm
 
 # Run instructions
 To run a program for synthetic data (the franke function), simply run the program, for example:
+```
 python3 task_b.py
+```
 
 To run a program for real data (for example the SRTM data provided in ../data/), run the program with the filename as a parameter, for example:
+```
 python3 task_b.py -f ..\data\nearest_neighbor_SRTM_data_Norway_1.tif
-
+```
 
 # Parameters
 N = number of polynomial degrees to run : int
