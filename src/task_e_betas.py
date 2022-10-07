@@ -7,9 +7,8 @@ from utils import *
 np.random.seed(42069)
 
 # Parameters
-N = 20
-lambdas = np.logspace(-15, -9, 6)
-lambdas[-1] = 10000000000
+N = 10
+lambdas = np.logspace(-10, 0, 4)
 betas_to_plot = 9
 
 # Parameters for synthetic data
@@ -18,12 +17,13 @@ scaling = False
 
 # get data
 X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(
-    N, scaling, noise
+    N, scaling=scaling, noise=noise, step=0.1,
 )
 
 # calculate beta values
 for i in range(len(lambdas)):
-    plt.subplot(321 + i)
+    plt.subplot(411 + i)
+    plt.suptitle(f"Beta progression for different lambdas")
     betas, z_preds_train, z_preds_test, _ = linreg_to_N(
         X,
         X_train,
@@ -47,7 +47,7 @@ for i in range(len(lambdas)):
             plt.title("Beta progression")
             plt.legend()
 
-    plt.title(f"Beta progression for lambda = {lambdas[i]:.5}")
+    plt.title(f"lambda = {lambdas[i]:.5}")
     plt.legend()
 
 plt.show()

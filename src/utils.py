@@ -342,7 +342,7 @@ def find_best_lambda(X, z, model, lambdas, N, K):
     return best_lambda, best_MSE, best_polynomial
 
 
-def read_in_dataset(N, scaling, noise):
+def read_in_dataset(N, *, scaling=False, noise=0.05, step=0.05):
     argv = sys.argv[1:]
 
     parser = argparse.ArgumentParser(description="Compute task g.b")
@@ -370,8 +370,8 @@ def read_in_dataset(N, scaling, noise):
         )
     else:
         # create synthetic data
-        x = np.arange(0, 1, 0.05)
-        y = np.arange(0, 1, 0.05)
+        x = np.arange(0, 1, step)
+        y = np.arange(0, 1, step)
         x, y = np.meshgrid(x, y)
         z = FrankeFunction(x, y)
 

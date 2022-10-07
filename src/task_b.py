@@ -8,8 +8,8 @@ from utils import *
 np.random.seed(42069)
 
 # parameters
-N = 20
-betas_to_plot = 9
+N = 25
+betas_to_plot = 10
 # parameters for synthetic data
 noise = 0.05
 scaling = False
@@ -93,9 +93,9 @@ if betas_to_plot <= betas.shape[0]:
         data = betas[beta, :]
         data[data == 0] = np.nan
         plt.plot(data, label=f"beta{beta}", marker="o", markersize=3)
-        plt.xlabel("Polynomial degree (N)")
-        plt.ylabel("Beta value")
-        plt.title("Beta progression")
+        plt.xlabel("Polynomial degree (N)", size=15)
+        plt.ylabel("Beta value", size=15)
+        plt.title("Beta progression", size=22)
         plt.legend()
     plt.show()
 

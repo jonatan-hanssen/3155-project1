@@ -11,15 +11,15 @@ np.random.seed(42069)
 K = 20
 N = 10
 bootstraps = 100
-plot_only_best_lambda = True
-lambdas = np.logspace(-10, 0, 6)
+plot_only_best_lambda = False
+lambdas = np.logspace(-10, 0, 4)
 # parameter synthetic data
 noise = 0.05
 scaling = False
 
 # read in data
 X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(
-    N, scaling, noise
+    N, scaling=scaling, noise=noise, step=0.1,
 )
 z = z.ravel()
 
@@ -32,7 +32,7 @@ if plot_only_best_lambda:
 # for lambdas
 for i in range(len(lambdas)):
     if not plot_only_best_lambda:
-       plt.subplot(321 + i)
+       plt.subplot(411 + i)
        plt.suptitle(f"Bias variance tradeoff for ridge regression")
 
     # results
@@ -66,6 +66,7 @@ for i in range(len(lambdas)):
     plt.plot(errors, label="MSE test")
     plt.plot(biases, label="bias")
     plt.plot(variances, label="variance")
+    plt.ylim(0,0.12)
     plt.xlabel("Polynomial degree (N)")
     plt.tight_layout(h_pad=0.001)
     if plot_only_best_lambda:
