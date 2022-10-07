@@ -1,4 +1,6 @@
-import matplotlib.pyplot as plt
+"""
+task d (and task g): compare resampling method MSE for OLS over N polynomial degrees
+"""
 from sklearn.model_selection import cross_validate, KFold
 
 # Our own library of functions
@@ -6,48 +8,40 @@ from utils import *
 
 np.random.seed(42069)
 
-# make data
-x = np.arange(0, 1, 0.05)
-y = np.arange(0, 1, 0.05)
-x, y = np.meshgrid(x, y)
-z = FrankeFunction(x, y)
-zs = SkrankeFunction(x, y)
-
 # parameters
-N = 20
-noise = 0.05
-scaling = False
+N = 10
 K = 10
 bootstraps = 100
+# parameters for synthetic data
+noise = 0.05
+scaling = False
 
-# add noise
-z += noise * np.random.standard_normal(z.shape)
-
-# split datasets
-X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
-
+# read in data
+X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(
+    N, scaling, noise
+)
 z = z.ravel()
 
 # model under testing
 OLS_model = OLS
 
-# scikit model under testing
-OLS_model_scikit = LinearRegression(fit_intercept=scaling)
+# scikit comparison model
+OLS_scikit = LinearRegression(fit_intercept=False)
 kfolds = KFold(n_splits=K)
 
-# results cross validation
+# cross val results
 errors_cv = np.zeros(N)
 errors_cv_scikit = np.zeros(N)
 
-# results bootstrap
+# bootstrap results
 errors_boot = np.zeros(N)
 biases_boot = np.zeros(N)
 variances_boot = np.zeros(N)
 
-# cross validation
+# run cross val
 print("Cross")
 for n in range(N):
-    print(n) # progress counter
+    print(n)
     l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
 
     # own implementation
@@ -55,7 +49,7 @@ for n in range(N):
 
     # scikit
     error_scikit = cross_validate(
-        estimator=OLS_model_scikit,
+        estimator=OLS_scikit,
         X=X[:, :l],
         y=z,
         scoring="neg_mean_squared_error",
@@ -63,12 +57,13 @@ for n in range(N):
     )
     errors_cv_scikit[n] = np.mean(-error_scikit["test_score"])
 
-# bootstrap
+# run bootstrap
 print("Boot")
 for n in range(N):
     print(n)
     l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
-    z_preds_test = bootstrap(
+
+    z_preds = bootstrap(
         X[:, :l],
         X_train[:, :l],
         X_test[:, :l],
@@ -79,20 +74,21 @@ for n in range(N):
         model=OLS_model,
     )
 
-    error, bias, variance = bias_variance(z_test, z_preds_test)
+    # bias variance trade-off
+    error, bias, variance = bias_variance(z_test, z_preds)
     errors_boot[n] = error
     biases_boot[n] = bias
     variances_boot[n] = variance
 
+# plot
 plt.plot(errors_boot, label="bootstrap")
 plt.plot(errors_cv, label="cross validation implementation")
 plt.plot(errors_cv_scikit, label="cross validation scikit learn")
-plt.xlabel("Polynomial Degree (N)")
 plt.ylabel("MSE score")
-plt.suptitle(
-    "MSE by resampling method")
-plt.title(f"Datapoints = {len(x)*len(y)}, Parameters: N = {N}, noise = {noise}, scaling = {scaling}, K = {K}, bootstraps = {bootstraps}, scaling={scaling}, n={N}, k={K}, bootstraps={bootstraps}", fontsize=6)
-plt.ylim(0, 0.1)
-
+plt.xlabel("Polynomial degree (N)")
+plt.title(
+    f"MSE by Resampling Method"
+)
 plt.legend()
+
 plt.show()

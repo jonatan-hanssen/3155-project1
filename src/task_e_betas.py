@@ -1,31 +1,27 @@
-from mpl_toolkits.mplot3d import Axes3D
-import matplotlib.pyplot as plt
-from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
-import numpy as np
-from random import random, seed
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-
+"""
+task g: calculate and plot ridge beta value over model complexity
+"""
 # Our own library of functions
 from utils import *
 
 np.random.seed(42069)
-# Make data.
-x = np.arange(0, 1, 0.05)
-y = np.arange(0, 1, 0.05)
-x, y = np.meshgrid(x, y)
-z = FrankeFunction(x, y)
-# z = SkrankeFunction(x, y)
 
-# Highest order polynomial we fit with
-N = 30
-lam = 0.001
+# Parameters
+N = 20
+lambdas = np.logspace(-15, -9, 6)
+lambdas[-1] = 10000000000
+betas_to_plot = 9
 
-z += 0.05 * np.random.standard_normal(z.shape)
-X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
+# Parameters for synthetic data
+noise = 0.05
+scaling = False
 
-lambdas = np.logspace(-4, 4, 6)
+# get data
+X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(
+    N, scaling, noise
+)
+
+# calculate beta values
 for i in range(len(lambdas)):
     plt.subplot(321 + i)
     betas, z_preds_train, z_preds_test, _ = linreg_to_N(
@@ -35,19 +31,17 @@ for i in range(len(lambdas)):
         z_train,
         z_test,
         N,
-        scaling=True,
+        scaling=scaling,
         model=ridge,
         lam=lambdas[i],
     )
-    plt.plot(betas[0, :], label="beta0")
-    plt.plot(betas[1, :], label="beta1")
-    plt.plot(betas[2, :], label="beta2")
-    plt.plot(betas[3, :], label="beta3")
-    plt.plot(betas[4, :], label="beta4")
-    plt.plot(betas[5, :], label="beta5")
+
+    # plot beta values
+    if betas_to_plot <= betas.shape[0]:
+        for col in range(betas_to_plot):
+            plt.plot(betas[col, :], label=f"beta{col}", marker="o", markersize=3)
+
     plt.title(f"Beta progression for lambda = {lambdas[i]:.5}")
     plt.legend()
 
 plt.show()
-
-# linear_regression(x,y,z)

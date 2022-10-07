@@ -30,9 +30,9 @@ for i in range(len(lambdas)):
     plt.suptitle(f"MSE by polynomial degree for OLS, Ridge and Lasso regression")
 
     # models under testing
-    Ridge_model = Ridge(lambdas[i], fit_intercept=scaling)
-    Lasso_model = Lasso(lambdas[i], fit_intercept=scaling, max_iter=200)
-    OLS_model = LinearRegression(fit_intercept=scaling)
+    Ridge_model = Ridge(lambdas[i], fit_intercept=False)
+    Lasso_model = Lasso(lambdas[i], fit_intercept=False, max_iter=200)
+    OLS_model = LinearRegression(fit_intercept=False)
 
     # cross validate, get error
     print("OLS")
