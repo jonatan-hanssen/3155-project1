@@ -38,8 +38,14 @@ for i in range(len(lambdas)):
 
     # plot beta values
     if betas_to_plot <= betas.shape[0]:
-        for col in range(betas_to_plot):
-            plt.plot(betas[col, :], label=f"beta{col}", marker="o", markersize=3)
+        for beta in range(betas_to_plot):
+            data = betas[beta, :]
+            data[data == 0] = np.nan
+            plt.plot(data, label=f"beta{beta}", marker="o", markersize=3)
+            plt.xlabel("Polynomial degree (N)")
+            plt.ylabel("Beta value")
+            plt.title("Beta progression")
+            plt.legend()
 
     plt.title(f"Beta progression for lambda = {lambdas[i]:.5}")
     plt.legend()

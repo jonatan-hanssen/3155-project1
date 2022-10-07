@@ -56,7 +56,7 @@ ax.zaxis.set_major_locator(LinearLocator(10))
 ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
 ax.set_title("Scaled terrain")
 # Add a color bar which maps values to colors.
-fig.colorbar(surf, shrink=0.5, aspect=5)
+#fig.colorbar(surf_real, shrink=0.5, aspect=5)
 
 # Subplot for the prediction
 # Plot the surface.
