@@ -3,7 +3,6 @@ task f: Plots MSE comparison between OLS, ridge and lasso with cross validation 
 """
 from sklearn.linear_model import Ridge, Lasso
 from sklearn.model_selection import cross_validate, KFold
-from imageio import imread
 
 # Our own library of functions
 from utils import *

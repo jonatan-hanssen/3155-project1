@@ -12,20 +12,20 @@ np.random.seed(42069)
 N = 20
 K = 20
 bootstraps = 100
-plot_only_best_lambda = False
+plot_only_best_lambda = True
 lambdas = np.logspace(-12, -4, 6)
 # synthetic parameters
 noise = 0.05
-scaling = False
+scaling = True
 
 # read in and get data
-X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(N, scaling, noise)
+X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(N, scaling=scaling, noise=noise)
 z = z.ravel()
 
 # plot only the gridsearched lambda
 if plot_only_best_lambda:
     lasso = Lasso(fit_intercept=False)
-    lam, _, _ = find_best_lambda(X, z, lasso, lambdas, N, K)
+    lam, best_MSE, best_poly = find_best_lambda(X, z, lasso, lambdas, N, K)
     lambdas = [lam]
 
 # loop through different lambda values
@@ -35,7 +35,7 @@ for i in range(len(lambdas)):
            plt.suptitle(f"Bias variance tradeoff for lasso regression")
 
     # model under testing
-    model_Lasso = Lasso(lambdas[i], max_iter=200, fit_intercept=False)
+    model_Lasso = Lasso(lambdas[i], max_iter=1000, fit_intercept=False)
 
     # arrays for bias-variance
     errors = np.zeros(N)
@@ -71,10 +71,11 @@ for i in range(len(lambdas)):
     plt.xlabel("Polynomial degree (N)")
     plt.tight_layout(h_pad=0.001)
     if plot_only_best_lambda:
-        plt.title(f"Bias variance tradeoff for lasso regression for optimal lambda = {lambdas[i]}")
+        plt.title(f"Bias variance tradeoff for lasso regression \n for optimal lambda = {lambdas[i]}")
     else:
         plt.title(f"lambda = {lambdas[i]:.5}")
     plt.legend()
 
 
+print(f"Optimal lambda = {lam}, best MSE = {best_MSE}, best polynomial = {best_poly}")
 plt.show()

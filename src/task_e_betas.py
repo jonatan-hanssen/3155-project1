@@ -13,7 +13,7 @@ betas_to_plot = 9
 
 # Parameters for synthetic data
 noise = 0.05
-scaling = False
+scaling = True
 
 # get data
 X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(
@@ -42,12 +42,10 @@ for i in range(len(lambdas)):
             data = betas[beta, :]
             data[data == 0] = np.nan
             plt.plot(data, label=f"beta{beta}", marker="o", markersize=3)
-            plt.xlabel("Polynomial degree (N)")
-            plt.ylabel("Beta value")
-            plt.title("Beta progression")
-            plt.legend()
-
+    plt.xlabel("Polynomial degree (N)")
+    plt.ylabel("Beta value")
+    plt.title("Beta progression")
     plt.title(f"lambda = {lambdas[i]:.5}")
-    plt.legend()
+    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
 plt.show()

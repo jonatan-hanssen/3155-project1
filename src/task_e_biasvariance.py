@@ -15,7 +15,7 @@ plot_only_best_lambda = False
 lambdas = np.logspace(-10, 0, 4)
 # parameter synthetic data
 noise = 0.05
-scaling = False
+scaling = True
 
 # read in data
 X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(
