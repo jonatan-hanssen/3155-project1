@@ -21,9 +21,9 @@ K = number of folds in K-folds : int \
 bootstraps = number of bootstraps : int \
 lambdas = array of lambdas to test : ndarray \
 plot_only_best_lambda = plots only lambda which gives least MSE : bool \
-betas_to_plot = number of betas plotted on beta progression plot : int \
+betas_to_plot = number of betas plotted on beta progression plot : int
 
 # Additional parameters for synthetic data
 scaling = use our own centering implementation (note that real data automatically uses minmax, so we don't use our centering implementation) : bool \
 noise = how much noise is added to the synthetic data : float \
-step = amount of datapoints produced, default = 0.05 \
+step = amount of datapoints produced, default = 0.05
