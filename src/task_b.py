@@ -16,7 +16,7 @@ scaling = False
 
 # get data
 X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(
-    N, scaling, noise
+    N, scaling=scaling, noise=noise
 )
 
 # implemented model under testing

@@ -11,9 +11,10 @@ from utils import *
 N = 20
 K = 10
 noise = 0.05
-kfolds = KFold(n_splits=K)
 scaling = False
 lambdas = np.logspace(-12, -4, 6)
+
+kfolds = KFold(n_splits=K)
 
 errors_OLS = np.zeros(N)
 errors_Ridge = np.zeros(N)
