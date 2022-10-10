@@ -103,6 +103,7 @@ for beta in range(betas_to_plot):
 plt.show()
 
 print(f"Minimal MSE_test value = {np.min(MSE_test)} for N = {np.argmin(MSE_test)}")
+print(f"Beta vector for final regression: {betas[:,N]}")
 plt.plot(MSE_train, label="train implementation", marker="o", markersize=3)
 plt.plot(MSE_test, label="test implementation", marker="o", markersize=3)
 plt.plot(MSE_train_sk, "r--", label="train ScikitLearn", marker="o", markersize=3)

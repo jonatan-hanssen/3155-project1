@@ -24,7 +24,7 @@ def FrankeFunction(x, y):
 
 # debug function
 def SkrankeFunction(x, y):
-    return 1*x + 2*y + 3*x**2 + 4*x*y + 5*y**2
+    return 0 + 1*x + 2*y + 3*x**2 + 4*x*y + 5*y**2
 
 
 def create_X(x, y, n):
@@ -53,20 +53,14 @@ def MSE(y_data, y_model):
     return np.sum((y_data - y_model) ** 2) / n
 
 
-def OLS(
-    X_train: np.ndarray,
-    z_train: np.ndarray,
-):
+def OLS(X_train: np.ndarray, z_train: np.ndarray):
     beta = np.linalg.pinv(X_train.T @ X_train) @ X_train.T @ z_train
-
     return beta
 
 
-def ridge(X_train, z_train, lam, *, centering=False):
+def ridge(X_train, z_train, lam):
     L = X_train.shape[1]
-
     beta = np.linalg.pinv(X_train.T @ X_train + lam * np.eye(L)) @ X_train.T @ z_train
-
     return beta
 
 
@@ -85,15 +79,20 @@ def bootstrap(
     z_preds_train = np.empty((z_train.shape[0], bootstraps))
     z_preds_test = np.empty((z_test.shape[0], bootstraps))
 
+    # non resampled train
+    _, z_pred_train, _, _ = evaluate_model(
+        X, X_train, X_test, z_train, model, lam=lam, centering=centering
+    )
+
     for i in range(bootstraps):
         X_, z_ = resample(X_train, z_train)
-        _, z_pred_train, z_pred_test, _ = evaluate_model(
+        _, _, z_pred_test, _ = evaluate_model(
             X, X_, X_test, z_, model, lam=lam, centering=centering
         )
-        z_preds_train[:, i] = z_pred_train
+        # z_preds_train[:, i] = z_pred_train
         z_preds_test[:, i] = z_pred_test
 
-    return z_preds_test
+    return z_preds_test, z_pred_train
 
 
 def crossval(
@@ -276,7 +275,6 @@ def linreg_to_N(
     centering: bool = False,
     model: Callable = OLS,
     lam: float = 0,
-    bootstrap: bool = False,
 ):
     L = X_train.shape[1]
 

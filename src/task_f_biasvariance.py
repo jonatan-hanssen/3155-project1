@@ -54,7 +54,7 @@ for i in range(len(lambdas)):
     for n in range(N):
         print(n)
         l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
-        z_preds_test = bootstrap(
+        z_preds_test, _ = bootstrap(
             X[:, :l],
             X_train[:, :l],
             X_test[:, :l],
