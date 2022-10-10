@@ -434,7 +434,7 @@ X_{i*} = 1 \;\; x_i \;\; y_i \; x_i^2 \;\; x_i y_i \;\; y_i^2 \;\; ... \;\; x_i^
 
 \lstinputlisting[language=Python, firstline=27, lastline=42]{../src/utils.py}
 
-	While the creating of the design matrix is equivalent for the two datasets, the preprocessing of the data afterwards is not. For the Franke function, we claim that no normalization is needed, as we generate the data ourselves to be between $0$ and $1$. Given that we are doing a polynomial fit, every element in our design matrix will be a multiplication of $x^p$ and $y^k$ for different $p$'s and $k$'s, which, given our choice of range for $x$ and $y$, guarantees that every element is between $0$ and $1$. However, we have included a centering of the data, which has no effect on the Ordinary Least Squares regression, but which is used when applying Ridge and Lasso regression, to avoid punishing the intercept. The centering is done as follows: First, the first coloumn of the design matrix (the intercept coloumn) is discarderd. Then we calculate the mean for the target values and the design matrix (the mean for the design matrix is a vector with mean values for each coloumn). We subtract this from the design matrix and target values when performing the fit giving us a vector $\bm{\beta}$. Afterwards we calculate the intercept with the following equation
+While the creating of the design matrix is equivalent for the two datasets, the preprocessing of the data afterwards is not. For the Franke function, we claim that no normalization is needed, as we generate the data ourselves to be between $0$ and $1$. Given that we are doing a polynomial fit, every element in our design matrix will be a multiplication of $x^p$ and $y^k$ for different $p$'s and $k$'s, which, given our choice of range for $x$ and $y$, guarantees that every element is between $0$ and $1$. However, we have included a centering of the data, which has no effect on the Ordinary Least Squares regression, but which is used when applying Ridge and Lasso regression, to avoid punishing the intercept. The centering is done as follows: First, the first coloumn of the design matrix (the intercept coloumn) is discarderd. Then we calculate the mean for the target values and the design matrix (the mean for the design matrix is a vector with mean values for each coloumn). We subtract this from the design matrix and target values when performing the fit giving us a vector $\bm{\beta}$. Afterwards we calculate the intercept with the following equation
 
 \begin{equation}
 	intercept = mean(\bar{y} - \bar{X}_c^T \bm{\beta})
@@ -471,15 +471,17 @@ Another form of "preprocessing" which is strictly practical in nature, is that w
 
 Linear regression for OLS and Ridge are implemented by using NumPy's \texttt{numpy.linalg.pinv} and the normal equations. We have implemented them as functions which take in the target values and the design matrix and return $\bm{\hat{\beta}}$. They are called from a wrapper function called \texttt{evaluate\_model} which takes care of the scaling and works with both SciKit models and our own. Below are the functions, taken from \texttt{src/utils.py}:
 
-\lstinputlisting[language=Python, firstline=53, lastline=64]{../src/utils.py}
+\lstinputlisting[language=Python, firstline=56, lastline=64]{../src/utils.py}
 
 For repeated calls of these functions with different polynomial degrees, we use the function \texttt{linreg\_to\_N}, which passes the correctly sliced design matrix to the regression functions and saves the predictions and various performance metrics for each polynomial degree for easy plotting.
 
 For Lasso regression, we use SciKit's implementation. We also use SciKit's implementation for OLS and Ridge for comparisons with our own implementation.
 
-The correctness of our linear regression can be confirmed by running our debug function (the so called SkrankeFunction)\footnote{this can be done by running \texttt{\$ python3 task\_b.py --debug -n 2 --noscale}}, which is a second degree polynomial where $b_0 = 0, \; b_1 = 1, \; b_2 = 2$ and so on. The SkrankeFunction (taken from \texttt{src/utils.py}) looks like this
+The correctness of our Ordinary Least Squares regression can be confirmed by running our debug function (the so called SkrankeFunction)\footnote{this can be done by running \texttt{\$ python3 task\_b.py --debug --noscale -n 2}}, which is a second degree polynomial where $b_0 = 0, \; b_1 = 1, \; b_2 = 2$ and so on. The SkrankeFunction (taken from \texttt{src/utils.py}) looks like this
 
-\lstinputlisting[language=Python, firstline=238, lastline=245]{../src/utils.py}
+\lstinputlisting[language=Python, firstline=26, lastline=27]{../src/utils.py}
+
+and the result of our regression is correctly given as $\bm{\beta} = (0 \; 1 \; 2 \; 3 \; 4 \; 5\;)^T$.
 
 \subsubsection{Implementation of resampling methods}
 
