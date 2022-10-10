@@ -357,7 +357,7 @@ def read_from_cmdline():
     parser.add_argument("-st", "--step", help="Step size for linspace function. Range [0.01-0.4]. Default 0.05", type=float, default=0.05)
     parser.add_argument("-b", "--betas", help="Betas to plot, when applicable. Default 10", type=int)
     parser.add_argument("-n", help="Polynomial degree. Default 10", type=int, default=10)
-    parser.add_argument("-sc", "--scaling", help="Whether to use scaling (centering for synthetic case or MinMaxScaling for organic case)", action="store_true") 
+    parser.add_argument("-nsc", "--noscale", help="Do not use scaling (centering for synthetic case or MinMaxScaling for organic case)", action="store_true") 
 
     # parse arguments and call run_filter
     args = parser.parse_args()
@@ -394,7 +394,7 @@ def read_from_cmdline():
 
         # normalize data
         centering = False
-        if args.scaling:
+        if not args.noscale:
             X, X_train, X_test, z, z_train, z_test = minmax_dataset(
                 X, X_train, X_test, z, z_train, z_test
             )
@@ -409,7 +409,9 @@ def read_from_cmdline():
             z = FrankeFunction(x, y)
             # add noise
             z += args.noise * np.random.standard_normal(z.shape)
-        centering = args.scaling
+        centering = not args.noscale
+        print(f"{args.noscale=}")
+        print(f"{centering=}")
 
         X, X_train, X_test, z_train, z_test = preprocess(x, y, z, args.n, 0.2)
 

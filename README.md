@@ -18,8 +18,8 @@ python3 task_b.py -f ../data/nearest_neighbor_SRTM_data_Norway_1.tif
 If you would like to change other parameters, the following optional arguments are provided from the command line
 
 ```
-usage: task_*.py [-h] [-f FILE | -d | -no NOISE] [-st STEP] [-b BETAS] [-n N]
-                 [-sc]
+usage: task_b.py [-h] [-f FILE | -d | -no NOISE] [-st STEP] [-b BETAS] [-n N]
+                 [-nsc]
 
 Read in arguments for tasks
 
@@ -36,8 +36,8 @@ options:
   -b BETAS, --betas BETAS
                         Betas to plot, when applicable. Default 10
   -n N                  Polynomial degree. Default 10
-  -sc, --scaling        Whether to use scaling (centering for synthetic case
-                        or MinMaxScaling for organic case)
+  -nsc, --noscale       Do not use scaling (centering for synthetic case or
+                        MinMaxScaling for organic case)
 ```
 
 If you wish to change even more parameters (at your own risk), the following advanced parameters are provided at the top of each script:
@@ -46,3 +46,4 @@ K = number of folds in K-folds : int \
 bootstraps = number of bootstraps : int \
 lambdas = array of lambdas to test : ndarray \
 plot_only_best_lambda = plots only lambda which gives least MSE : bool
+
