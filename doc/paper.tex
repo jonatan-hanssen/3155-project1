@@ -111,17 +111,19 @@ This sections covers the theoretic background which underlies the methods used i
 
 \subsubsection{Linear regression}
 
-To describe how linear regression works, let us first describe the problem it aims to solve. Assume we have a dataset, which contains a series of inputs $\{x_i\}$, and corresponding target values $\{y_i\}$. Our assumption is that there is some relationship $y_i = f(x_i) + \epsilon_i$ where $\epsilon_i \sim N(0,\sigma^2)$, and we wish to create a model which approximates this relationship. More specifically, we wish to find a vector $\beta$ which gives us the "best" approximation $\bm{y_{pred}}$ of $\bm{y}$, by using the parameters in the following equation:
+To describe how linear regression works, let us first describe the problem it aims to solve. Assume we have a dataset, which contains a series of inputs $\{x_i\}$, and corresponding target values $\{y_i\}$. Our assumption is that there is some relationship $y_i = f(x_i) + \epsilon_i$ where $\epsilon_i \sim N(0,\sigma^2)$, and we wish to create a model which approximates this relationship. More specifically, we wish to find a vector $\beta$ which gives us the "best" approximation $\bm{\tilde{y}}$ of $\bm{y}$, by using the parameters in the following equation:
 
 \begin{equation}
 X \bm{\beta} = \bm{\tilde{y}}
+\label{first}
 \end{equation}
 
-$X$ is called the design matrix, and is an $n$ by $p$ matrix created by our input data and our choice of basis functions, where $n$ is the amount of different input states we have (for our problem, $n$ is the number of distinct $x$ values times the number of distinct $y$ values) and $p$ is the number of features we use for our fit (in our case, $p$ is based on the polynomial degree we use). The element $X_{ij}$ is calculated by evaluating the basis function corresponding the coloumn $j$ for the input data corresponding to the row $j$. As we can see, each row of this matrix is scalar multiplied by the vector $\beta$, giving us a linear combination of the values of $X_{i*}$ for each $y_i$ in the target vector $\bm{y}$. This vector is called the parameter vector, and finding the optimal values $\hat{\bm{\beta}}$ is the problem we wish to solve. But for this, we need to define what an "optimal" prediction $\bm{\tilde{y}}$ is.
+
+$X$ is called the design matrix, and is an $n$ by $p$ matrix created by our input data and our choice of basis functions, where $n$ is the amount of different input states we have and $p$ is the number of features we use for our fit. For our problem, $n$ is the number of distinct $x$ values times the number of distinct $y$ values, and $p$ is based on the polynomial degree we use. The basis functions are the summands of a two variable polynomial of degree $N$. The element $x_{ij}$ is calculated by evaluating the basis function corresponding the coloumn $j$ for the input data corresponding to the row $i$. As we can see from Eq.~\ref{first}, each row of this matrix is scalar multiplied by the vector $\beta$, giving us a linear combination of the values of $X_{i*}$ for each $y_i$ in the vector $\bm{\tilde{y}}$. The vector $\bm{\beta}$ is called the parameter vector, and finding the optimal values $\hat{\bm{\beta}}$ is the problem we wish to solve. But for this, we need to define what an "optimal" prediction $\bm{\tilde{y}}$ is.
 
 \subsubsection{The cost function}
 
-The define the optimal prediction, we use a cost function, and the choice of cost function greatly influences what optimal parameters we get. \footnote{It is here important to keep in mind that the cost function used when fitting the model (training) rarely is the same as the one used for testing our prediction, as described in <somewhere>}. An intuitive cost function is the mean squared error (MSE). This function simply computes the average distance between our prediction and the target value, squared:
+To define the optimal prediction, we use a cost function, and the choice of cost function greatly influences what optimal parameters we get.\footnote{It is here important to keep in mind that the cost function used when fitting the model (training) rarely is the same as the one used for testing our prediction, as described in <somewhere>} An intuitive cost function is the mean squared error (MSE). This function simply computes the average distance between our prediction and the target value, squared:
 
 \begin{equation}
 	C_{mse}(\tilde{\bm{y}}) = \sum_{i=0}^{n-1}(y_i-\tilde{y_i})^2
@@ -133,7 +135,7 @@ We may now plug in the definition of $\bm{\tilde{y}}$.
 	C_{mse}(\bm{\beta}) = \sum_{i=0}^{n-1}(y_i-X_{i*}\bm{\beta})^2
 \end{equation}
 
-We see that we have a function of our parameters $\bm{\beta}$, which describe how much our prediction deviates from our target values. Our problem now is to optimize this function, that is, find the values of $\beta$ which give MSE the lowest value. Luckily for us, it can be proven that the second derivative of this function is always positive (WHERE?), which means that we can find the global minimum by solving the equation
+We see that we have a function of our parameters $\bm{\beta}$, which describe how much our prediction deviates from our target values. Our problem now is to optimize this function, that is, find the values of $\beta$ which gives the MSE the lowest value. Luckily for us, it can be proven that the second derivative of this function is always positive (WHERE?), which means that we can find the global minimum by solving the equation
 
 Hastie 45
 
@@ -153,7 +155,7 @@ X^T\bm{y} = X^TX\bm{\beta} \\
 \bm{\hat{\beta}} = (X^TX)^{-1}X^T\bm{y}
 \end{gather}
 
-The process we have just described, with MSE as the cost function, is the what is known as Ordinary Least Squares (OLS) regression. Using different cost functions when fitting the model leads to different equations for $\bm{\hat{\beta}}$. This leads us to the two next forms of linear regression we use in this paper. But before this, a...
+The process we have just described, with MSE as the cost function, is what is known as Ordinary Least Squares (OLS) regression. Using different cost functions when fitting the model leads to different equations for $\bm{\hat{\beta}}$. This leads us to the two next forms of linear regression we use in this paper. But before this, a...
 
 \subsubsection{Brief statistical intermission}
 
@@ -543,7 +545,7 @@ By using bootstrap resampling, we can study the bias-variance-tradeoff, which sh
 % \label{frankenoisybeta}
 % \end{figure}
 
-Table. ~\ref{ols_mse_table} shows the best polynomial degree and MSE for regular and noisy data. Here we see that the best degree without noise is 10, which shows that even without noise, the low amount of data leads to a slight overfit even at very small polynomial degrees. This is not surprising, as at $N = 10$ we have $66$ features, which is a substantial amount compared to our measly 320 training datapoints. We could of course arbitrarily increase our dataset to ludicrous levels, but doing linear regression with this dataset gives valuable insight into how our performance is dependent on our availiable data.
+Table. ~\ref{ols_mse_table} shows the best polynomial degree and MSE for regular and noisy data. Here we see that the best degree without noise is 9, which shows that even without noise, the low amount of data leads to a slight overfit even at very small polynomial degrees. This is not surprising, as at $N = 10$ we have $66$ features, which is a substantial amount compared to our measly 320 training datapoints. We could of course arbitrarily increase our dataset to ludicrous levels, but doing linear regression with this dataset gives valuable insight into how our performance is dependent on our availiable data.
 
 \begin{table}[t]
 \caption{Best MSE and polynomial degree for OLS}
@@ -554,7 +556,7 @@ Table. ~\ref{ols_mse_table} shows the best polynomial degree and MSE for regular
 % \hline
 Std of noise & Best MSE & Best degree \\
 \hline
-0 & 0.0004335 & 10\\
+0 & 0.00051085 & 9\\
 0.05 & 0.0038302 & 7 \\
 0.10 & 0.0139833 & 7 \\
 \hline
@@ -689,17 +691,33 @@ The next pages contain plots and tables that are of interest.
 \begin{tabular}{c | l l l l l l l}
 % & & \\ % put some space after the caption
 % \hline
-Figure & Highest $N$ & Std of noise & Number of datapoints & Bootstraps & K-folds & $\lambda$ & Scaling \\
+Figure & Highest $N$ & Std of noise & Step (\# of points) & Bootstraps & K-folds & $\lambda$ & Scaling \\
 \hline
-\ref{frankenonoise} & 10 & 0 & 400 & - & - & - & None\\
-\ref{frankenonoisemse} & 25 & 0 & 400 & 100 & - & - & None\\
-\ref{frankenoisemse} & 25 & 0.05 & 400 & 100 & - & - & None\\
-\ref{frankiebiasvariance} & 25 & 0.05 & 100 & 100 & - & - & None\\
-\ref{frankiedifflambdas} & 25 & 0.05 & 100 & 100 & - & variable & Centering\\
-\ref{frankeridgebetas} & 25 & 0.05 & 100 & - & - & variable & Centering\\
-\ref{frankenoisybeta} & 25 & 0.05 & 400 & - & - & - & Centering\\
-\ref{frankienoisecomparison} & 25 & variable & 400 & 100 & - & - & None\\
-\ref{frankiehigherdatapoints} & 30 & 0 & 10000 & 100 & - & - & None\\
+\ref{frankiebiasvariance} & 25 & 0.05 & 0.1 (100) & 100 & - & - & None\\
+\ref{frankiedifflambdas} & 25 & 0.05 & 0.1 (100) & 100 & - & variable & Centering\\
+\ref{frankeridgebetas} & 25 & 0.05 & 0.1 (100) & - & - & variable & Centering\\
+\ref{frankenoisybeta} & 25 & 0.05 & 0.05 (400) & - & - & - & Centering\\
+\ref{frankienoisecomparison} & 25 & variable & 0.05 (400) & 100 & - & - & None\\
+\ref{frankiehigherdatapoints} & 30 & 0 & 0.01 (10000) & 100 & - & - & None\\
+\hline
+\end{tabular}
+\end{center}
+\end{table*}
+
+\begin{table*}
+\caption{This table shows the command to execute, as well as the advanced parameters to change, to reproduce every figure in the report. (More info about the scripts and their parameters can be found in the README)}
+\begin{center}
+\label{allparamstable}
+\begin{tabular}{c | l l l l}
+% & & \\ % put some space after the caption
+% \hline
+Figure & Shell command (leading \texttt{python3} omitted) & Bootstraps & K-folds & $\lambda$ \\
+\hline
+\ref{frankenonoise} & \texttt{task\_b.py --noise 0 -n 25} & 100 & - & - \\
+\ref{frankenonoisemse} & \texttt{task\_c.py --noise 0 -n 25}  & 100 & - & - \\
+\ref{frankenoisemse} & \texttt{task\_c.py -n 25}  & 100 & - & - \\
+\ref{frankienoisecomparison} & \texttt{noise\_plot.py} & 100 & - & - \\
+\ref{frankiehigherdatapoints} & \texttt{task\_c.py --noise 0 -n 30 --step 0.01} & 100 & - & - \\
 \hline
 \end{tabular}
 \end{center}
