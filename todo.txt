@@ -1,3 +1,9 @@
 Plots needed:
 
-bias variance, but for lasso [DONE]
+task_c med real data (1 og 2), train og test comparison bootrapped
+
+bias-variance for real data (1 og 2) på ridge for ulike lambda, gridsearch beste lambda (task_e_bias_variance)
+
+bias-variance for syntetisk og real data (1 og 2) på lasso for ulike lambdaer (task_f_bias_variance)
+
+task_f_MSE_comparison real data (1 og 2)
