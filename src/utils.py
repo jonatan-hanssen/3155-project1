@@ -367,7 +367,7 @@ def read_from_cmdline():
         raise ValueError(f"Noise value out of range [0,1]: {args.noise}")
 
     if args.step < 0.01 or args.step > 0.4:
-        raise ValueError(f"Noise value out of range [0,1]: {args.noise}")
+        raise ValueError(f"Step value out of range [0,1]: {args.noise}")
 
     if args.n <= 0:
         raise ValueError(f"Polynomial degree must be positive: {args.N}")
