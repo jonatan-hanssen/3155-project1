@@ -1,8 +1,8 @@
-\begin{thebibliography}{TH09}
+\begin{thebibliography}{}
 
-\bibitem[TH09]{hastie}
-Jerome~Friedman Trevor~Hastie, Robert~Tibshirani.
+\bibitem[Hastie et~al., 2009]{hastie}
+Hastie, T., Tibshirani, R., and Friedman, J. (2009).
 \newblock {\em The Elements of Statistical Learning}.
-\newblock Springer, New Nork, NY, 2009.
+\newblock Springer, New Nork, NY.
 
 \end{thebibliography}

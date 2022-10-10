@@ -1,46 +1,46 @@
 This is BibTeX, Version 0.99d (TeX Live 2022/Arch Linux)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: paper.aux
-The style file: alpha.bst
+The style file: apalike.bst
 Database file #1: bibliography.bib
 You've used 1 entry,
-            2543 wiz_defined-function locations,
-            564 strings with 4556 characters,
-and the built_in function-call counts, 298 in all, are:
-= -- 24
-> -- 8
-< -- 1
-+ -- 3
-- -- 2
-* -- 16
-:= -- 58
+            1935 wiz_defined-function locations,
+            477 strings with 3795 characters,
+and the built_in function-call counts, 366 in all, are:
+= -- 31
+> -- 18
+< -- 0
++ -- 8
+- -- 6
+* -- 28
+:= -- 71
 add.period$ -- 3
 call.type$ -- 1
-change.case$ -- 4
+change.case$ -- 7
 chr.to.int$ -- 1
 cite$ -- 1
-duplicate$ -- 16
-empty$ -- 26
-format.name$ -- 3
-if$ -- 58
+duplicate$ -- 14
+empty$ -- 24
+format.name$ -- 7
+if$ -- 67
 int.to.chr$ -- 1
 int.to.str$ -- 0
 missing$ -- 2
 newline$ -- 8
 num.names$ -- 3
-pop$ -- 7
+pop$ -- 10
 preamble$ -- 1
-purify$ -- 6
+purify$ -- 8
 quote$ -- 0
-skip$ -- 12
+skip$ -- 10
 stack$ -- 0
-substring$ -- 8
+substring$ -- 14
 swap$ -- 1
-text.length$ -- 1
+text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 4
 warning$ -- 0
 while$ -- 2
-width$ -- 2
+width$ -- 0
 write$ -- 15
