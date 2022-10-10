@@ -43,7 +43,7 @@ for i in range(len(lambdas)):
         plt.suptitle(f"Bias variance tradeoff for lasso regression")
 
     # model under testing
-    model_Lasso = Lasso(lambdas[i], max_iter=1000, fit_intercept=False)
+    model_Lasso = Lasso(lambdas[i], max_iter=500, fit_intercept=False)
 
     # arrays for bias-variance
     errors = np.zeros(N)
@@ -73,21 +73,21 @@ for i in range(len(lambdas)):
         variances[n] = variance
 
     # plot subplots
-    plt.plot(errors, "g--", label="MSE test")
     plt.plot(biases, label="bias")
+    plt.plot(errors, "r--", label="MSE test")
     plt.plot(variances, label="variance")
-    plt.xlabel("Polynomial degree (N)")
+    plt.xlabel("Polynomial degree (N)", size=12)
     plt.tight_layout(h_pad=0.001)
     if plot_only_best_lambda:
         print(
             f"Optimal lambda = {lam}, best MSE = {best_MSE}, best polynomial = {best_poly}"
         )
         plt.title(
-            f"Bias variance tradeoff for lasso regression \n for optimal lambda = {lambdas[i]}"
+            f"Bias variance tradeoff for lasso regression \n for optimal lambda = {lambdas[i]}", size=18
         )
     else:
-        plt.title(f"lambda = {lambdas[i]:.5}")
-    plt.legend()
+        plt.title(f"lambda = {lambdas[i]:.5}", size=15)
+    plt.legend(prop={"size": 10}, loc="center left", bbox_to_anchor=(1, 0.5))
 
 
 plt.show()

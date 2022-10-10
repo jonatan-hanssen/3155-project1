@@ -1,6 +1,7 @@
 """
 task f: Plots MSE comparison between OLS, ridge and lasso with cross validation for real and synthetic data.
 """
+import numpy as np
 from sklearn.linear_model import Ridge, Lasso
 from sklearn.model_selection import cross_validate, KFold
 
@@ -31,6 +32,14 @@ kfolds = KFold(n_splits=K)
 errors_OLS = np.zeros(N)
 errors_Ridge = np.zeros(N)
 errors_Lasso = np.zeros(N)
+
+min_error_OLS = np.inf
+min_error_Ridge = np.inf
+min_error_Lasso = np.inf
+
+best_poly_OLS = 0
+best_poly_Ridge = 0
+best_poly_Lasso = 0
 
 # test different values of lambda
 for i in range(len(lambdas)):
@@ -76,6 +85,15 @@ for i in range(len(lambdas)):
         )
         errors_Lasso[n] = np.mean(-scores_Lasso["test_score"])
 
+    if min(min_error_OLS, np.min(scores_ols)) == np.min(scores_ols):
+        min_error_OLS = np.min(scores_ols)
+        best_poly_OLS = np.argmin(scores_ols)
+    if min(min_error_Ridge, np.min(scores_Ridge)) == np.min(scores_Ridge):
+        min_error_Ridge = np.min(scores_Ridge)
+        best_poly_Ridge = np.argmin(scores_Ridge)
+    if min(min_error_Lasso, np.min(scores_Lasso)) == np.min(scores_Lasso):
+        min_error_Lasso = np.min(scores_Lasso)
+        best_poly_Lasso = np.argmin(scores_Lasso)
     # plot
     plt.plot(errors_OLS, "r--", label="OLS")
     plt.plot(errors_Ridge, "b--", label="Ridge")
@@ -86,4 +104,7 @@ for i in range(len(lambdas)):
     plt.tight_layout(h_pad=0.001)
     plt.legend()
 
+print(f"Minimal MSE_test value for OLS = {min_error_OLS} for N = {best_poly_OLS}")
+print(f"Minimal MSE_test value for Ridge = {min_error_Ridge} for N = {best_poly_Ridge}")
+print(f"Minimal MSE_test value for Lasso = {min_error_Lasso} for N = {best_poly_Lasso}")
 plt.show()

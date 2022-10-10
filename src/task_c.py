@@ -1,6 +1,8 @@
 """
 task c (and task g): plots bias-variance tradeoff with bootstrap for OLS
 """
+import matplotlib.pyplot as plt
+
 # Our own library of functions
 from utils import *
 
@@ -88,16 +90,17 @@ plt.plot(MSEs_train, label="train implementation", marker="o", markersize=3)
 plt.plot(MSEs_test, label="test implementation", marker="o", markersize=3)
 plt.plot(MSEs_train_sk, "r--", label="train ScikitLearn", marker="o", markersize=3)
 plt.plot(MSEs_test_sk, "g--", label="test ScikitLearn", marker="o", markersize=3)
-plt.xlabel("Polynomial degree (N)")
-plt.title("MSE scores over model complexity")
-plt.legend()
+plt.xlabel("Polynomial degree (N)", size=15)
+plt.ylabel("MSE score", size=15)
+plt.title("MSE scores over model complexity", size=18)
+plt.legend(prop={"size": 12})
 plt.show()
 
 # plot
-plt.plot(MSEs_test, "g--", label="MSE test")
-plt.plot(biases, "b--", label="biases")
-plt.plot(variances, "r--", label="variances")
-plt.xlabel("Polynomial degree (N)", size=15)
-plt.title("Bias-variance tradeoff over model complexity OLS", size=18)
-plt.legend(prop={"size": 20})
+plt.plot(biases, label="bias")
+plt.plot(MSEs_test, "r--", label="MSE test")
+plt.plot(variances, label="variances")
+plt.xlabel("Polynomial degree (N)", size=12)
+plt.title("Bias-variance tradeoff over model complexity OLS", size=15)
+plt.legend(prop={"size": 12})
 plt.show()
