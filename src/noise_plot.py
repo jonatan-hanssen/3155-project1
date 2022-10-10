@@ -24,6 +24,7 @@ noises = np.linspace(0, 0.2, 5)
 centering = False
 bootstraps = 100
 
+
 def noise_plot(x, y, z, N, noise, centering, bootstraps):
     # add noise
     z += noise * np.random.standard_normal(z.shape)
@@ -36,7 +37,7 @@ def noise_plot(x, y, z, N, noise, centering, bootstraps):
     for n in range(N):
         print(n)
         l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
-        z_preds_test = bootstrap(
+        z_preds_test, _ = bootstrap(
             X[:, :l],
             X_train[:, :l],
             X_test[:, :l],
@@ -44,6 +45,8 @@ def noise_plot(x, y, z, N, noise, centering, bootstraps):
             z_test,
             bootstraps,
             centering=centering,
+            model=ridge,
+            lam=10 ** (-8),
         )
 
         MSE_test, _ = scores(z_test, z_preds_test)

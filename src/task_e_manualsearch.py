@@ -36,7 +36,7 @@ xi = [i for i in range(0, num_lambdas, 2)]
 for i in range(num_lambdas):
     print(i)
 
-    z_preds = bootstrap(
+    z_preds, _ = bootstrap(
         X,
         X_train,
         X_test,
