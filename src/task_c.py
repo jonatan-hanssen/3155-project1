@@ -79,12 +79,10 @@ for n in range(N):
     MSE_test_sk = np.mean(mse_scores_sk)
     MSE_train_sk = MSE(z_pred_train_sk, z_train)
 
-    print(MSE_train_sk)
     MSEs_test_sk[n] = MSE_test_sk
     MSEs_train_sk[n] = MSE_train_sk
 
-    # bias-variance trade-off
-
+print(f"Minimal MSE_test value = {np.min(MSEs_test)} for N = {np.argmin(MSEs_test)}")
 # plot mse test and train
 plt.plot(MSEs_train, label="train implementation", marker="o", markersize=3)
 plt.plot(MSEs_test, label="test implementation", marker="o", markersize=3)
