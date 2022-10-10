@@ -91,9 +91,9 @@ for n in range(N):
 plt.plot(errors_boot, label="bootstrap")
 plt.plot(errors_cv, label="cross validation implementation")
 plt.plot(errors_cv_scikit, label="cross validation scikit learn")
-plt.ylabel("MSE score")
-plt.xlabel("Polynomial degree (N)")
-plt.title(f"MSE by Resampling Method")
-plt.legend()
+plt.ylabel("MSE score", size=15)
+plt.xlabel("Polynomial degree (N)", size=15)
+plt.title(f"MSE by Resampling Method", size=18)
+plt.legend(prop={'size': 10})
 
 plt.show()
