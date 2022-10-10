@@ -56,10 +56,10 @@ for n in range(N):
     variances[n] = variance
 
 # plot
-plt.plot(errors, "g--", label="MSE test")
-plt.plot(biases, label="biases")
-plt.plot(variances, label="variances")
-plt.xlabel("Polynomial degree (N)")
-plt.title("Bias-variance tradeoff over model complexity OLS")
-plt.legend()
+plt.plot(errors, "g--", label="MSE test") 
+plt.plot(biases, "b--", label="biases")
+plt.plot(variances, "r--", label="variances")
+plt.xlabel("Polynomial degree (N)", size=15)
+plt.title("Bias-variance tradeoff over model complexity OLS", size=18)
+plt.legend(prop={'size': 20})
 plt.show()
