@@ -14,7 +14,7 @@ N = 20
 K = 20
 bootstraps = 100
 noise = 0.05
-scaling = True
+centering = True
 kfolds = KFold(n_splits=K)
 
 # if true, plot only lambda that gives lowest MSE
@@ -23,8 +23,8 @@ plot_only_best_lambda = True
 lambdas = np.logspace(-12, -4, 6)
 
 # read in data
-X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(
-    N, scaling, noise
+X, X_train, X_test, z, z_train, z_test, centering, x, y, z = read_in_dataset(
+    N, centering, noise
 )
 z = z.ravel()
 
@@ -79,7 +79,7 @@ for i in range(len(lambdas)):
             z_train,
             z_test,
             bootstraps,
-            scaling=scaling,
+            centering=centering,
             model=model,
             lam=lambdas[i],
         )

@@ -7,17 +7,21 @@ from utils import *
 
 np.random.seed(42069)
 
-# parameters
-N = 25
-betas_to_plot = 10
-# parameters for synthetic data
-noise = 0.05
-scaling = False
-
 # get data
-X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(
-    N, scaling=scaling, noise=noise
-)
+(
+    betas_to_plot,
+    N,
+    X,
+    X_train,
+    X_test,
+    z,
+    z_train,
+    z_test,
+    centering,
+    x,
+    y,
+    z,
+) = read_from_cmdline()
 
 # implemented model under testing
 OLS_model = OLS
@@ -26,12 +30,12 @@ OLS_scikit = LinearRegression(fit_intercept=False)
 
 # perform linear regression
 betas, z_preds_train, z_preds_test, z_preds = linreg_to_N(
-    X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS_model
+    X, X_train, X_test, z_train, z_test, N, centering=centering, model=OLS_model
 )
 
 # perform linear regression scikit
 _, z_preds_train_sk, z_preds_test_sk, _ = linreg_to_N(
-    X, X_train, X_test, z_train, z_test, N, scaling=scaling, model=OLS_scikit
+    X, X_train, X_test, z_train, z_test, N, centering=centering, model=OLS_scikit
 )
 
 # Calculate OLS scores
@@ -56,7 +60,7 @@ ax.zaxis.set_major_locator(LinearLocator(10))
 ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
 ax.set_title("Scaled terrain")
 # Add a color bar which maps values to colors.
-#fig.colorbar(surf_real, shrink=0.5, aspect=5)
+# fig.colorbar(surf_real, shrink=0.5, aspect=5)
 
 # Subplot for the prediction
 # Plot the surface.
@@ -88,16 +92,15 @@ plt.imshow(pred_map)
 plt.colorbar()
 plt.show()
 
-if betas_to_plot <= betas.shape[0]:
-    for beta in range(betas_to_plot):
-        data = betas[beta, :]
-        data[data == 0] = np.nan
-        plt.plot(data, label=f"beta{beta}", marker="o", markersize=3)
-        plt.xlabel("Polynomial degree (N)", size=15)
-        plt.ylabel("Beta value", size=15)
-        plt.title("Beta progression", size=22)
-        plt.legend()
-    plt.show()
+for beta in range(betas_to_plot):
+    data = betas[beta, :]
+    data[data == 0] = np.nan
+    plt.plot(data, label=f"beta{beta}", marker="o", markersize=3)
+    plt.xlabel("Polynomial degree (N)", size=15)
+    plt.ylabel("Beta value", size=15)
+    plt.title("Beta progression", size=22)
+    plt.legend()
+plt.show()
 
 print(f"Minimal MSE_test value = {np.min(MSE_test)} for N = {np.argmin(MSE_test)}")
 plt.plot(MSE_train, label="train implementation", marker="o", markersize=3)

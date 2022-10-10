@@ -14,11 +14,11 @@ K = 10
 bootstraps = 100
 # parameters for synthetic data
 noise = 0.05
-scaling = False
+centering = False
 
 # read in data
-X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(
-    N, scaling, noise
+X, X_train, X_test, z, z_train, z_test, centering, x, y, z = read_in_dataset(
+    N, centering, noise
 )
 z = z.ravel()
 
@@ -45,7 +45,7 @@ for n in range(N):
     l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
 
     # own implementation
-    errors_cv[n] = crossval(X[:, :l], z, K, scaling=scaling, model=OLS_model)
+    errors_cv[n] = crossval(X[:, :l], z, K, centering=centering, model=OLS_model)
 
     # scikit
     error_scikit = cross_validate(
@@ -70,7 +70,7 @@ for n in range(N):
         z_train,
         z_test,
         bootstraps,
-        scaling=scaling,
+        centering=centering,
         model=OLS_model,
     )
 
@@ -86,9 +86,7 @@ plt.plot(errors_cv, label="cross validation implementation")
 plt.plot(errors_cv_scikit, label="cross validation scikit learn")
 plt.ylabel("MSE score")
 plt.xlabel("Polynomial degree (N)")
-plt.title(
-    f"MSE by Resampling Method"
-)
+plt.title(f"MSE by Resampling Method")
 plt.legend()
 
 plt.show()

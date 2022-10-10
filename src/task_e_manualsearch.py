@@ -43,7 +43,7 @@ for i in range(num_lambdas):
         z_train,
         z_test,
         bootstraps,
-        scaling=True,
+        centering=True,
         model=ridge,
         lam=lambdas[i],
     )

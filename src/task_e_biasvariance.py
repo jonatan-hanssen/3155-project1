@@ -2,6 +2,7 @@
 task e (and task g): plots bias-variance trade-off for ridge regression
 """
 from sklearn.linear_model import Ridge
+
 # Our own library of functions
 from utils import *
 
@@ -15,11 +16,14 @@ plot_only_best_lambda = False
 lambdas = np.logspace(-10, 0, 4)
 # parameter synthetic data
 noise = 0.05
-scaling = True
+centering = True
 
 # read in data
-X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(
-    N, scaling=scaling, noise=noise, step=0.1,
+X, X_train, X_test, z, z_train, z_test, centering, x, y, z = read_in_dataset(
+    N,
+    centering=centering,
+    noise=noise,
+    step=0.1,
 )
 z = z.ravel()
 
@@ -32,8 +36,8 @@ if plot_only_best_lambda:
 # for lambdas
 for i in range(len(lambdas)):
     if not plot_only_best_lambda:
-       plt.subplot(411 + i)
-       plt.suptitle(f"Bias variance tradeoff for ridge regression")
+        plt.subplot(411 + i)
+        plt.suptitle(f"Bias variance tradeoff for ridge regression")
 
     # results
     errors = np.zeros(N)
@@ -51,7 +55,7 @@ for i in range(len(lambdas)):
             z_train,
             z_test,
             bootstraps,
-            scaling=scaling,
+            centering=centering,
             model=ridge,
             lam=lambdas[i],
         )
@@ -66,13 +70,16 @@ for i in range(len(lambdas)):
     plt.plot(errors, label="MSE test")
     plt.plot(biases, label="bias")
     plt.plot(variances, label="variance")
-    plt.ylim(0,0.12)
+    plt.ylim(0, 0.12)
     plt.xlabel("Polynomial degree (N)")
     plt.tight_layout(h_pad=0.001)
     if plot_only_best_lambda:
-        plt.title(f"Bias variance tradeoff for ridge regression for optimal lambda = {lambdas[i]}")
+        plt.title(
+            f"Bias variance tradeoff for ridge regression for optimal lambda = {lambdas[i]}"
+        )
     else:
         plt.title(f"lambda = {lambdas[i]:.5}")
     plt.legend()
 
 plt.show()
+

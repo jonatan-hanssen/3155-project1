@@ -16,10 +16,10 @@ plot_only_best_lambda = False
 lambdas = np.logspace(-10, 0, 4)
 # synthetic parameters
 noise = 0.05
-scaling = True
+centering = True
 
 # read in and get data
-X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(N, scaling=scaling, noise=noise)
+X, X_train, X_test, z, z_train, z_test, centering, x, y, z = read_in_dataset(N, centering=centering, noise=noise)
 z = z.ravel()
 
 # plot only the gridsearched lambda
@@ -53,7 +53,7 @@ for i in range(len(lambdas)):
             z_train,
             z_test,
             bootstraps,
-            scaling=scaling,
+            centering=centering,
             model=model_Lasso,
             lam=lambdas[i],
         )

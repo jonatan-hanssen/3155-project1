@@ -11,10 +11,10 @@ N = 20
 bootstraps = 100
 # parameters for synthetic data
 noise = 0.05
-scaling = False
+centering = False
 
 # get data
-X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(N, scaling, noise)
+X, X_train, X_test, z, z_train, z_test, centering, x, y, z = read_in_dataset(N, centering, noise)
 
 # result arrays
 errors = np.zeros(N)
@@ -37,7 +37,7 @@ for n in range(N):
         z_train,
         z_test,
         bootstraps,
-        scaling=scaling,
+        centering=centering,
         model=OLS_model,
     )
 

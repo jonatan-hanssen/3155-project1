@@ -13,11 +13,14 @@ betas_to_plot = 9
 
 # Parameters for synthetic data
 noise = 0.05
-scaling = True
+centering = True
 
 # get data
-X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(
-    N, scaling=scaling, noise=noise, step=0.1,
+X, X_train, X_test, z, z_train, z_test, centering, x, y, z = read_in_dataset(
+    N,
+    centering=centering,
+    noise=noise,
+    step=0.1,
 )
 
 # calculate beta values
@@ -31,7 +34,7 @@ for i in range(len(lambdas)):
         z_train,
         z_test,
         N,
-        scaling=scaling,
+        centering=centering,
         model=ridge,
         lam=lambdas[i],
     )
@@ -46,6 +49,6 @@ for i in range(len(lambdas)):
     plt.ylabel("Beta value")
     plt.title("Beta progression")
     plt.title(f"lambda = {lambdas[i]:.5}")
-    plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
 plt.show()

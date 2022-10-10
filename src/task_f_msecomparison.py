@@ -11,7 +11,7 @@ from utils import *
 N = 20
 K = 10
 noise = 0.05
-scaling = False
+centering = False
 lambdas = np.logspace(-12, -4, 6)
 
 kfolds = KFold(n_splits=K)
@@ -21,7 +21,9 @@ errors_Ridge = np.zeros(N)
 errors_Lasso = np.zeros(N)
 
 # read in data
-X, X_train, X_test, z, z_train, z_test, scaling, x, y, z = read_in_dataset(N, scaling, noise)
+X, X_train, X_test, z, z_train, z_test, centering, x, y, z = read_in_dataset(
+    N, centering, noise
+)
 
 # test different values of lambda
 for i in range(len(lambdas)):
@@ -68,9 +70,9 @@ for i in range(len(lambdas)):
         errors_Lasso[n] = np.mean(-scores_Lasso["test_score"])
 
     # plot
-    plt.plot(errors_OLS, 'r--', label="OLS")
-    plt.plot(errors_Ridge, 'b--', label="Ridge")
-    plt.plot(errors_Lasso, 'g--', label="Lasso")
+    plt.plot(errors_OLS, "r--", label="OLS")
+    plt.plot(errors_Ridge, "b--", label="Ridge")
+    plt.plot(errors_Lasso, "g--", label="Lasso")
     plt.ylabel("MSE score")
     plt.xlabel("Polynomial degree (N)")
     plt.title(f"lambda = {lambdas[i]:.5}")
@@ -78,3 +80,4 @@ for i in range(len(lambdas)):
     plt.legend()
 
 plt.show()
+

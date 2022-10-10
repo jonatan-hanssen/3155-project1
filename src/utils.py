@@ -24,7 +24,7 @@ def FrankeFunction(x, y):
 
 # debug function
 def SkrankeFunction(x, y):
-    return x**2 + y**2
+    return 1*x + 2*y + 3*x**2 + 4*x*y + 5*y**2
 
 
 def create_X(x, y, n):
@@ -62,7 +62,7 @@ def OLS(
     return beta
 
 
-def ridge(X_train, z_train, lam, *, scaling=False):
+def ridge(X_train, z_train, lam, *, centering=False):
     L = X_train.shape[1]
 
     beta = np.linalg.pinv(X_train.T @ X_train + lam * np.eye(L)) @ X_train.T @ z_train
@@ -78,7 +78,7 @@ def bootstrap(
     z_test: np.ndarray,
     bootstraps: int,
     *,
-    scaling: bool = False,
+    centering: bool = False,
     model: Callable = OLS,
     lam: float = 0,
 ):
@@ -88,7 +88,7 @@ def bootstrap(
     for i in range(bootstraps):
         X_, z_ = resample(X_train, z_train)
         _, z_pred_train, z_pred_test, _ = evaluate_model(
-            X, X_, X_test, z_, model, lam=lam, scaling=scaling
+            X, X_, X_test, z_, model, lam=lam, centering=centering
         )
         z_preds_train[:, i] = z_pred_train
         z_preds_test[:, i] = z_pred_test
@@ -101,7 +101,7 @@ def crossval(
     z: np.ndarray,
     K: int,
     *,
-    scaling: bool = False,
+    centering: bool = False,
     model=OLS,
     lam: float = 0,
 ):
@@ -137,7 +137,7 @@ def crossval(
             z_train,
             model,
             lam=lam,
-            scaling=scaling,
+            centering=centering,
         )
         errors[k] = MSE(z_test, z_pred_test)
 
@@ -172,11 +172,11 @@ def evaluate_model(
     model,
     *,
     lam: float = 0,
-    scaling: bool = False,
+    centering: bool = False,
 ):
     if isinstance(model, Callable):
         intercept = 0
-        if scaling:
+        if centering:
             X_train = X_train[:, 1:]
             X_test = X_test[:, 1:]
             X = X[:, 1:]
@@ -201,7 +201,7 @@ def evaluate_model(
                     z_train,
                     lam,
                 )
-        # intercept is zero if no scaling
+        # intercept is zero if no centering
         z_pred_train = X_train @ beta + intercept
         z_pred_test = X_test @ beta + intercept
         z_pred = X @ beta + intercept
@@ -209,7 +209,7 @@ def evaluate_model(
     # presumed scikit model
     else:
         intercept = 0
-        if scaling:
+        if centering:
             # if width is 1, simply return the intercept
             if X_train.shape[1] == 1:
                 beta = np.zeros(1)
@@ -273,7 +273,7 @@ def linreg_to_N(
     z_test: np.ndarray,
     N: int,
     *,
-    scaling: bool = False,
+    centering: bool = False,
     model: Callable = OLS,
     lam: float = 0,
     bootstrap: bool = False,
@@ -295,7 +295,7 @@ def linreg_to_N(
             z_train,
             model,
             lam=lam,
-            scaling=scaling,
+            centering=centering,
         )
 
         betas[0 : len(beta), n] = beta
@@ -342,16 +342,45 @@ def find_best_lambda(X, z, model, lambdas, N, K):
     return best_lambda, best_MSE, best_polynomial
 
 
-def read_in_dataset(N, *, scaling=False, noise=0.05, step=0.05):
+def read_from_cmdline():
     argv = sys.argv[1:]
 
-    parser = argparse.ArgumentParser(description="Compute task g.b")
+    parser = argparse.ArgumentParser(description="Read in arguments for tasks")
 
-    # filename is optional
-    parser.add_argument("-f", "--file", help="The filename to apply filter to")
+    group = parser.add_mutually_exclusive_group()
+
+    # with debug or file, we cannot have noise. We cannot have debug and file
+    # either
+    group.add_argument("-f", "--file", help="Terrain data file name")
+    group.add_argument("-d", "--debug", help="Use debug function for testing. Default false", action="store_true")
+    group.add_argument("-no", "--noise", help="Amount of noise to have. Recommended range [0-0.1]. Default 0.05", type=float, default=0.05)
+    parser.add_argument("-st", "--step", help="Step size for linspace function. Range [0.01-0.4]. Default 0.05", type=float, default=0.05)
+    parser.add_argument("-b", "--betas", help="Betas to plot, when applicable. Default 10", type=int)
+    parser.add_argument("-n", help="Polynomial degree. Default 10", type=int, default=10)
+    parser.add_argument("-sc", "--scaling", help="Whether to use scaling (centering for synthetic case or MinMaxScaling for organic case)", action="store_true") 
 
     # parse arguments and call run_filter
     args = parser.parse_args()
+
+    # error checking
+    if args.noise < 0 or args.noise > 1:
+        raise ValueError(f"Noise value out of range [0,1]: {args.noise}")
+
+    if args.step < 0.01 or args.step > 0.4:
+        raise ValueError(f"Noise value out of range [0,1]: {args.noise}")
+
+    if args.n <= 0:
+        raise ValueError(f"Polynomial degree must be positive: {args.N}")
+
+    num_betas = int((args.n + 1) * (args.n + 2) / 2)  # Number of elements in beta
+    if args.betas:
+        if args.betas > num_betas:
+            raise ValueError(f"More betas than exist in the design matrix: {args.betas}")
+        betas_to_plot = args.betas
+    else:
+        betas_to_plot = min(10, num_betas)
+
+
 
     if args.file:
         # Load the terrain
@@ -361,22 +390,27 @@ def read_in_dataset(N, *, scaling=False, noise=0.05, step=0.05):
         x, y = np.meshgrid(x, y, indexing="ij")
 
         # split data into test and train
-        X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
+        X, X_train, X_test, z_train, z_test = preprocess(x, y, z, args.n, 0.2)
 
         # normalize data
-        scaling = False
-        X, X_train, X_test, z, z_train, z_test = minmax_dataset(
-            X, X_train, X_test, z, z_train, z_test
-        )
+        centering = False
+        if args.scaling:
+            X, X_train, X_test, z, z_train, z_test = minmax_dataset(
+                X, X_train, X_test, z, z_train, z_test
+            )
     else:
         # create synthetic data
-        x = np.arange(0, 1, step)
-        y = np.arange(0, 1, step)
+        x = np.arange(0, 1, args.step)
+        y = np.arange(0, 1, args.step)
         x, y = np.meshgrid(x, y)
-        z = FrankeFunction(x, y)
+        if args.debug:
+            z = SkrankeFunction(x, y)
+        else:
+            z = FrankeFunction(x, y)
+            # add noise
+            z += args.noise * np.random.standard_normal(z.shape)
+        centering = args.scaling
 
-        # add noise
-        z += noise * np.random.standard_normal(z.shape)
-        X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
+        X, X_train, X_test, z_train, z_test = preprocess(x, y, z, args.n, 0.2)
 
-    return X, X_train, X_test, z, z_train, z_test, scaling, x, y, z
+    return betas_to_plot, args.n, X, X_train, X_test, z, z_train, z_test, centering, x, y, z
