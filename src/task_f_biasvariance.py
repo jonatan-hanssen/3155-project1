@@ -3,6 +3,7 @@ task g: performs bias-variance tradeoff for lasso regression using the scikit le
         lasso model
 """
 from sklearn.linear_model import Lasso
+
 # Our own library of functions
 from utils import *
 
@@ -10,16 +11,23 @@ np.random.seed(42069)
 
 # parameters
 K = 20
-N = 10
 bootstraps = 100
 plot_only_best_lambda = False
 lambdas = np.logspace(-10, 0, 4)
-# synthetic parameters
-noise = 0.05
-centering = True
-
-# read in and get data
-X, X_train, X_test, z, z_train, z_test, centering, x, y, z = read_in_dataset(N, centering=centering, noise=noise)
+(
+    betas_to_plot,
+    N,
+    X,
+    X_train,
+    X_test,
+    z,
+    z_train,
+    z_test,
+    centering,
+    x,
+    y,
+    z,
+) = read_from_cmdline()
 z = z.ravel()
 
 # plot only the gridsearched lambda
@@ -31,8 +39,8 @@ if plot_only_best_lambda:
 # loop through different lambda values
 for i in range(len(lambdas)):
     if not plot_only_best_lambda:
-           plt.subplot(411 + i)
-           plt.suptitle(f"Bias variance tradeoff for lasso regression")
+        plt.subplot(411 + i)
+        plt.suptitle(f"Bias variance tradeoff for lasso regression")
 
     # model under testing
     model_Lasso = Lasso(lambdas[i], max_iter=1000, fit_intercept=False)
@@ -71,8 +79,12 @@ for i in range(len(lambdas)):
     plt.xlabel("Polynomial degree (N)")
     plt.tight_layout(h_pad=0.001)
     if plot_only_best_lambda:
-        print(f"Optimal lambda = {lam}, best MSE = {best_MSE}, best polynomial = {best_poly}")
-        plt.title(f"Bias variance tradeoff for lasso regression \n for optimal lambda = {lambdas[i]}")
+        print(
+            f"Optimal lambda = {lam}, best MSE = {best_MSE}, best polynomial = {best_poly}"
+        )
+        plt.title(
+            f"Bias variance tradeoff for lasso regression \n for optimal lambda = {lambdas[i]}"
+        )
     else:
         plt.title(f"lambda = {lambdas[i]:.5}")
     plt.legend()

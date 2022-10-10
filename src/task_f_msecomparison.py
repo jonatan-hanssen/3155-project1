@@ -8,22 +8,29 @@ from sklearn.model_selection import cross_validate, KFold
 from utils import *
 
 # parameters
-N = 20
 K = 10
-noise = 0.05
-centering = False
 lambdas = np.logspace(-12, -4, 6)
 
 kfolds = KFold(n_splits=K)
 
+(
+    betas_to_plot,
+    N,
+    X,
+    X_train,
+    X_test,
+    z,
+    z_train,
+    z_test,
+    centering,
+    x,
+    y,
+    z,
+) = read_from_cmdline()
+
 errors_OLS = np.zeros(N)
 errors_Ridge = np.zeros(N)
 errors_Lasso = np.zeros(N)
-
-# read in data
-X, X_train, X_test, z, z_train, z_test, centering, x, y, z = read_in_dataset(
-    N, centering, noise
-)
 
 # test different values of lambda
 for i in range(len(lambdas)):
@@ -80,4 +87,3 @@ for i in range(len(lambdas)):
     plt.legend()
 
 plt.show()
-

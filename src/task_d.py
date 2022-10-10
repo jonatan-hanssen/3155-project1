@@ -9,17 +9,24 @@ from utils import *
 np.random.seed(42069)
 
 # parameters
-N = 10
 K = 10
 bootstraps = 100
-# parameters for synthetic data
-noise = 0.05
-centering = False
 
-# read in data
-X, X_train, X_test, z, z_train, z_test, centering, x, y, z = read_in_dataset(
-    N, centering, noise
-)
+(
+    betas_to_plot,
+    N,
+    X,
+    X_train,
+    X_test,
+    z,
+    z_train,
+    z_test,
+    centering,
+    x,
+    y,
+    z,
+) = read_from_cmdline()
+
 z = z.ravel()
 
 # model under testing

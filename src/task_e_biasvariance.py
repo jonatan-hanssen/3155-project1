@@ -10,21 +10,26 @@ np.random.seed(42069)
 
 # parameters
 K = 20
-N = 10
 bootstraps = 100
 plot_only_best_lambda = False
 lambdas = np.logspace(-10, 0, 4)
 # parameter synthetic data
-noise = 0.05
-centering = True
 
-# read in data
-X, X_train, X_test, z, z_train, z_test, centering, x, y, z = read_in_dataset(
+(
+    betas_to_plot,
     N,
-    centering=centering,
-    noise=noise,
-    step=0.1,
-)
+    X,
+    X_train,
+    X_test,
+    z,
+    z_train,
+    z_test,
+    centering,
+    x,
+    y,
+    z,
+) = read_from_cmdline()
+
 z = z.ravel()
 
 # plot only the gridsearched lambda
@@ -82,4 +87,3 @@ for i in range(len(lambdas)):
     plt.legend()
 
 plt.show()
-

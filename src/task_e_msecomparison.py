@@ -10,11 +10,8 @@ from utils import *
 np.random.seed(42069)
 
 # Parameters
-N = 20
 K = 20
 bootstraps = 100
-noise = 0.05
-centering = True
 kfolds = KFold(n_splits=K)
 
 # if true, plot only lambda that gives lowest MSE
@@ -22,10 +19,20 @@ kfolds = KFold(n_splits=K)
 plot_only_best_lambda = True
 lambdas = np.logspace(-12, -4, 6)
 
-# read in data
-X, X_train, X_test, z, z_train, z_test, centering, x, y, z = read_in_dataset(
-    N, centering, noise
-)
+(
+    betas_to_plot,
+    N,
+    X,
+    X_train,
+    X_test,
+    z,
+    z_train,
+    z_test,
+    centering,
+    x,
+    y,
+    z,
+) = read_from_cmdline()
 z = z.ravel()
 
 # plot only the gridsearched lambda

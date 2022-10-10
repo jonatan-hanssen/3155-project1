@@ -7,21 +7,25 @@ from utils import *
 np.random.seed(42069)
 
 # Parameters
-N = 10
 lambdas = np.logspace(-10, 0, 4)
 betas_to_plot = 9
 
 # Parameters for synthetic data
-noise = 0.05
-centering = True
 
-# get data
-X, X_train, X_test, z, z_train, z_test, centering, x, y, z = read_in_dataset(
+(
+    betas_to_plot,
     N,
-    centering=centering,
-    noise=noise,
-    step=0.1,
-)
+    X,
+    X_train,
+    X_test,
+    z,
+    z_train,
+    z_test,
+    centering,
+    x,
+    y,
+    z,
+) = read_from_cmdline()
 
 # calculate beta values
 for i in range(len(lambdas)):
