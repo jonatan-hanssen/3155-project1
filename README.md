@@ -18,7 +18,7 @@ python3 task_b.py -f ../data/nearest_neighbor_SRTM_data_Norway_1.tif
 If you would like to change other parameters, the following optional arguments are provided from the command line
 
 ```
-usage: task_b.py [-h] [-f FILE | -d | -no NOISE] [-st STEP] [-b BETAS] [-n N]
+usage: task_*.py [-h] [-f FILE | -d | -no NOISE] [-st STEP] [-b BETAS] [-n N]
                  [-nsc]
 
 Read in arguments for tasks
@@ -35,7 +35,7 @@ options:
                         Default 0.05
   -b BETAS, --betas BETAS
                         Betas to plot, when applicable. Default 10
-  -n N                  Polynomial degree. Default 10
+  -n N                  Polynomial degree. Default 9
   -nsc, --noscale       Do not use scaling (centering for synthetic case or
                         MinMaxScaling for organic case)
 ```
