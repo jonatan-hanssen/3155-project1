@@ -37,13 +37,13 @@ OLS_scikit = LinearRegression(fit_intercept=False)
 kfolds = KFold(n_splits=K)
 
 # cross val results
-errors_cv = np.zeros(N)
-errors_cv_scikit = np.zeros(N)
+errors_cv = np.zeros(N+1)
+errors_cv_scikit = np.zeros(N+1)
 
 # bootstrap results
-errors_boot = np.zeros(N)
-biases_boot = np.zeros(N)
-variances_boot = np.zeros(N)
+errors_boot = np.zeros(N+1)
+biases_boot = np.zeros(N+1)
+variances_boot = np.zeros(N+1)
 
 # run cross val
 print("Cross")

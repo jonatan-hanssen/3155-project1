@@ -48,9 +48,9 @@ for i in range(len(lambdas)):
         plt.suptitle(f"MSE by polynomial degree for resampling methods Ridge")
 
     # arrays for MSE scores
-    errors_cv = np.zeros(N)
-    errors_cv_scikit = np.zeros(N)
-    errors_boot = np.zeros(N)
+    errors_cv = np.zeros(N+1)
+    errors_cv_scikit = np.zeros(N+1)
+    errors_boot = np.zeros(N+1)
 
     # scikit model under testing
     Ridge_model = Ridge(lambdas[i], fit_intercept=False)

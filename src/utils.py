@@ -327,7 +327,7 @@ def find_best_lambda(X, z, model, lambdas, N, K):
     best_lambda = 0
     best_MSE = 10**10
 
-    for n in range(N-1,N):
+    for n in range(N+1):
         print(n)
         l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
         model.fit(X[:, :l], z)

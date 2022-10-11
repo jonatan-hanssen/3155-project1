@@ -3,11 +3,6 @@ own idea: make a plot MSE test error for different levels of noise
 """
 # Our own library of functions
 from utils import *
-import matplotlib
-
-font = {"family": "normal", "size": 25}
-
-matplotlib.rc("font", **font)
 
 np.random.seed(42069)
 
@@ -31,10 +26,10 @@ def noise_plot(x, y, z, N, noise, centering, bootstraps):
     X, X_train, X_test, z_train, z_test = preprocess(x, y, z, N, 0.2)
 
     # results
-    test_errors = np.zeros(N)
+    test_errors = np.zeros(N+1)
 
     # bootstrap
-    for n in range(N):
+    for n in range(N+1):
         print(n)
         l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
         z_preds_test, _ = bootstrap(

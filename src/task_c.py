@@ -27,14 +27,14 @@ bootstraps = 100
 ) = read_from_cmdline()
 
 # result arrays
-MSEs_test = np.zeros(N)
-MSEs_train = np.zeros(N)
-biases = np.zeros(N)
-variances = np.zeros(N)
+MSEs_test = np.zeros(N+1)
+MSEs_train = np.zeros(N+1)
+biases = np.zeros(N+1)
+variances = np.zeros(N+1)
 
 # scikit
-MSEs_test_sk = np.zeros(N)
-MSEs_train_sk = np.zeros(N)
+MSEs_test_sk = np.zeros(N+1)
+MSEs_train_sk = np.zeros(N+1)
 
 
 # model under testing

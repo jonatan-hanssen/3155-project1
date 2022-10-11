@@ -12,10 +12,7 @@ np.random.seed(42069)
 K = 20
 bootstraps = 100
 plot_only_best_lambda = False
-lambdas = np.logspace(-8, 3, 20)
-lambdas[0] = 0
-print(lambdas)
-# parameter synthetic data
+lambdas = np.logspace(-10, 0, 4)
 
 (
     betas_to_plot,
@@ -36,11 +33,11 @@ z = z.ravel()
 
 # plot only the gridsearched lambda
 if plot_only_best_lambda:
+    lambdas = np.logspace(-8, 3, 20)
+    lambdas[0] = 0
     ridge = Ridge(fit_intercept=False)
     lam, best_MSE, best_poly = find_best_lambda(X, z, ridge, lambdas, N, K)
     lambdas = [lam]
-    print(f"{best_MSE=}")
-    print(f"{lam=}")
 
 # for lambdas
 for i in range(len(lambdas)):
@@ -49,9 +46,9 @@ for i in range(len(lambdas)):
         plt.suptitle(f"Bias variance tradeoff for ridge regression")
 
     # results
-    errors = np.zeros(N)
-    biases = np.zeros(N)
-    variances = np.zeros(N)
+    errors = np.zeros(N+1)
+    biases = np.zeros(N+1)
+    variances = np.zeros(N+1)
 
     # for polynomial degree
     for n in range(N + 1):

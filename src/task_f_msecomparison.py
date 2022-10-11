@@ -29,9 +29,9 @@ kfolds = KFold(n_splits=K)
     z,
 ) = read_from_cmdline()
 
-errors_OLS = np.zeros(N)
-errors_Ridge = np.zeros(N)
-errors_Lasso = np.zeros(N)
+errors_OLS = np.zeros(N+1)
+errors_Ridge = np.zeros(N+1)
+errors_Lasso = np.zeros(N+1)
 
 min_error_OLS = np.inf
 min_error_Ridge = np.inf
