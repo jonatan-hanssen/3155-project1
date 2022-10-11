@@ -707,9 +707,8 @@ Figure & Shell command (leading \texttt{python3} omitted) \\
 \ref{frankenoisemse} & \texttt{task\_c.py -n 24}\\
 \ref{frankiebiasvariance} & \texttt{task\_c.py -n 24 --step 0.1}\\
 \ref{frankiedifflambdas} & \texttt{task\_e\_biasvariance.py -n 24 --step 0.1}\\
-\ref{frankedifflambdaslasso} & \texttt{task\_f\_biasvariance.py -n 9}\\
+\ref{frankedifflambdaslasso} & \texttt{task\_f\_biasvariance.py -n 9 --step 0.15}\\
 \ref{real1ridgedifflambdas} & \texttt{task\_e\_biasvariance.py --file ../data/small\_SRTM\_data\_Norway\_1.tif -n 24}\\
-\ref{real1msecomparison} & \texttt{task\_f\_biasvariance.py --file ../data/small\_SRTM\_data\_Norway\_1.tif -n 9}\\
 \ref{frankeridgebetas} & \texttt{task\_e\_betas.py -n 24}\\
 \ref{frankenoisybeta} & \texttt{task\_c.py -n 24}\\
 \ref{frankienoisecomparison} & \texttt{noise\_plot.py}\\
@@ -774,7 +773,7 @@ Figure & Shell command (leading \texttt{python3} omitted) \\
 
 \begin{figure*}
 \centerline{\includegraphics[width=3.25in]{figure/frankedifflambdaslasso.png}}
-\caption{Bias, variance and test MSE plotted over polynomial degree for our Lasso prediction on the Franke function with an added stochastic noise $\epsilon \sim N(0,0.05)$, using lambdas of increasing size. Here we have reduced the number of datapoints to only 100 to force overfitting earlier.}
+\caption{Bias, variance and test MSE plotted over polynomial degree for our Lasso prediction on the Franke function with an added stochastic noise $\epsilon \sim N(0,0.05)$, using lambdas of increasing size. Here we have reduced the number of datapoints to less than 100 to force overfitting earlier.}
 \label{frankedifflambdaslasso}
 \end{figure*}
 
