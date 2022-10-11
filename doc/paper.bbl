@@ -1,5 +1,10 @@
 \begin{thebibliography}{}
 
+\bibitem[Gonzales and Woods, 2018]{dip}
+Gonzales, R.~C. and Woods, R.~E. (2018).
+\newblock {\em Digital Image Processing}.
+\newblock Pearson, New Nork, NY.
+
 \bibitem[Hastie et~al., 2009]{hastie}
 Hastie, T., Tibshirani, R., and Friedman, J. (2009).
 \newblock {\em The Elements of Statistical Learning}.
