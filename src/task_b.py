@@ -23,9 +23,6 @@ np.random.seed(42069)
     z,
 ) = read_from_cmdline()
 
-print(np.min(z))
-print(np.max(z))
-
 # implemented model under testing
 OLS_model = OLS
 # scikit model under testing
