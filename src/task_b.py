@@ -58,7 +58,7 @@ ax = fig.add_subplot(121, projection="3d")
 surf = ax.plot_surface(x, y, z, cmap=cm.coolwarm, linewidth=0, antialiased=False)
 ax.zaxis.set_major_locator(LinearLocator(10))
 ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
-ax.set_title("Scaled terrain")
+ax.set_title("Scaled terrain", size=24)
 # Add a color bar which maps values to colors.
 # fig.colorbar(surf_real, shrink=0.5, aspect=5)
 
@@ -69,14 +69,14 @@ ax = fig.add_subplot(122, projection="3d")
 surf = ax.plot_surface(
     x,
     y,
-    np.reshape(z_preds[:, np.argmin(MSE_test)], z.shape),
+    np.reshape(z_preds[:, N], z.shape),
     cmap=cm.coolwarm,
     linewidth=0,
     antialiased=False,
 )
 ax.zaxis.set_major_locator(LinearLocator(10))
 ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
-ax.set_title(f"Polynomial fit of scaled terrain, N = {np.argmin(MSE_test)}")
+ax.set_title(f"Polynomial fit of scaled terrain, N = {N}", size=24)
 fig.colorbar(surf, shrink=0.5, aspect=5)
 
 plt.show()
