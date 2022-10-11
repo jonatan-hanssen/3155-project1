@@ -39,7 +39,7 @@ MSEs_train_sk = np.zeros(N)
 
 # model under testing
 OLS_model = OLS
-OLS_scikit = LinearRegression()
+OLS_scikit = LinearRegression(fit_intercept=False)
 
 # for polynomial degree
 for n in range(N):
