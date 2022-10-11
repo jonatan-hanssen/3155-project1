@@ -38,7 +38,6 @@ if plot_only_best_lambda:
     lam, best_MSE, best_poly = find_best_lambda(X, z, lasso, lambdas, N, K)
     lambdas = [lam]
 
-raise ValueError
 # loop through different lambda values
 for i in range(len(lambdas)):
     if not plot_only_best_lambda:

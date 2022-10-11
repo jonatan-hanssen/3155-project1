@@ -1,36 +1,3 @@
-Plots needed:
-
-task_c med real data (1 og 2), train og test comparison bootrapped. Vis lavest MSE (bootstrapped).
-
-python3 task_c.py -f ..\data\small_SRTM_data_Norway_1.tif -n 20
-
-Minimal MSE_test value = 0.01426834000972839 for N = 19
-Minimal MSE_test value = 0.013817853537034838 for N = 40
-
-
-bias-variance for real data (1 og 2) på ridge for ulike lambda, gridsearch beste lambda (task_e_bias_variance)
-
-python3 .\task_e_biasvariance.py -f ..\data\small_SRTM_data_Norway_1.tif -n 10
-
-beste lambda:
-Optimal lambda = 18.329807108324374, best MSE = 0.015435776613248697, best polynomial = 19
-
-
-bias-variance for syntetisk og real data (1 og 2) på lasso for ulike lambdaer (task_f_bias_variance)
-
-
-Optimal lambda = 2.1544346900318867e-07, best MSE = 0.01685880609495088, best polynomial = 9
-
-
-
-task_f_MSE_comparison for syntetisk og real data (1 og 2). Vis laveste MSE.
-
-python3 .\task_f_msecomparison.py -f ..\data\small_SRTM_data_Norway_1.tif -n 10
-
-Minimal MSE_test value for OLS = 0.019567853634438186 for N = 9
-Minimal MSE_test value for Ridge = 0.019255481969400443 for N = 9
-Minimal MSE_test value for Lasso = 0.018560138034798463 for N = 9
-
-task_b -n 50 real data (1 og 2)
+[DONE]
 
 

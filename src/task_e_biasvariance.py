@@ -38,9 +38,7 @@ if plot_only_best_lambda:
     ridge = Ridge(fit_intercept=False)
     lam, best_MSE, best_poly = find_best_lambda(X, z, ridge, lambdas, N, K)
     lambdas = [lam]
-    f"Optimal lambda = {lam}, best MSE = {best_MSE}, best polynomial = {best_poly}"
 
-raise ValueError
 # for lambdas
 for i in range(len(lambdas)):
     if not plot_only_best_lambda:
