@@ -354,7 +354,7 @@ def read_from_cmdline():
     group.add_argument("-no", "--noise", help="Amount of noise to have. Recommended range [0-0.1]. Default 0.05", type=float, default=0.05)
     parser.add_argument("-st", "--step", help="Step size for linspace function. Range [0.01-0.4]. Default 0.05", type=float, default=0.05)
     parser.add_argument("-b", "--betas", help="Betas to plot, when applicable. Default 10", type=int)
-    parser.add_argument("-n", help="Polynomial degree. Default 10", type=int, default=10)
+    parser.add_argument("-n", help="Polynomial degree. Default 9", type=int, default=9)
     parser.add_argument("-nsc", "--noscale", help="Do not use scaling (centering for synthetic case or MinMaxScaling for organic case)", action="store_true") 
 
     # parse arguments and call run_filter
