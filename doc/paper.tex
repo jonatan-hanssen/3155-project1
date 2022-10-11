@@ -588,7 +588,7 @@ Using Ridge regression, we see from Fig.~\ref{frankiedifflambdas} that larger an
 
 Looking at Lasso regression, we find that it has the same capability to reduce overfitting as Ridge, as can be seen in Fig.~\ref{frankelassodifflambdas}. However, looking at Table.~\ref{ols_vs_ridge_vs_lasso_table}, we see that Lasso falls short when finding a good MSE. Intuitively, it does not make sense for Lasso to be worse than OLS, because Lasso with $\lambda = 0$ is equivalent to OLS. But we cannot avoid considering the fact that Lasso does not have an analytical solution, and as such we must use numerical methods to find the optimal parameters. Using scikit's implementation, we have not been able to get the numerical method to converge, which means that we have not found a global minimum.\footnote{Scikit explicitly mentions that using $\lambda = 0$ does not converge well with their implementation} For this reason, Lasso regression has not given satisfying results.
 
-\begin{table}[t]
+\begin{table*}[t]
 \caption{Best MSE for OLS, Ridge and Lasso with 400 datapoints}
 \begin{center}
 \label{ols_vs_ridge_vs_lasso_table}
@@ -603,7 +603,7 @@ Lasso & 0.05 & 0.0095846 & 10 & $2.5118 \cdot 10^{-6}$ \\
 \hline
 \end{tabular}
 \end{center}
-\end{table}
+\end{table*}
 
 \begin{figure} 
 \centerline{\includegraphics[width=3.25in]{figure/frankiedifflambdas.png}}
@@ -617,13 +617,32 @@ Lasso & 0.05 & 0.0095846 & 10 & $2.5118 \cdot 10^{-6}$ \\
 \label{frankeridgebetas}
 \end{figure}
 
+\begin{figure*} 
+\centerline{\includegraphics[width=6.85in]{figure/real1surfacecomp.png}}
+\caption{A comparison of our best OLS prediction and actual terrain data (terrain 1), at polynomial degree 19}
+\label{real1surfacecomp}
+\end{figure*}
+
 \subsection{Real elevation data}
 
 With the confidence that our methods work as expected on synthetic data, we turn our attention to the real elevation data. 
 
 \subsubsection{Ordinary Least Squares}
 
-Here we find some limitations of linear regression. We see from Fig.~\ref{realmse} that the we are able to fit the terrain up to a certain point, gaining an MSE of NUMBER with OLS with polynomial degree DEGREE. However, we see that beyond this, we have little to gain. This can be seen when we increase the polynomial degree to very large amounts, without seeing any decrease in MSE (Fig. NUMBER). Looking at the beta progression for selected betas (Fig. NUMBER), we see that the parameters stabilize, which implies that we are not overfitting, but simply reaching our best possible prediction for polynomial regression. The fact that we are not overfitting is further reinforced by looking at the bias-variance plot in Fig. NUMBER, which shows no increase in variance. It is reasonable to expect that our model will not overfit, due to the large increase in data we now use for the fit. Our synthetic data used $20 x 20 = 400$ datapoints, while we now have $320 x 640 = 204 800$ datapoints. This means that for a 50th order polynomial, which will have $1326$ features, our number of features are less than $1\%$ of our datapoints. If we decrease the number of datapoints used for training considerably, we can see overfitting start to occur (see Appendix 1). So we are not overfitting, but we are not decreasing our MSE either. This is likely because the elevation data has a jagged and complex shape, which cannot be accurately recreated, even with a polynomial of degree $50$. We should remember that the Franke function can be expanded into a series of polynomials, which is why we can expect to get a lower and lower MSE as the polynomial degree increases (so long as we have enough data and it is not noisy). The same is not true for our elevation data, and as such we have little to gain from increasing our model complexity after a certain point. Clearly, linear regression does not offer a very good tradeoff between computational cost and performance for this data.
+Here we find some limitations of linear regression. We see from Fig.~\ref{real1msetraintest} that the we are able to fit the terrain up to a certain point, gaining an MSE of $0.0142683$ with OLS with polynomial degree 19. This is about two orders of magnitude higher than our lowest MSE for the Franke function without noise, which had values on a similar scale.\footnote{The Franke function without noise has a range of about $(0,1.2)$ and our MinMaxed terrain data has been scaled to a range of $(0,1)$. While not exactly the same, these are on the same order of magnitude, and we believe that comparing the MSE scores is reasonable} In fact, our MSE is comparable to the Franke function with a stochastic noise $\epsilon \sim N(0,0.1)$, which implies that our terrain is very irregular and difficult to approximate. Looking at the plot for polynomial degree 19 (Fig.~\ref{real1surfacecomp}), we see that our poor MSE is reflected visually in our fit as well, as the surfaces do not look particularly similar. Comparing the best polynomial degree of the best fit with the synthetic data, we see that our best fit is reached much later. This implies that we are not overfitting yet, and indeed the bias variance decomposition confirms this, as we see that variance is essentially inconsequential (Fig.~\ref{realbiasvarianceOLS}). %This can be seen when we increase the polynomial degree to very large amounts, without seeing any decrease in MSE (Fig. NUMBER). Looking at the beta progression for selected betas (Fig. NUMBER), we see that the parameters stabilize, which implies that we are not overfitting, but simply reaching our best possible prediction for polynomial regression. The fact that we are not overfitting is further reinforced by looking at the bias-variance plot in Fig.~\ref{realbiasvarianceOLS}, which shows no increase in variance. 
+It is reasonable to expect that our model will not overfit, due to the large increase in data we now use for the fit. Our synthetic data used $20 x 20 = 400$ datapoints, while we now have $320 x 640 = 204 800$ datapoints. This means that for a 50th order polynomial, which will have $1326$ features, our number of features are less than $1\%$ of our datapoints. If we decrease the number of datapoints used for training considerably, we can see overfitting start to occur (Fig.~\ref{real1mselessdata} in the appendix). So we are not overfitting, but we are not decreasing our MSE either. This is likely because the elevation data has a jagged and complex shape, which cannot be accurately recreated, even with a polynomial of degree $50$. We should remember that the Franke function can be expanded into a series of polynomials, which is why we can expect to get a lower and lower MSE as the polynomial degree increases (so long as we have enough data and it is not noisy). The same is not true for our elevation data, and as such we have little to gain from increasing our model complexity after a certain point. Clearly, linear regression does not offer a very good tradeoff between computational cost and performance for this data.
+ 
+\begin{figure} 
+\centerline{\includegraphics[width=3.25in]{figure/realbiasvarianceOLS.png}}
+\caption{Bias, variance and test MSE plotted over polynomial degree for our OLS prediction of Terrain 1}
+\label{realbiasvarianceOLS}
+\end{figure}
+
+\begin{figure} 
+\centerline{\includegraphics[width=3.25in]{figure/real1msetraintest.png}}
+\caption{Test and train MSE for OLS on Terrain 1}
+\label{real1msetraintest}
+\end{figure}
 
 % \begin{figure} 
 % \centerline{\includegraphics[width=3.25in]{figure/realmse.png}}
@@ -693,12 +712,8 @@ The next pages contain plots and tables that are of interest.
 % \hline
 Figure & Highest $N$ & Std of noise & Step (\# of points) & Bootstraps & K-folds & $\lambda$ & Scaling \\
 \hline
-\ref{frankiebiasvariance} & 25 & 0.05 & 0.1 (100) & 100 & - & - & None\\
 \ref{frankiedifflambdas} & 25 & 0.05 & 0.1 (100) & 100 & - & variable & Centering\\
 \ref{frankeridgebetas} & 25 & 0.05 & 0.1 (100) & - & - & variable & Centering\\
-\ref{frankenoisybeta} & 25 & 0.05 & 0.05 (400) & - & - & - & Centering\\
-\ref{frankienoisecomparison} & 25 & variable & 0.05 (400) & 100 & - & - & None\\
-\ref{frankiehigherdatapoints} & 30 & 0 & 0.01 (10000) & 100 & - & - & None\\
 \hline
 \end{tabular}
 \end{center}
@@ -713,11 +728,15 @@ Figure & Highest $N$ & Std of noise & Step (\# of points) & Bootstraps & K-folds
 % \hline
 Figure & Shell command (leading \texttt{python3} omitted) & Bootstraps & K-folds & $\lambda$ \\
 \hline
-\ref{frankenonoise} & \texttt{task\_b.py --noise 0 -n 25} & 100 & - & - \\
+\ref{frankenonoise} & \texttt{task\_b.py --noise 0 -n 25} & - & - & - \\
 \ref{frankenonoisemse} & \texttt{task\_c.py --noise 0 -n 25}  & 100 & - & - \\
 \ref{frankenoisemse} & \texttt{task\_c.py -n 25}  & 100 & - & - \\
+\ref{frankiebiasvariance} & \texttt{task\_c.py -n 25 --step 0.1}  & 100 & - & - \\
+\ref{frankenoisybeta} & \texttt{task\_c.py -n 25}  & 100 & - & - \\
 \ref{frankienoisecomparison} & \texttt{noise\_plot.py} & 100 & - & - \\
 \ref{frankiehigherdatapoints} & \texttt{task\_c.py --noise 0 -n 30 --step 0.01} & 100 & - & - \\
+\ref{real1surfacecomp} & \texttt{task\_b.py --file ../data/small\_SRTM\_data\_Norway\_1.tif -n 19} & - & - & - \\
+\ref{real1mselessdata} & \texttt{task\_c.py -f ../data/tiny\_SRTM\_data\_Norway\_1.tif -n 20} & 100 & - & - \\
 \hline
 \end{tabular}
 \end{center}
@@ -728,6 +747,13 @@ Figure & Shell command (leading \texttt{python3} omitted) & Bootstraps & K-folds
 \centerline{\includegraphics[width=3.25in]{figure/frankienoisecomparison.png}}
 \caption{Test and train MSE for the OLS prediction of Franke function with an increasing amount of noise}
 \label{frankienoisecomparison}
+\end{figure*}
+
+\begin{figure*}
+% \begin{figure}[t]
+\centerline{\includegraphics[width=3.25in]{figure/real1mselessdata.png}}
+\caption{Test and train MSE for the OLS prediction of terrain 1, this time downscaled to only $50x100$. Here the optimal degree was 11, showing that with lower data we start to overfit more rapidly.}
+\label{real1mselessdata}
 \end{figure*}
 
 \begin{figure*}
