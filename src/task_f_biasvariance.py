@@ -12,7 +12,7 @@ np.random.seed(42069)
 # parameters
 K = 20
 bootstraps = 100
-plot_only_best_lambda = True
+plot_only_best_lambda = False
 lambdas = np.logspace(-10, 0, 4)
 (
     betas_to_plot,
