@@ -23,6 +23,9 @@ np.random.seed(42069)
     z,
 ) = read_from_cmdline()
 
+print(np.min(z))
+print(np.max(z))
+
 # implemented model under testing
 OLS_model = OLS
 # scikit model under testing
@@ -69,14 +72,14 @@ ax = fig.add_subplot(122, projection="3d")
 surf = ax.plot_surface(
     x,
     y,
-    np.reshape(z_preds[:, N], z.shape),
+    np.reshape(z_preds[:, np.argmin(MSE_test)], z.shape),
     cmap=cm.coolwarm,
     linewidth=0,
     antialiased=False,
 )
 ax.zaxis.set_major_locator(LinearLocator(10))
 ax.zaxis.set_major_formatter(FormatStrFormatter("%.02f"))
-ax.set_title("Polynomial fit of scaled terrain")
+ax.set_title(f"Polynomial fit of scaled terrain, N = {np.argmin(MSE_test)}")
 fig.colorbar(surf, shrink=0.5, aspect=5)
 
 plt.show()
@@ -108,9 +111,9 @@ plt.plot(MSE_train, label="train implementation", marker="o", markersize=3)
 plt.plot(MSE_test, label="test implementation", marker="o", markersize=3)
 plt.plot(MSE_train_sk, "r--", label="train ScikitLearn", marker="o", markersize=3)
 plt.plot(MSE_test_sk, "g--", label="test ScikitLearn", marker="o", markersize=3)
-plt.ylabel("MSE score")
-plt.xlabel("Polynomial degree (N)")
-plt.title("MSE scores over model complexity")
+plt.ylabel("MSE score", size=15)
+plt.xlabel("Polynomial degree (N)", size=15)
+plt.title("MSE scores over model complexity", size=22)
 plt.legend()
 plt.show()
 
