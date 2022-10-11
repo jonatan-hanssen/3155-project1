@@ -10,7 +10,7 @@ from utils import *
 
 # parameters
 K = 10
-lambdas = np.logspace(-12, -4, 6)
+lambdas = np.logspace(-10, 0, 4)
 
 kfolds = KFold(n_splits=K)
 
@@ -44,7 +44,7 @@ best_poly_Lasso = 0
 # test different values of lambda
 for i in range(len(lambdas)):
     z = z.ravel()
-    plt.subplot(321 + i)
+    plt.subplot(411 + i)
     plt.suptitle(f"MSE by polynomial degree for OLS, Ridge and Lasso regression")
 
     # models under testing
@@ -85,24 +85,24 @@ for i in range(len(lambdas)):
         )
         errors_Lasso[n] = np.mean(-scores_Lasso["test_score"])
 
-    if min(min_error_OLS, np.min(scores_ols)) == np.min(scores_ols):
-        min_error_OLS = np.min(scores_ols)
-        best_poly_OLS = np.argmin(scores_ols)
-    if min(min_error_Ridge, np.min(scores_Ridge)) == np.min(scores_Ridge):
-        min_error_Ridge = np.min(scores_Ridge)
-        best_poly_Ridge = np.argmin(scores_Ridge)
-    if min(min_error_Lasso, np.min(scores_Lasso)) == np.min(scores_Lasso):
-        min_error_Lasso = np.min(scores_Lasso)
-        best_poly_Lasso = np.argmin(scores_Lasso)
+    if min(min_error_OLS, np.min(errors_OLS)) == np.min(errors_OLS):
+        min_error_OLS = np.min(errors_OLS)
+        best_poly_OLS = np.argmin(errors_OLS)
+    if min(min_error_Ridge, np.min(errors_Ridge)) == np.min(errors_Ridge):
+        min_error_Ridge = np.min(errors_Ridge)
+        best_poly_Ridge = np.argmin(errors_Ridge)
+    if min(min_error_Lasso, np.min(errors_Lasso)) == np.min(errors_Lasso):
+        min_error_Lasso = np.min(errors_Lasso)
+        best_poly_Lasso = np.argmin(errors_Lasso)
     # plot
     plt.plot(errors_OLS, "r--", label="OLS")
     plt.plot(errors_Ridge, "b--", label="Ridge")
     plt.plot(errors_Lasso, "g--", label="Lasso")
-    plt.ylabel("MSE score")
-    plt.xlabel("Polynomial degree (N)")
-    plt.title(f"lambda = {lambdas[i]:.5}")
+    plt.ylabel("MSE score", size=12)
+    plt.xlabel("Polynomial degree (N)", size=12)
+    plt.title(f"lambda = {lambdas[i]:.5}", size=15)
     plt.tight_layout(h_pad=0.001)
-    plt.legend()
+    plt.legend(prop={"size": 10}, loc="center left", bbox_to_anchor=(1, 0.5))
 
 print(f"Minimal MSE_test value for OLS = {min_error_OLS} for N = {best_poly_OLS}")
 print(f"Minimal MSE_test value for Ridge = {min_error_Ridge} for N = {best_poly_Ridge}")

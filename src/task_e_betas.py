@@ -7,7 +7,7 @@ from utils import *
 np.random.seed(42069)
 
 # Parameters
-lambdas = np.logspace(-10, 0, 4)
+lambdas = np.logspace(-8, 3, 4)
 betas_to_plot = 9
 
 # Parameters for synthetic data
