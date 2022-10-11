@@ -4,7 +4,7 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 import numpy as np
 from random import random, seed
-from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.model_selection import train_test_split, GridSearchCV, KFold
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.utils import resample
@@ -317,11 +317,12 @@ def scores(z, z_preds):
 
 
 def find_best_lambda(X, z, model, lambdas, N, K):
+    kfolds = KFold(n_splits=K, shuffle=True)
     model = GridSearchCV(
         estimator=model,
         param_grid={"alpha": list(lambdas)},
         scoring="neg_mean_squared_error",
-        cv=K,
+        cv=kfolds,
     )
     best_polynomial = 0
     best_lambda = 0

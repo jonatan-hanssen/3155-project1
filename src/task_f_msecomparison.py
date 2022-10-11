@@ -12,7 +12,7 @@ from utils import *
 K = 10
 lambdas = np.logspace(-10, 0, 4)
 
-kfolds = KFold(n_splits=K)
+kfolds = KFold(n_splits=K, shuffle=True)
 
 (
     betas_to_plot,

@@ -12,7 +12,7 @@ np.random.seed(42069)
 # Parameters
 K = 20
 bootstraps = 100
-kfolds = KFold(n_splits=K)
+kfolds = KFold(n_splits=K, shuffle=True)
 
 # if true, plot only lambda that gives lowest MSE
 # if false, plot range of different lambdas
@@ -102,7 +102,7 @@ for i in range(len(lambdas)):
     plt.xlabel("Polynomial degree (N)")
     if plot_only_best_lambda:
         plt.title(
-            f"MSE by polynomial degree for resampling methods for optimal lambda = {lambdas[i]} Ridge"
+            f"MSE by polynomial degree for resampling methods \n for optimal lambda = {lambdas[i]} Ridge"
         )
     else:
         plt.title(f"lambda = {lambdas[i]:.5}")

@@ -5,7 +5,7 @@ task_c med real data (1 og 2), train og test comparison bootrapped. Vis lavest M
 python3 task_c.py -f ..\data\small_SRTM_data_Norway_1.tif -n 20
 
 Minimal MSE_test value = 0.01426834000972839 for N = 19
-
+Minimal MSE_test value = 0.013817853537034838 for N = 40
 
 
 bias-variance for real data (1 og 2) på ridge for ulike lambda, gridsearch beste lambda (task_e_bias_variance)
