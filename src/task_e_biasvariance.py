@@ -72,18 +72,17 @@ for i in range(len(lambdas)):
         variances[n] = variance
 
     # plot
-    plt.plot(errors, label="MSE test")
     plt.plot(biases, label="bias")
+    plt.plot(errors, "r--", label="MSE test")
     plt.plot(variances, label="variance")
-    plt.ylim(0, 0.12)
-    plt.xlabel("Polynomial degree (N)")
+    plt.xlabel("Polynomial degree (N)", size=12)
     plt.tight_layout(h_pad=0.001)
     if plot_only_best_lambda:
         plt.title(
-            f"Bias variance tradeoff for ridge regression for optimal lambda = {lambdas[i]}"
+            f"Bias variance tradeoff for ridge regression for optimal lambda = {lambdas[i]}", size=18
         )
     else:
-        plt.title(f"lambda = {lambdas[i]:.5}")
-    plt.legend()
+        plt.title(f"lambda = {lambdas[i]:.5}", size=15)
+    plt.legend(prop={"size": 10}, loc="center left", bbox_to_anchor=(1, 0.5))
 
 plt.show()

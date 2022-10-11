@@ -49,9 +49,9 @@ for i in range(len(lambdas)):
             data = betas[beta, :]
             data[data == 0] = np.nan
             plt.plot(data, label=f"beta{beta}", marker="o", markersize=3)
-    plt.xlabel("Polynomial degree (N)")
-    plt.ylabel("Beta value")
-    plt.title("Beta progression")
+    plt.xlabel("Polynomial degree (N)", size=15)
+    plt.ylabel("Beta value", size=15)
+    plt.title("Beta progression", size=18)
     plt.title(f"lambda = {lambdas[i]:.5}")
     plt.legend(loc="center left", bbox_to_anchor=(1, 0.5))
 
