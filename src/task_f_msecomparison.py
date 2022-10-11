@@ -9,7 +9,7 @@ from sklearn.model_selection import cross_validate, KFold
 from utils import *
 
 # parameters
-K = 10
+K = 20
 lambdas = np.logspace(-10, 0, 4)
 
 kfolds = KFold(n_splits=K, shuffle=True)
@@ -54,7 +54,7 @@ for i in range(len(lambdas)):
 
     # cross validate, get error
     print("OLS")
-    for n in range(N):
+    for n in range(N+1):
         print(n)
         l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
 

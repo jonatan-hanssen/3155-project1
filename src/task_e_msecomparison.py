@@ -37,6 +37,8 @@ z = z.ravel()
 
 # plot only the gridsearched lambda
 if plot_only_best_lambda:
+    lambdas = np.logspace(-8, 3, 20)
+    lambdas[0] = 0
     ridge = Ridge(fit_intercept=False)
     lam, _, _ = find_best_lambda(X, z, ridge, lambdas, N, K)
     lambdas = [lam]

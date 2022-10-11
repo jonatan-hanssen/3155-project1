@@ -11,7 +11,7 @@ np.random.seed(42069)
 # parameters
 K = 20
 bootstraps = 100
-plot_only_best_lambda = False
+plot_only_best_lambda = True
 lambdas = np.logspace(-10, 0, 4)
 
 (
@@ -33,12 +33,14 @@ z = z.ravel()
 
 # plot only the gridsearched lambda
 if plot_only_best_lambda:
-    lambdas = np.logspace(-8, 3, 20)
+    lambdas = np.logspace(-8, 3, 15)
     lambdas[0] = 0
     ridge = Ridge(fit_intercept=False)
     lam, best_MSE, best_poly = find_best_lambda(X, z, ridge, lambdas, N, K)
     lambdas = [lam]
+    f"Optimal lambda = {lam}, best MSE = {best_MSE}, best polynomial = {best_poly}"
 
+raise ValueError
 # for lambdas
 for i in range(len(lambdas)):
     if not plot_only_best_lambda:
