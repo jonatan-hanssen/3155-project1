@@ -521,7 +521,7 @@ To gain insight into how the three different regression methods work, we experim
 \label{frankenonoisemse}
 \end{figure}
 
-We find that OLS creates a good fit for the Franke Function. With 400 datapoints, we can increase our polynomial degree to around 20 before we see signs of overfitting.\footnote{Here we also see something a bit surprising: We see that our own implementation of OLS follows Scikit's implementation up to around polynomial degree 10, at which point scikit's MSE increases rapidly. We chalk this up to numerical errors and differing implementation of the normal equations, as we simply use the normal equation exactly, while scikit uses an implementation which is probably computationally more efficient but gives slight differences when comparing to the normal equation. These differences seem to create a large error after a certain size of the design matrix is reached, which we can not adequately explain.} This is most likely because the Franke function can be expanded into a sum of polynomials. We would expect to see higher polynomial degrees give us better and better prediction, up to a certain point.\footnote{And indeed, this seems to be the case, as if we increase the availiable datapoints considerably, as seen in Fig.~\ref{frankiehigherdatapoints} in the appendix, we can reach much higher polynomial degrees without overfitting} When we reach degrees higher than around 20, we see that our test error increases slightly, a sign of overfitting. This is also to be expected, as even if the continual Franke function could be expanded into a series of polynomials, we are working with a limited dataset of only 400 samples (and only 320 of those in our training set). As we reach higher and higher degrees, we are more and more likely to see unlucky train-test-splits where the best fit for the training data leads to large errors for the test data. See Fig.~\ref{frankenonoise} for a comparison between the Franke function and our best prediction, which shows that they are essentially identical. Fig.~\ref{frankenonoisemse} shows the train and test MSE by polynomial degree. The MSE for test in these plots is the average MSE for 100 bootstraps. For a full list of all parameters used for every plot shown, see Table.~\ref{allparamstable} in the appendix.
+We find that OLS creates a good fit for the Franke Function. With 400 datapoints, we can increase our polynomial degree to around 20 before we see signs of overfitting.\footnote{Here we also see something a bit surprising: We see that our own implementation of OLS follows Scikit's implementation up to around polynomial degree 10, at which point scikit's MSE increases rapidly. We chalk this up to numerical errors and differing implementation of the normal equations, as we simply use the normal equation exactly, while scikit uses an implementation which is probably computationally more efficient but gives slight differences when comparing to the normal equation. These differences seem to create a large error after a certain size of the design matrix is reached, which we can not adequately explain.} This is most likely because the Franke function can be expanded into a sum of polynomials. We would expect to see higher polynomial degrees give us better and better prediction, up to a certain point.\footnote{And indeed, this seems to be the case, as if we increase the availiable datapoints considerably, as seen in Fig.~\ref{frankiehigherdatapoints} in the appendix, we can reach much higher polynomial degrees without overfitting} When we reach degrees higher than around 20, we see that our test error increases slightly, a sign of overfitting. This is also to be expected, as even if the continual Franke function could be expanded into a series of polynomials, we are working with a limited dataset of only 400 samples (and only 320 of those in our training set). As we reach higher and higher degrees, we are more and more likely to see unlucky train-test-splits where the best fit for the training data leads to large errors for the test data. See Fig.~\ref{frankenonoise} for a comparison between the Franke function and our best prediction, which shows that they are essentially identical. Fig.~\ref{frankenonoisemse} shows the train and test MSE by polynomial degree. The MSE for test in these plots is the average MSE for 100 bootstraps. For a comprehensive list of the shell command required to reproduce this and every other plot, see Table.~\ref{allparamstable} in the appendix.
 
 However, when we introduce a stochastic noise, we see that overfitting happens rapidly. Without a regularization hyperparameter, parameters fluctuate wildly and our prediction suffers. Fig.~\ref{frankenoisemse} shows our MSE up to polynomial degree 25 with an added stochastic noise $\epsilon \sim N(0,0.05)$, where we see that we are overfitting severely. See Fig.~\ref{frankienoisecomparison} in the appendix for test MSE for more and more noisy target values. 
 
@@ -556,7 +556,7 @@ Table. ~\ref{ols_mse_table} shows the best polynomial degree and MSE for regular
 % \hline
 Std of noise & Best MSE & Best degree \\
 \hline
-0 & 0.00051085 & 9\\
+0 & 0.0005109 & 9\\
 0.05 & 0.0038302 & 7 \\
 0.10 & 0.0139833 & 7 \\
 \hline
@@ -566,23 +566,23 @@ Std of noise & Best MSE & Best degree \\
 
 \subsubsection{Ridge}
 
-Using Ridge regression, we see from Fig.~\ref{frankiedifflambdas} that larger and larger values of $\lambda$ efficiently prevents overfitting and reduces the variance between predictions. Looking at the beta progression with for the same values of $\lambda$ (Fig.~\ref{frankeridgebetas}), we see that the regularization parameter is successfully shrinking the beta values. Using Scikit's gridsearch, we find the optimal $\lambda$ to be $10^{-8}$ and the optimal polynomial degree to be 7, with an average MSE of $0.0037999$, which is very slightly lower than OLS for the Franke function with an added stochastic noise $\epsilon \sim N(0,0.05)$. We see from this that Ridge regression has not really had much of an effect in decreasing the MSE. We must now remember what Ridge aims to do. With the regularization parameter, we can prevent overfitting if our model is too complex for our data. Looking at Fig.~\ref{frankeridgenoisecomparison} in comparison to Fig.~\ref{frankienoisecomparison} (both in the appendix), we can see that Ridge really has achieved this, reducing overfitting as our data becomes more and more noisy. But we should recall that we decide the complexity of our model, by deciding which polynomial degree we use when creating the design matrix. In fact, by choosing polynomial degree 7 for our OLS method to get the best MSE for noisy data, we are in fact doing a primitive form of best subset selection, as described in Hastie et Al.\cite[57]{hastie}. Almost by definition, the polynomial degree with the best MSE is not overfitted, because if it was, it would not be the model with the lowest MSE among all polynomial degrees. Therefore it is not so unexpected that Ridge regression has a relatively low impact on the MSE. We could expect that Ridge would allow us to reach higher polynomial degrees without overfitting, by shrinking features of the higher polynomial degrees that are not supported but allowing us to keep other high degree terms (for example, allowing us to use $x^5y^4$, but discard $x^9$, if only $x^5y^4$ was supported by the data). But we can see from the Table. ~\ref{ols_vs_ridge_table} that we are not able to push into higher degrees. A possible explanation for this is that every feature is useful, due to the polynomial expansion of the Franke function. 
+Using Ridge regression, we see from Fig.~\ref{frankiedifflambdas} that larger and larger values of $\lambda$ efficiently prevents overfitting and reduces the variance between predictions. Looking at the beta progression with for the same values of $\lambda$ (Fig.~\ref{frankeridgebetas}), we see that the regularization parameter is successfully shrinking the beta values. Using Scikit's gridsearch, we find the optimal $\lambda$ to be $10^{-8}$ and the optimal polynomial degree to be 7, with an average MSE of $0.0037999$, which is very slightly lower than OLS for the Franke function with an added stochastic noise $\epsilon \sim N(0,0.05)$. We see from this that Ridge regression has not really had much of an effect in decreasing the MSE. We must now remember what Ridge aims to do. With the regularization parameter, we can prevent overfitting if our model is too complex for our data. Looking at Fig.~\ref{frankeridgenoisecomparison} in comparison to Fig.~\ref{frankienoisecomparison} (both in the appendix), we can see that Ridge really has achieved this, reducing overfitting as our data becomes more and more noisy. But we should recall that we decide the complexity of our model, by deciding which polynomial degree we use when creating the design matrix. In fact, by choosing polynomial degree 7 for our OLS method to get the best MSE for noisy data, we are in fact doing a primitive form of best subset selection, as described in Hastie et Al.\cite[57]{hastie}. Almost by definition, the polynomial degree with the best MSE is not overfitted, because if it was, it would not be the model with the lowest MSE among all polynomial degrees. Therefore it is not so unexpected that Ridge regression has a relatively low impact on the MSE. We could expect that Ridge would allow us to reach higher polynomial degrees without overfitting, by shrinking features of the higher polynomial degrees that are not supported but allowing us to keep other high degree terms (for example, allowing us to use $x^5y^4$, but discard $x^9$, if only $x^5y^4$ was supported by the data). But we can see from the Table. ~\ref{ols_vs_ridge_vs_lasso_table} that we are not able to push into higher degrees. A possible explanation for this is that every feature is useful, due to the polynomial expansion of the Franke function. 
 
-\begin{table}[t]
-\caption{Best MSE for Ridge regression and OLS with 400 datapoints}
-\begin{center}
-\label{ols_vs_ridge_table}
-\begin{tabular}{c | l l l l}
-% & & \\ % put some space after the caption
+% \begin{table}[t]
+% \caption{Best MSE for Ridge regression and OLS with 400 datapoints}
+% \begin{center}
+% \label{ols_vs_ridge_table}
+% \begin{tabular}{c | l l l l}
+% % & & \\ % put some space after the caption
+% % \hline
+% Regression & Std of noise & MSE & Degree & $\lambda$ \\
 % \hline
-Regression & Std of noise & MSE & Degree & $\lambda$ \\
-\hline
-OLS & 0.05 & 0.0038302 & 7 & - \\
-Ridge & 0.05 & 0.0037999 & 7 & $10^{-8}$ \\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
+% OLS & 0.05 & 0.0038302 & 7 & - \\
+% Ridge & 0.05 & 0.0037999 & 7 & $10^{-8}$ \\
+% \hline
+% \end{tabular}
+% \end{center}
+% \end{table}
 
 \subsubsection{Lasso}
 
