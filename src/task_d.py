@@ -34,16 +34,16 @@ OLS_model = OLS
 
 # scikit comparison model
 OLS_scikit = LinearRegression(fit_intercept=False)
-kfolds = KFold(n_splits=K)
+kfolds = KFold(n_splits=K, shuffle=True)
 
 # cross val results
-errors_cv = np.zeros(N+1)
-errors_cv_scikit = np.zeros(N+1)
+errors_cv = np.zeros(N + 1)
+errors_cv_scikit = np.zeros(N + 1)
 
 # bootstrap results
-errors_boot = np.zeros(N+1)
-biases_boot = np.zeros(N+1)
-variances_boot = np.zeros(N+1)
+errors_boot = np.zeros(N + 1)
+biases_boot = np.zeros(N + 1)
+variances_boot = np.zeros(N + 1)
 
 # run cross val
 print("Cross")
@@ -66,7 +66,7 @@ for n in range(N):
 
 # run bootstrap
 print("Boot")
-for n in range(N+1):
+for n in range(N + 1):
     print(n)
     l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
 
