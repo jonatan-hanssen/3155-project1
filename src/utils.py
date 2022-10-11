@@ -408,8 +408,6 @@ def read_from_cmdline():
             # add noise
             z += args.noise * np.random.standard_normal(z.shape)
         centering = not args.noscale
-        print(f"{args.noscale=}")
-        print(f"{centering=}")
 
         X, X_train, X_test, z_train, z_test = preprocess(x, y, z, args.n, 0.2)
 
