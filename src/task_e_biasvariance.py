@@ -50,7 +50,7 @@ for i in range(len(lambdas)):
     variances = np.zeros(N)
 
     # for polynomial degree
-    for n in range(N):
+    for n in range(N + 1):
         print(n)
         l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
         z_preds, _ = bootstrap(
@@ -79,7 +79,8 @@ for i in range(len(lambdas)):
     plt.tight_layout(h_pad=0.001)
     if plot_only_best_lambda:
         plt.title(
-            f"Bias variance tradeoff for ridge regression for optimal lambda = {lambdas[i]}", size=18
+            f"Bias variance tradeoff for ridge regression for optimal lambda = {lambdas[i]}",
+            size=18,
         )
     else:
         plt.title(f"lambda = {lambdas[i]:.5}", size=15)

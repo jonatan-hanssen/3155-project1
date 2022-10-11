@@ -188,7 +188,7 @@ def evaluate_model(
             elif model.__name__ == "ridge":
                 beta = model((X_train - X_train_mean), (z_train - z_train_mean), lam)
 
-            intercept = np.mean(z_train_mean - X_train_mean @ beta)
+            intercept = z_train_mean - X_train_mean @ beta
 
         else:
             if model.__name__ == "OLS":

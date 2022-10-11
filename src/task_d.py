@@ -66,7 +66,7 @@ for n in range(N):
 
 # run bootstrap
 print("Boot")
-for n in range(N):
+for n in range(N+1):
     print(n)
     l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
 

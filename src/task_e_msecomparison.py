@@ -76,7 +76,7 @@ for i in range(len(lambdas)):
 
     # calculate bootstrap error
     print("Running Bootstrap")
-    for n in range(N):
+    for n in range(N+1):
         print(n)
         l = int((n + 1) * (n + 2) / 2)  # number of elements in beta
         z_preds_test, _ = bootstrap(

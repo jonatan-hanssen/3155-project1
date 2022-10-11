@@ -51,7 +51,7 @@ for i in range(len(lambdas)):
     variances = np.zeros(N)
 
     # for polynomial degree
-    for n in range(N):
+    for n in range(N + 1):
         print(n)
         l = int((n + 1) * (n + 2) / 2)  # Number of elements in beta
         z_preds_test, _ = bootstrap(
@@ -83,7 +83,8 @@ for i in range(len(lambdas)):
             f"Optimal lambda = {lam}, best MSE = {best_MSE}, best polynomial = {best_poly}"
         )
         plt.title(
-            f"Bias variance tradeoff for lasso regression \n for optimal lambda = {lambdas[i]}", size=18
+            f"Bias variance tradeoff for lasso regression \n for optimal lambda = {lambdas[i]}",
+            size=18,
         )
     else:
         plt.title(f"lambda = {lambdas[i]:.5}", size=15)
